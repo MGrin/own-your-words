@@ -1,0 +1,70 @@
+{
+  "name": "own-your-words",
+  "version": "1.0.0",
+  "private": true,
+  "author": {
+    "email": "mr6r1n@gmail.com",
+    "name": "MGrin"
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "^1.0.15",
+    "@chakra-ui/react": "^1.6.7",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@fontsource/open-sans": "^4.5.0",
+    "@fontsource/raleway": "^4.5.0",
+    "@metamask/jazzicon": "^2.0.0",
+    "@usedapp/core": "^0.4.7",
+    "chakra-ui-steps": "^1.3.0",
+    "framer-motion": "^4",
+    "nft.storage": "^3.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3",
+    "react-twitter-login": "^1.4.0",
+    "react-twitter-widgets": "^1.10.0",
+    "web-vitals": "^1.0.1",
+    "web3": "^1.5.2"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.3.1",
+    "@openzeppelin/test-environment": "^0.1.9",
+    "@openzeppelin/test-helpers": "^0.5.13",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@truffle/hdwallet-provider": "^1.5.0",
+    "chai": "^4.3.4",
+    "ganache-cli": "^6.12.2",
+    "mocha": "^9.1.1",
+    "truffle": "^5.4.10"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "eth:build": "truffle compile && rm -f ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
+    "eth:test": "truffle test",
+    "eth:migrate": "truffle migrate --network development && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
+    "eth:console": "truffle console --network development"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
