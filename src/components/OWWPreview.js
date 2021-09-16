@@ -11,7 +11,7 @@ export const generateSVG = (oww, existingTokenId) => {
     if (symbolsCounter % MAXSymbolsInLline === 1) {
       const previousText = messageFormatted.substring(0, symbolsCounter);
       const newPreviousText = previousText.replace(
-        /[\s\.\,\:\;\!\?\-\=]([^\s\.\,\:\;\!\?\-\=]*)$/,
+        /[\s.,:;!?\-=]([^\s.,:;!?\-=]*)$/,
         "\n$1"
       );
       messageFormatted =
