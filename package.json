@@ -37,7 +37,8 @@
     "chai": "^4.3.4",
     "ganache-cli": "^6.12.2",
     "mocha": "^9.1.1",
-    "truffle": "^5.4.10"
+    "truffle": "^5.4.10",
+    "truffle-hdwallet-provider": "^1.0.17"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -47,7 +48,11 @@
     "eth:build": "truffle compile && rm -f ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
     "eth:test": "truffle test",
     "eth:migrate": "truffle migrate --network development && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
-    "eth:console": "truffle console --network development"
+    "eth:migrate:ropsten": "truffle migrate -f 2 --network ropsten && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
+    "eth:migrate:rinkeby": "truffle migrate -f 2 --network rinkeby && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
+    "eth:console": "truffle console --network development",
+    "eth:console:ropsten": "truffle console --network ropsten",
+    "eth:console:rinkeby": "truffle console --network rinkeby"
   },
   "eslintConfig": {
     "extends": [

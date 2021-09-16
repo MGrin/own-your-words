@@ -9,6 +9,7 @@ node_modules
 
 # misc 
 .DS_Store
+.mnemotic
 .env
 .env.local
 .env.development.local

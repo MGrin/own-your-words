@@ -2,6 +2,7 @@ import {
   Heading,
   Text,
   Box,
+  Container,
   Center,
   Flex,
   Spacer,
@@ -123,29 +124,37 @@ const App = () => {
           NFTs.
         </Text>
       </Center>
-      <Box
-        m={["0", "6"]}
-        p="12"
-        boxShadow="lg"
-        border="1px"
-        borderColor="gray.300"
-        borderRadius="6"
-      >
-        <Tabs>
-          <TabList>
-            <Tab>Mint your OWW</Tab>
-            <Tab>See your OWW tokens ({tokens.length})</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <OwnedWordsNFTFlow addMintedToken={addMintedToken} />
-            </TabPanel>
-            <TabPanel>
-              <OwnedWordsList tokens={tokens} error={error} loading={loading} />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </Box>
+      <Center>
+        <Container
+          maxW="3xl"
+          centerContent
+          m={["0", "6"]}
+          p="12"
+          boxShadow="lg"
+          border="1px"
+          borderColor="gray.300"
+          borderRadius="6"
+        >
+          <Tabs>
+            <TabList>
+              <Tab>Mint your OWW</Tab>
+              <Tab>See your OWW tokens ({tokens.length})</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <OwnedWordsNFTFlow addMintedToken={addMintedToken} />
+              </TabPanel>
+              <TabPanel>
+                <OwnedWordsList
+                  tokens={tokens}
+                  error={error}
+                  loading={loading}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Container>
+      </Center>
     </Box>
   );
 };
