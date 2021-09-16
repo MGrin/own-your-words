@@ -135,7 +135,7 @@ const App = () => {
           borderColor="gray.300"
           borderRadius="6"
         >
-          <Tabs>
+          <Tabs width="100%">
             <TabList>
               <Tab>Mint your OWW</Tab>
               <Tab>See your OWW tokens ({tokens.length})</Tab>
