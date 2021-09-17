@@ -78,11 +78,11 @@ const App = () => {
     if (!account || !contract) {
       return;
     }
-    contract.methods
-      .get_version()
-      .call()
-      .then((r) => console.log(r))
-      .catch((err) => console.log(err));
+    // contract.methods
+    //   .get_version()
+    //   .call()
+    //   .then((r) => console.log(r))
+    //   .catch((err) => console.log(err));
     setLoading(true);
 
     fetchOwnedTokens(account, contract)
