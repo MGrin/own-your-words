@@ -6,14 +6,17 @@ import { DAppProvider } from "@usedapp/core";
 import theme from "./theme";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { OWWProvider } from "./hooks/useOwnedWords";
 
 const dappsConfig = {};
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
       <DAppProvider config={dappsConfig}>
-        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <App />
+        <OWWProvider>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+          <App />
+        </OWWProvider>
       </DAppProvider>
     </ChakraProvider>
   </React.StrictMode>,

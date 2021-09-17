@@ -12,11 +12,10 @@ import {
   TabPanels,
   TabPanel,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
-import Web3 from "web3";
+import { useOWW } from "./hooks/useOwnedWords";
 
-import abi from "./abi.json";
 import ConnectWeb3Button from "./components/ConnectWeb3Button";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import OwnedWordsNFTFlow from "./components/OwnedWordsNFTFlow";
@@ -47,26 +46,21 @@ const fetchOwnedTokens = async (account, contract) => {
 };
 
 const App = () => {
-  const { library, account } = useEthers();
+  const contract = useOWW();
+  const { account } = useEthers();
   const [tokens, setTokens] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
 
-  const contract = useRef();
-  const web3 = useRef();
-
-  useEffect(() => {
-    setError(undefined);
-  }, []);
   const addMintedToken = useCallback(
     (tokenId) => {
-      if (!account || !web3.current || !contract.current) {
+      if (!account || !contract) {
         return;
       }
 
       setLoading(true);
       setError(undefined);
-      transformTokenIDToOWW(tokenId, account, contract.current)
+      transformTokenIDToOWW(tokenId, account, contract)
         .then((oww) => {
           setTokens([...tokens, oww]);
           setLoading(false);
@@ -77,22 +71,21 @@ const App = () => {
           console.log(error);
         });
     },
-    [account, tokens, setTokens, setError, setLoading]
+    [account, tokens, contract, setTokens, setError, setLoading]
   );
 
   useEffect(() => {
-    if (!account) {
+    if (!account || !contract) {
       return;
     }
+    contract.methods
+      .get_version()
+      .call()
+      .then((r) => console.log(r))
+      .catch((err) => console.log(err));
     setLoading(true);
 
-    web3.current = new Web3(library.provider);
-    contract.current = new web3.current.eth.Contract(
-      abi.abi,
-      process.env.REACT_APP_OWW_CONTRACT
-    );
-
-    fetchOwnedTokens(account, contract.current)
+    fetchOwnedTokens(account, contract)
       .then((owws) => {
         setTokens(owws);
         setLoading(false);
@@ -102,7 +95,7 @@ const App = () => {
         setLoading(false);
         console.log(error);
       });
-  }, [account, library]);
+  }, [account, contract]);
 
   return (
     <Box p="6">

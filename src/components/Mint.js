@@ -6,13 +6,12 @@ import {
   AlertTitle,
   AlertDescription,
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useEthers } from "@usedapp/core";
-import Web3 from "web3";
-import { NFTStorage, File } from "nft.storage";
+import { File } from "nft.storage";
 
 import OWWPreview, { generateSVG } from "./OWWPreview";
-import abi from "../abi.json";
+import { useNFTStorage, useOWW } from "../hooks/useOwnedWords";
 
 const mint = async (oww, account, contract, nftStorageClient) => {
   const metadata = await nftStorageClient.store({
@@ -46,14 +45,13 @@ const mint = async (oww, account, contract, nftStorageClient) => {
 };
 
 const Mint = ({ oww, onSuccess, onFailure }) => {
-  const { library, account } = useEthers();
+  const { account } = useEthers();
+  const contract = useOWW();
+  const nftStorageClient = useNFTStorage();
+
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [existingTokenId, setExistingTokenId] = useState();
-
-  const contract = useRef();
-  const web3 = useRef();
-  const nftStorageClient = useRef();
 
   useEffect(() => {
     if (!oww) {
@@ -61,16 +59,8 @@ const Mint = ({ oww, onSuccess, onFailure }) => {
     }
 
     setLoading(true);
-    web3.current = new Web3(library.provider);
-    contract.current = new web3.current.eth.Contract(
-      abi.abi,
-      process.env.REACT_APP_OWW_CONTRACT
-    );
-    nftStorageClient.current = new NFTStorage({
-      token: process.env.REACT_APP_NFT_STORAGE_API_KEY,
-    });
 
-    contract.current.methods
+    contract.methods
       .get_token_id_for_post(oww.sn_name, oww.author_id, oww.post_id)
       .call({ from: account })
       .then((tokenId) => {
@@ -80,16 +70,16 @@ const Mint = ({ oww, onSuccess, onFailure }) => {
       .catch((err) => {
         setLoading(false);
       });
-  }, [oww, account, library]);
+  }, [oww, account, contract]);
 
   const handleMintClick = useCallback(() => {
-    if (!account || !contract.current || !nftStorageClient.current) {
+    if (!account || !contract || !nftStorageClient) {
       return;
     }
 
     setLoading(true);
 
-    mint(oww, account, contract.current, nftStorageClient.current)
+    mint(oww, account, contract, nftStorageClient)
       .then((tokenId) => {
         setLoading(false);
         onSuccess(tokenId);

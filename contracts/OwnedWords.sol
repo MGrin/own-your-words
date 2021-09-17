@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC721PresetMinterAutoId.sol";
+import "./ERC721PresetMinterAutoIdUpgradeable.sol";
 
 library MintedPost {
   struct data {
@@ -19,10 +19,16 @@ library MintedPost {
   }
 }
 
-contract OwnedWords is ERC721PresetMinterAutoId {
+contract OwnedWords is ERC721PresetMinterAutoIdUpgradeable {
   using MintedPost for MintedPost.data;
 
-  constructor() ERC721PresetMinterAutoId("OwnedWords", "OWW") {}
+  function initialize() public virtual initializer {
+    __OwnedWords_init();
+  }
+
+  function __OwnedWords_init() internal initializer {
+    __ERC721PresetMinterAutoId_init("OwnedWords", "OWW");
+  }
 
   mapping(uint256 => MintedPost.data) private _owned_posts_by_id;
   mapping(string => MintedPost.data) private _owned_posts_by_gen_id;
