@@ -89,7 +89,7 @@ const Mint = ({ oww, onSuccess, onFailure }) => {
         setError(err);
         console.error(err);
       });
-  }, [oww, account, onSuccess]);
+  }, [oww, account, contract, nftStorageClient, onSuccess]);
 
   const canMint = !error && !existingTokenId;
 
