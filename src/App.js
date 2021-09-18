@@ -24,7 +24,7 @@ import OwnedWordsList from "./components/OwnedWordsList";
 const transformTokenIDToOWW = async (tokenId, account, contract) => {
   const promises = [
     contract.methods.tokenURI(tokenId).call({ sender: account }),
-    contract.methods.get_post_url(tokenId).call({ sender: account }),
+    contract.methods.getPostUrl(tokenId).call({ sender: account }),
   ];
 
   const data = await Promise.all(promises);
@@ -37,7 +37,7 @@ const transformTokenIDToOWW = async (tokenId, account, contract) => {
 };
 
 const fetchOwnedTokens = async (account, contract) => {
-  const tokenIds = await contract.methods.get_tokens().call({ from: account });
+  const tokenIds = await contract.methods.getTokens().call({ from: account });
   const owwPromises = tokenIds.map((tokenId) =>
     transformTokenIDToOWW(tokenId, account, contract)
   );

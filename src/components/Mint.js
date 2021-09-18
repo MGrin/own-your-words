@@ -61,7 +61,7 @@ const Mint = ({ oww, onSuccess, onFailure }) => {
     setLoading(true);
 
     contract.methods
-      .get_token_id_for_post(oww.sn_name, oww.author_id, oww.post_id)
+      .getTokenIdForPost(oww.sn_name, oww.author_id, oww.post_id)
       .call({ from: account })
       .then((tokenId) => {
         setExistingTokenId(tokenId);

@@ -14,6 +14,7 @@
     "@fontsource/open-sans": "^4.5.0",
     "@fontsource/raleway": "^4.5.0",
     "@metamask/jazzicon": "^2.0.0",
+    "@openzeppelin/truffle-upgrades": "^1.9.1",
     "@usedapp/core": "^0.4.7",
     "chakra-ui-steps": "^1.3.0",
     "framer-motion": "^4",
@@ -49,10 +50,8 @@
     "eth:build": "truffle compile && rm -f ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
     "eth:test": "truffle test",
     "eth:migrate": "truffle migrate --network development && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
-    "eth:migrate:ropsten": "truffle migrate -f 2 --network ropsten && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
-    "eth:migrate:rinkeby": "truffle migrate -f 2 --network rinkeby && rm ./src/abi.json && cp ./artifacts/OwnedWords.json ./src/abi.json",
+    "eth:migrate:rinkeby": "./scripts/migrate.sh rinkeby",
     "eth:console": "truffle console --network development",
-    "eth:console:ropsten": "truffle console --network ropsten",
     "eth:console:rinkeby": "truffle console --network rinkeby"
   },
   "eslintConfig": {

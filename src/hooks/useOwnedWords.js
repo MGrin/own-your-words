@@ -28,6 +28,17 @@ export const OWWProvider = ({ children }) => {
       contract,
       nftStorageClient,
     });
+
+    contrat.methods
+      .getVersion()
+      .call({ sender: account })
+      .then((version) => {
+        window.CONTRACT_VERSION = version;
+        console.log(version);
+      })
+      .catch((err) => {
+        console.warning(`Failed to get the contract version: `, err);
+      });
   }, [account, library]);
 
   return <context.Provider value={value}>{children}</context.Provider>;

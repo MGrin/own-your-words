@@ -22,6 +22,10 @@ library MintedPost {
 contract OwnedWords is ERC721PresetMinterAutoIdUpgradeable {
   using MintedPost for MintedPost.data;
 
+  function getVersion() public pure returns (string memory) {
+    return "1.0.1";
+  }
+
   function initialize() public virtual initializer {
     __OwnedWords_init();
   }
@@ -70,7 +74,7 @@ contract OwnedWords is ERC721PresetMinterAutoIdUpgradeable {
     return _token_id;
   }
 
-  function get_post_url(uint256 tokenId) public view returns (string memory) {
+  function getPostUrl(uint256 tokenId) public view returns (string memory) {
     require(
       _exists(tokenId),
       "OwnedWords: POST URL query for nonexistent token"
@@ -79,11 +83,11 @@ contract OwnedWords is ERC721PresetMinterAutoIdUpgradeable {
     return _owned_posts_by_id[tokenId].post_url;
   }
 
-  function get_tokens() public view returns (uint256[] memory) {
+  function getTokens() public view returns (uint256[] memory) {
     return _owned_tokens_by_address[msg.sender];
   }
 
-  function get_token_id_for_post(
+  function getTokenIdForPost(
     string memory sn_name,
     string memory author_id,
     string memory post_id
