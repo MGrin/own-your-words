@@ -29,7 +29,7 @@ export const OWWProvider = ({ children }) => {
       nftStorageClient,
     });
 
-    contrat.methods
+    contract.methods
       .getVersion()
       .call({ sender: account })
       .then((version) => {
