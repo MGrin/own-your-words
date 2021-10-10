@@ -11,9 +11,10 @@ export const OWWProvider = ({ children }) => {
   const [value, setValue] = useState();
 
   useEffect(() => {
-    if (!library || !account) {
+    if (!library || !account || !abi.abi) {
       return;
     }
+
     const web3 = new Web3(library.provider);
     const contract = new web3.eth.Contract(
       abi.abi,

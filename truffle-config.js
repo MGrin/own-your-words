@@ -58,16 +58,16 @@ module.exports = {
     // },
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
-    ropsten: {
-      provider: () =>
-        new HDWalletProvider(
-          mnemonic,
-          `https://ropsten.infura.io/v3/d7a5a5bee3bc4d6ca4093f1419953fee`
-        ),
-      network_id: 3, // Ropsten's id
-      gas: 5000000, // Ropsten has a lower block limit than mainnet
-      skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
-    },
+    // ropsten: {
+    //   provider: () =>
+    //     new HDWalletProvider(
+    //       mnemonic,
+    //       `https://ropsten.infura.io/v3/d7a5a5bee3bc4d6ca4093f1419953fee`
+    //     ),
+    //   network_id: 3, // Ropsten's id
+    //   gas: 5000000, // Ropsten has a lower block limit than mainnet
+    //   skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
+    // },
     rinkeby: {
       provider: () =>
         new HDWalletProvider(

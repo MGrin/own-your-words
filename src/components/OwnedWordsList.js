@@ -9,7 +9,7 @@ import {
 import { Spinner } from "@chakra-ui/spinner";
 import { useEthers } from "@usedapp/core";
 
-import ConnectWeb3Button from "./ConnectWeb3Button";
+import ConnectWeb3Button from "../containers/ConnectWeb3Button";
 import OWW from "./OWW";
 
 const OwnedWordsList = ({ tokens, error, loading }) => {

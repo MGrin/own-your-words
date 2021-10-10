@@ -13,8 +13,8 @@ import TwitterLogin from "react-twitter-login";
 
 import ConnectWeb3Button, {
   getSweetAddressRepresentation,
-} from "./ConnectWeb3Button";
-import ListOfTweets from "./ListOfTweets";
+} from "../containers/ConnectWeb3Button";
+import ListOfTweets from "../containers/ListOfTweets";
 import Mint from "./Mint";
 
 const StepWrapper = ({ children }) => <Center p="6">{children}</Center>;

@@ -2,7 +2,7 @@ import { Button, Box, Text, useColorMode } from "@chakra-ui/react";
 import { useEthers, useEtherBalance, useLookupAddress } from "@usedapp/core";
 import { useCallback } from "react";
 import { formatEther } from "@ethersproject/units";
-import Identicon from "./Identicon";
+import Identicon from "../components/Identicon";
 
 export const getSweetAddressRepresentation = (account) =>
   account

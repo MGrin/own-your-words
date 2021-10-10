@@ -1,15 +1,8 @@
-import {
-  Switch,
-  Flex,
-  useColorMode,
-  Image,
-  useBreakpointValue,
-} from "@chakra-ui/react";
+import { Switch, Flex, useColorMode, Image } from "@chakra-ui/react";
 import { useCallback } from "react";
 
 const ThemeSwitcher = () => {
   const { colorMode, setColorMode } = useColorMode();
-  const hidden = useBreakpointValue({ base: true, sm: false });
 
   const handleThemeChange = useCallback(
     (e) => {
@@ -27,7 +20,7 @@ const ThemeSwitcher = () => {
   }, [setColorMode]);
 
   return (
-    <Flex align="center" hidden={hidden}>
+    <Flex align="center">
       <Image
         onClick={setDarkTheme}
         borderRadius="24"
