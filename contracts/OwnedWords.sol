@@ -23,7 +23,7 @@ contract OwnedWords is ERC721PresetMinterAutoIdUpgradeable {
   using MintedPost for MintedPost.data;
 
   function getVersion() public pure returns (string memory) {
-    return "1.0.1";
+    return "1.0.2";
   }
 
   function initialize() public virtual initializer {

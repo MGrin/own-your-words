@@ -1,4 +1,3 @@
-// const SNO = artifacts.require("SocialNetworkOwnership");
 const OWW = artifacts.require("OwnedWords");
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 

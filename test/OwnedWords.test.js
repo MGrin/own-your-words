@@ -34,6 +34,7 @@ contract("OwnedWords", function (accounts) {
 
   beforeEach(async function () {
     this.token = await deployProxy(OwnedWords);
+    this.tokenLatest = await OwnedWords.new();
   });
 
   shouldSupportInterfaces([
@@ -213,9 +214,45 @@ contract("OwnedWords", function (accounts) {
     });
   });
 
-  describe("contract version", function () {
+  describe("contract methods", function () {
     it("should return the contract version", async function () {
-      expect(await this.token.getVersion({ from: other })).to.equal("1.0.0");
+      expect(await this.token.getVersion({ from: other })).to.equal("1.0.2");
+    });
+
+    it("should return the post URL for a given token", async function () {
+      const tokenId = new BN("0");
+
+      let receipt = await this.token.mint(...mint_args, {
+        from: other,
+      });
+      expectEvent(receipt, "Transfer", {
+        from: ZERO_ADDRESS,
+        to: other,
+        tokenId,
+      });
+
+      expect(await this.token.balanceOf(other)).to.be.bignumber.equal("1");
+      expect(await this.token.ownerOf(tokenId)).to.equal(other);
+
+      expect(await this.token.getPostUrl(tokenId)).to.be.equal(mint_args[5]);
+    });
+
+    it.skip("should return the minted post for a given token", async function () {
+      const tokenId = new BN("0");
+
+      let receipt = await this.token.mint(...mint_args, {
+        from: other,
+      });
+      expectEvent(receipt, "Transfer", {
+        from: ZERO_ADDRESS,
+        to: other,
+        tokenId,
+      });
+
+      expect(await this.token.balanceOf(other)).to.be.bignumber.equal("1");
+      expect(await this.token.ownerOf(tokenId)).to.equal(other);
+
+      expect(await this.token.getMintedPost(tokenId)).to.be.equal("");
     });
   });
 });
