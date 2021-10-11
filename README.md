@@ -1,5 +1,15 @@
-# Own-Your-Words
+# Basic Sample Hardhat Project
 
-A Web3 app to mint your own social network content. For free.
+This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
 
-Visit: [own-your-words.vercel.app](https://own-your-words.vercel.app)
+Try running some of the following tasks:
+
+```shell
+npx hardhat accounts
+npx hardhat compile
+npx hardhat clean
+npx hardhat test
+npx hardhat node
+node scripts/sample-script.js
+npx hardhat help
+```

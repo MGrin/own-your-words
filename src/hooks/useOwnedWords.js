@@ -1,56 +1,72 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useEthers } from "@usedapp/core";
-import Web3 from "web3";
-import { NFTStorage } from "nft.storage";
-import abi from "../abi.json";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import owwAbi from "../oww.json";
+import owsnAbi from "../owsn.json";
+import { useWeb3 } from "./useWeb3";
 
 const context = createContext();
 
 export const OWWProvider = ({ children }) => {
-  const { library, account } = useEthers();
-  const [value, setValue] = useState();
+  const { eth } = useWeb3();
+  const [oww, setOWW] = useState();
+  const [owsn, setOWSN] = useState();
+  const account = null;
 
   useEffect(() => {
-    if (!library || !account || !abi.abi) {
+    if (!owwAbi.abi || !owsnAbi.abi) {
       return;
     }
 
-    const web3 = new Web3(library.provider);
-    const contract = new web3.eth.Contract(
-      abi.abi,
+    const owwContract = new eth.Contract(
+      owwAbi.abi,
       process.env.REACT_APP_OWW_CONTRACT
     );
-    const nftStorageClient = new NFTStorage({
-      token: process.env.REACT_APP_NFT_STORAGE_API_KEY,
-    });
+    const owsnContract = new eth.Contract(
+      owsnAbi.abi,
+      process.env.REACT_APP_OWSN_CONTRACT
+    );
 
-    setValue({
-      web3,
-      contract,
-      nftStorageClient,
-    });
+    setOWW(owwContract);
+    setOWSN(owsnContract);
 
-    contract.methods
+    owwContract.methods
       .getVersion()
       .call({ sender: account })
       .then((version) => {
-        window.CONTRACT_VERSION = version;
-        console.log(version);
+        window.OWW_CONTRACT_VERSION = version;
+        console.log(`OWW version: ${version}`);
       })
       .catch((err) => {
-        console.warning(`Failed to get the contract version: `, err);
+        console.warning(`Failed to get the OWW contract version: `, err);
       });
-  }, [account, library]);
 
+    owsnContract.methods
+      .getVersion()
+      .call({ sender: account })
+      .then((version) => {
+        window.OWSN_CONTRACT_VERSION = version;
+        console.log(`OWSN version: ${version}`);
+      })
+      .catch((err) => {
+        console.warning(`Failed to get the OWSN contract version: `, err);
+      });
+  }, [eth]);
+
+  const value = useMemo(
+    () => ({
+      oww,
+      owsn,
+    }),
+    [oww, owsn]
+  );
   return <context.Provider value={value}>{children}</context.Provider>;
 };
 
 export const useOWW = () => {
   const value = useContext(context);
-  return value ? value.contract : undefined;
+  return value ? value.oww : undefined;
 };
 
-export const useNFTStorage = () => {
+export const useOWSN = () => {
   const value = useContext(context);
-  return value ? value.nftStorageClient : undefined;
+  return value ? value.owsn : undefined;
 };

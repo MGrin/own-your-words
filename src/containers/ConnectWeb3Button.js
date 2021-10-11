@@ -1,28 +1,10 @@
 import { Button, Box, Text, useColorMode } from "@chakra-ui/react";
-import { useEthers, useEtherBalance, useLookupAddress } from "@usedapp/core";
-import { useCallback } from "react";
-import { formatEther } from "@ethersproject/units";
 import Identicon from "../components/Identicon";
-
-export const getSweetAddressRepresentation = (account) =>
-  account
-    ? `${account.slice(0, 6)}...${account.slice(
-        account.length - 4,
-        account.length
-      )}`
-    : "";
+import { useWeb3 } from "../hooks/useWeb3";
 
 const ConnectWeb3Button = ({ size }) => {
-  const { activateBrowserWallet, account } = useEthers();
-  const ens = useLookupAddress();
-  const etherBalance = useEtherBalance(account);
   const { colorMode } = useColorMode();
-
-  const connect = useCallback(() => {
-    activateBrowserWallet((error) => {
-      console.log(error);
-    });
-  }, [activateBrowserWallet]);
+  const { sweetAccount, account, connect } = useWeb3();
 
   return account ? (
     <Box
@@ -32,11 +14,6 @@ const ConnectWeb3Button = ({ size }) => {
       borderRadius="xl"
       py="0"
     >
-      <Box px="3">
-        <Text fontSize="md">
-          {etherBalance && parseFloat(formatEther(etherBalance)).toFixed(3)} ETH
-        </Text>
-      </Box>
       <Button
         bg={colorMode === "dark" ? "gray.800" : undefined}
         border="1px solid transparent"
@@ -52,7 +29,7 @@ const ConnectWeb3Button = ({ size }) => {
         height="38px"
       >
         <Text fontSize="md" fontWeight="medium" mr="2">
-          {account && (ens ?? getSweetAddressRepresentation(account))}
+          {sweetAccount}
         </Text>
         <Identicon />
       </Button>

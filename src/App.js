@@ -1,5 +1,5 @@
 import { Box, Container } from "@chakra-ui/react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Header from "./containers/Header";
 import Accounts from "./pages/Accounts";
 import Landing from "./pages/Landing";
@@ -16,6 +16,7 @@ const App = () => {
           <Route path="/accounts" exact component={Accounts} />
           <Route path="/words" exact component={Words} />
           <Route path="/statements" exact component={Statements} />
+          <Route path="/" component={() => <Redirect to="/" />} />
         </Switch>
       </Container>
     </Box>

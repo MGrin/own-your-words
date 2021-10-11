@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
-import { useEthers } from "@usedapp/core";
 import Jazzicon from "@metamask/jazzicon";
 
 import styled from "@emotion/styled";
+import { useWeb3 } from "../hooks/useWeb3";
 
 const StyledIdenticon = styled.div`
   height: 1rem;
@@ -13,7 +13,7 @@ const StyledIdenticon = styled.div`
 
 export default function Identicon() {
   const ref = useRef();
-  const { account } = useEthers();
+  const { account } = useWeb3();
 
   useEffect(() => {
     if (account && ref.current) {

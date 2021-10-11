@@ -17,12 +17,12 @@ import {
 } from "@chakra-ui/react";
 import ConnectWeb3Button from "./ConnectWeb3Button";
 import ThemeSwitcher from "../components/ThemeSwitcher";
-import { useEthers } from "@usedapp/core";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
+import { useWeb3 } from "../hooks/useWeb3";
 
 const Header = () => {
-  const { account } = useEthers();
+  const { connected } = useWeb3();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerButtonRef = useRef();
   const isMobile = useBreakpointValue([true, false]);
@@ -79,7 +79,7 @@ const Header = () => {
   return (
     <Flex paddingBottom={["12", "6"]}>
       {isMobile && <ConnectWeb3Button />}
-      {!account && !isMobile && <HStack>{navigationList}</HStack>}
+      {connected && !isMobile && <HStack>{navigationList}</HStack>}
       <Spacer />
       {!isMobile && (
         <HStack>

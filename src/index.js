@@ -1,27 +1,35 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
-import { DAppProvider } from "@usedapp/core";
 import { BrowserRouter } from "react-router-dom";
 
 import theme from "./theme";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { OWWProvider } from "./hooks/useOwnedWords";
+import { Web3Provider } from "./hooks/useWeb3";
+import { IPFSProvider } from "./hooks/useIPFS";
+import { AuthProvider } from "./hooks/useAuth";
 
-const dappsConfig = {};
 ReactDOM.render(
   <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <DAppProvider config={dappsConfig}>
-        <OWWProvider>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </OWWProvider>
-      </DAppProvider>
-    </ChakraProvider>
+    <BrowserRouter>
+      <ChakraProvider theme={theme}>
+        <Web3Provider>
+          <AuthProvider>
+            <IPFSProvider>
+              <OWWProvider>
+                <ColorModeScript
+                  initialColorMode={theme.config.initialColorMode}
+                />
+
+                <App />
+              </OWWProvider>
+            </IPFSProvider>
+          </AuthProvider>
+        </Web3Provider>
+      </ChakraProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );
