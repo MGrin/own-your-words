@@ -29,3 +29,5 @@ typechain
 #Hardhat files
 cache
 artifacts
+
+geth.rinkeby

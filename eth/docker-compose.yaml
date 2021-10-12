@@ -1,0 +1,32 @@
+version: "3"
+services:
+  geth:
+    image: "ethereum/client-go:latest"
+    command: --rinkeby --ws --ipcdisable --ws.addr 0.0.0.0 --ws.origins="*" --datadir /geth
+    volumes:
+      - ./geth.rinkeby:/geth
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=chainlink
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+  chainlink:
+    image: smartcontract/chainlink:0.10.14
+    restart: always
+    depends_on:
+      - postgres
+    command: ["local", "n", "-p", "/chainlink/password", "-a", "/chainlink/api"]
+    env_file:
+      - ./chainlink.rinkeby/.env
+    ports:
+      - 6688:6688
+    expose:
+      - 6688
+    volumes:
+      - ./chainlink.rinkeby:/chainlink

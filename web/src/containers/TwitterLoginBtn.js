@@ -78,7 +78,7 @@ const parseOAuthRequestToken = (responseText) =>
     return { ...prev, [key]: value };
   }, {});
 
-const getAccessToken = async ({ oauthToken, oauthVerifier }) => {
+export const getAccessToken = async ({ oauthToken, oauthVerifier }) => {
   const method = "POST";
   const apiUrl = "https://api.twitter.com/oauth/access_token";
 
@@ -120,7 +120,7 @@ const getAuthLink = async (callbackUrl) => {
   return `https://api.twitter.com/oauth/authorize?oauth_token=${requestTokenData.oauth_token}`;
 };
 
-const TwitterLoginBtn = () => {
+const TwitterLoginBtn = ({ onSuccess }) => {
   const { twitter, setTwitterAccessToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
@@ -138,6 +138,9 @@ const TwitterLoginBtn = () => {
 
   useEffect(() => {
     if (twitter && twitter.requestTokenData && !twitter.accessToken) {
+      if (onSuccess) {
+        return onSuccess(twitter.requestTokenData);
+      }
       setLoading(true);
       getAccessToken(twitter.requestTokenData)
         .then((accessToken) => {

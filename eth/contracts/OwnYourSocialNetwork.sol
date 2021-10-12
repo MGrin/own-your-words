@@ -25,16 +25,15 @@ contract OwnYourSocialNetwork is ERC721Custom {
   mapping(string => uint256) private _owned_accounts_by_gen_id;
   mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
 
-  function initialize() initializer public {
-    __ERC721Custom_init("OwnYourSocialNetwork", "OWSN");
+  function initialize(string memory name, string memory symbol) override initializer public  {
+    __ERC721Custom_init(name, symbol);
   }
 
   function mint(
     string memory sn_name,
     string memory sn_id,
-    string memory access_token
-  ) public virtual returns (uint256) {
-    
+    string memory sn_url
+  ) private returns (uint256) {
     string memory gen_sn_id = string(
       abi.encodePacked(sn_name, sn_id)
     );
@@ -43,7 +42,14 @@ contract OwnYourSocialNetwork is ERC721Custom {
       _exists(_owned_accounts_by_gen_id[gen_sn_id]) == false,
       "OwnYourSocialNetwork: The account was already minted"
     );
-    uint256 _token_id = _mint_without_owner(msg.sender);
+    uint256 _token_id = _mint_without_owner(_msgSender());
+    _owned_accounts_by_id[_token_id].id = _token_id;
+    _owned_accounts_by_id[_token_id].owner = _msgSender();
+    _owned_accounts_by_id[_token_id].sn_name = sn_name;
+    _owned_accounts_by_id[_token_id].sn_id = sn_id;
+    _owned_accounts_by_id[_token_id].sn_url = sn_url;
+
+    _owned_accounts_by_gen_id[gen_sn_id] = _token_id;
 
     return _token_id;
   }
