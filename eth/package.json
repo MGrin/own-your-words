@@ -23,27 +23,16 @@
   "scripts": {
     "deploy-owsn": "npx hardhat run scripts/deploy-owsn.js",
     "upgrade-owsn": "npx hardhat run scripts/upgrade-owsn.js",
+    "deploy-tao": "npx hardhat run scripts/deploy-tao.js",
     "console": "npx hardhat console",
     "rinkeby:deploy-owsn": "npx hardhat run --network rinkeby scripts/deploy-owsn.js",
     "rinkeby:upgrade-owsn": "npx hardhat run --network rinkeby scripts/upgrade-owsn.js",
-    "rinkeby:console": "npx hardhat console --network rinkeby"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "rinkeby:deploy-tao": "npx hardhat run --network rinkeby scripts/deploy-tao.js",
+    "rinkeby:console": "npx hardhat console --network rinkeby",
+    "localhost:deploy-owsn": "npx hardhat run --network localhost scripts/deploy-owsn.js",
+    "localhost:upgrade-owsn": "npx hardhat run --network localhost scripts/upgrade-owsn.js",
+    "localhost:deploy-tao": "npx hardhat run --network localhost scripts/deploy-tao.js",
+    "localhost:console": "npx hardhat console --network localhost",
+    "test": "npx hardhat test"
   }
 }

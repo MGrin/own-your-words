@@ -6,7 +6,7 @@ async function main() {
 
   const OwnYourSocialNetwork = await ethers.getContractFactory(NAME);
 
-  const existingDeployment = getLock(NAME, network.name);
+  const existingDeployment = getLock(network.name, NAME);
 
   const owsn = await upgrades.upgradeProxy(
     existingDeployment.address,
@@ -15,7 +15,7 @@ async function main() {
   );
   await owsn.deployed();
 
-  writeLock(NAME, network.name, owsn.address);
+  writeLock(network.name, NAME, owsn.address);
   console.log("OwnYourSocialNetwork deployed to:", owsn.address);
 }
 

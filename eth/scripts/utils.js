@@ -5,6 +5,10 @@ const LOCK_STORAGE = "./locks";
 const writeLock = (network, name, address) => {
   const lockPath = `${LOCK_STORAGE}/${getLockName(network, name)}`;
 
+  if (fs.existsSync(lockPath)) {
+    fs.unlinkSync(lockPath);
+  }
+
   fs.writeFileSync(
     lockPath,
     JSON.stringify({
@@ -24,8 +28,12 @@ const verifyNoLock = (network, name) => {
 };
 
 const getLock = (network, name) => {
-  const lock = require(`.${LOCK_STORAGE}/${getLockName(network, name)}`);
-  return lock;
+  try {
+    const lock = require(`.${LOCK_STORAGE}/${getLockName(network, name)}`);
+    return lock;
+  } catch (err) {
+    throw new Error("Contract has never been deployed");
+  }
 };
 
 module.exports = {

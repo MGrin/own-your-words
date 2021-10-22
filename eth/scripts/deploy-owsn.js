@@ -1,16 +1,22 @@
 const { ethers, upgrades, network } = require("hardhat");
-const { writeLock, verifyNoLock } = require("./utils");
+const { writeLock, verifyNoLock, getLock } = require("./utils");
 
 async function main() {
   const NAME = "OwnYourSocialNetwork";
-  verifyNoLock(NAME, network.name);
+  verifyNoLock(network.name, NAME);
 
   const OwnYourSocialNetwork = await ethers.getContractFactory(NAME);
 
-  const owsn = await upgrades.deployProxy(OwnYourSocialNetwork, [NAME, "OWSN"]);
+  const taoLock = getLock(network.name, "TwitterAuthOracle");
+
+  const owsn = await upgrades.deployProxy(
+    OwnYourSocialNetwork,
+    [NAME, "OWSN", taoLock.address],
+    { initializer: "__OwnYourSocialNetwork__init" }
+  );
   await owsn.deployed();
 
-  writeLock(NAME, network.name, owsn.address);
+  writeLock(network.name, NAME, owsn.address);
   console.log(`${NAME} deployed to:`, owsn.address);
 }
 

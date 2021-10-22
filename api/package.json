@@ -1,0 +1,22 @@
+{
+  "name": "own-your-words-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "MGrin",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "cors": "^2.8.5",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "uuid": "^8.3.2"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}

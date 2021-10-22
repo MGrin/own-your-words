@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import owwAbi from "../oww.json";
 import owsnAbi from "../owsn.json";
 import { useWeb3 } from "./useWeb3";
+import { OWW_CONTRACT } from "../utils/constants";
 
 const context = createContext();
 
@@ -16,10 +17,7 @@ export const OWWProvider = ({ children }) => {
       return;
     }
 
-    const owwContract = new eth.Contract(
-      owwAbi.abi,
-      process.env.REACT_APP_OWW_CONTRACT
-    );
+    const owwContract = new eth.Contract(owwAbi.abi, OWW_CONTRACT);
     const owsnContract = new eth.Contract(
       owsnAbi.abi,
       process.env.REACT_APP_OWSN_CONTRACT
