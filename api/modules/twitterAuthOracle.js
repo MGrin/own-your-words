@@ -12,7 +12,33 @@ const handleOffChainError = (error) => {
   console.error(error);
 };
 
-const handleNewPendingRequest = async (error, event) => {
+const processRequest = async (requestId) => {
+  try {
+    await taoContract.methods.startProcessing(requestId).send({
+      from: account.address,
+    });
+
+    const request = await taoContract.methods
+      .getRequestById(requestId)
+      .call({ sender: account.address });
+
+    const accessToken = await getAccessToken({
+      oauthToken: request.oauthToken,
+      oauthVerifier: request.oauthVerifier,
+    });
+
+    await taoContract.methods
+      .succeeded(requestId, accessToken.screen_name, accessToken.user_id)
+      .send({ from: account.address });
+  } catch (err) {
+    handleOffChainError(err);
+    await taoContract.methods
+      .failed(requestId, String(err.message))
+      .send({ from: account.address });
+  }
+};
+
+const handleNewPendingRequestEvent = (subscribe) => async (error, event) => {
   if (error) {
     handleOffChainError(error);
     return;
@@ -20,45 +46,31 @@ const handleNewPendingRequest = async (error, event) => {
 
   try {
     const { requestId } = event.returnValues;
-    console.log(`Received request [requestId=${requestId}]`);
-
-    await taoContract.methods.startProcessing(requestId).send({
-      from: account.address,
-    });
-
-    try {
-      const request = await taoContract.methods
-        .getRequestById(requestId)
-        .call({ sender: account.address });
-
-      const accessToken = await getAccessToken({
-        oauthToken: request.oauthToken,
-        oauthVerifier: request.oauthVerifier,
-      });
-
-      console.log(accessToken);
-      await taoContract.methods.succeeded(
-        requestId,
-        accessToken.screen_name,
-        accessToken.user_id
-      );
-    } catch (err) {
-      handleOffChainError(err);
-      await taoContract.methods.failed(requestId, String(err.message));
-    }
+    console.log(
+      `[NewPendingRequestEvent]: Received request [requestId=${requestId}]`
+    );
+    await processRequest(requestId);
+    subscribe();
   } catch (err) {
     handleOffChainError(err);
   }
 };
 
 const start = async () => {
-  taoContract.events
-    .NewPendingRequest(handleNewPendingRequest)
-    .on("connected", () => {
-      console.log(
-        `Listening for NewPendingRequest event of TAO contract at ${process.env.TAO_CONTRACT}`
-      );
-    });
+  const subscribe = () => {
+    taoContract.once(
+      "NewPendingRequest",
+      ({
+        fromBlock: "pending",
+      },
+      handleNewPendingRequestEvent(subscribe))
+    );
+  };
+
+  subscribe();
+  console.log(
+    `Listening for NewPendingRequest event of TAO contract at ${process.env.TAO_CONTRACT}`
+  );
 };
 
 module.exports = {

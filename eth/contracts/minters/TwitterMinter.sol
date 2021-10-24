@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IMinter.sol";
 import "../oracles/TwitterAuthOracle.sol";
@@ -18,11 +19,13 @@ library TwitterMintState {
   }
 }
 
-contract TwitterMinter is Ownable, IMinter {
+contract TwitterMinter is AccessControl, IMinter {
   using TwitterMintState for TwitterMintState.SuccessCallback;
 
   TwitterAuthOracle public oracle;
   mapping(uint256 => TwitterMintState.SuccessCallback) private _callback_by_req_id;
+  bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+  bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
 
   event TwitterAuthRequestSubmited(
     address indexed sender, uint256 requestId
@@ -38,8 +41,12 @@ contract TwitterMinter is Ownable, IMinter {
     string error
   );
 
-  constructor(address twitterAuthOracleAddress) Ownable() {
+  constructor(address twitterAuthOracleAddress) AccessControl() {
     oracle = TwitterAuthOracle(twitterAuthOracleAddress);
+  
+    _setupRole(ADMIN_ROLE, _msgSender());
+    _setRoleAdmin(ADMIN_ROLE, USER_ROLE);
+    _setupRole(USER_ROLE, twitterAuthOracleAddress);
   }
 
   function startMint(
@@ -60,7 +67,7 @@ contract TwitterMinter is Ownable, IMinter {
 
   function succeedMint(
     TwitterAuthData.Response memory res
-  ) external onlyOwner {    
+  ) external onlyRole(USER_ROLE) {    
     uint256 tokenId = _callback_by_req_id[res.requestId].cb(
       "twitter",
       res.userId,
@@ -73,7 +80,7 @@ contract TwitterMinter is Ownable, IMinter {
   function failMint(
     uint256 reqId,
     string memory err
-  ) external onlyOwner {    
+  ) external onlyRole(USER_ROLE) {    
     emit TwitterAuthRequestFailed(reqId, err);
   }
 

@@ -20,18 +20,13 @@ library OwnedAccount {
 contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   using OwnedAccount for OwnedAccount.data;
 
-  function getVersion() external pure returns (string memory) {
-    return "1.0.0";
-  }
-
   mapping(string => uint256) private _owned_accounts_by_gen_id;
   mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
   TwitterMinter public twitterMinter;
   /////////////////////////////////////////////////////////////////////////////////////
 
-  function __OwnYourSocialNetwork__init(string memory name, string memory symbol, address twitterMinterAddress) initializer public  {
+  function __OwnYourSocialNetwork__init(string memory name, string memory symbol) initializer public  {
     __ERC721Custom_init(name, symbol);
-    twitterMinter = TwitterMinter(twitterMinterAddress);
   }
 
   function mint(
@@ -85,12 +80,18 @@ contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
     return _owned_accounts_by_id[_owned_accounts_by_gen_id[gen_sn_id]];
   }
 
-  // function updateTwitterMinterAddress(address twitterMinterAddress) external {
-  //   require(
-  //     hasRole(MINTER_ROLE, _msgSender()),
-  //     "OwnYourSocialNetwork: must have minter role to mint"
-  //   );
+  function updateTwitterMinterAddress(address twitterMinterAddress) public {
+    require(
+      hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+      "OwnYourSocialNetwork: must have minter role to updateTwitterMinterAddress"
+    );
 
-  //   twitterMinter = TwitterMinter(twitterMinterAddress);
-  // }
+    revokeRole(MINTER_ROLE, address(twitterMinter));
+    twitterMinter = TwitterMinter(twitterMinterAddress);
+    _setupRole(MINTER_ROLE, address(twitterMinterAddress));
+  }
+
+  function getVersion() external pure returns (string memory) {
+    return "1.0.1";
+  }
 }

@@ -1,4 +1,12 @@
-import { Box, Flex, Image, Spacer, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Image,
+  Switch,
+  Button,
+  Text,
+  Spacer,
+} from "@chakra-ui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import TwitterLoginBtn from "./TwitterLoginBtn";
 import { useAuth } from "../hooks/useAuth";
@@ -16,21 +24,12 @@ const TwitterAccountMint = () => {
   const [price, setPrice] = useState();
   const [redirectedFromTwitter, setRedirectedFromTwitter] = useState(true);
   const [isAccountMinted, setIsAccountMinted] = useState();
+  const [minting, setMinting] = useState(false);
 
   const { library } = useWeb3();
   const { twitter, clearTwitterAuthData } = useAuth();
   const { owsn, getOwnedAccountByGenSnId, mintTwitter } = useOWSN();
   const { tm, getMintPrice, subscribeToEvents } = useTM();
-
-  const tmSubscriptions = useRef();
-
-  useEffect(() => {
-    if (tmSubscriptions.current) {
-      Object.keys(tmSubscriptions.current).forEach((subscription) =>
-        subscription.unsubscrive()
-      );
-    }
-  }, []);
 
   useEffect(() => {
     if (!library || !tm) {
@@ -45,6 +44,16 @@ const TwitterAccountMint = () => {
         console.error(err.message);
       });
   }, [library, tm, getMintPrice]);
+
+  const handleTMEvent = useCallback(
+    (event) => (data) => {
+      console.log(event, data.returnValues);
+      if (event !== "TwitterAuthRequestSubmited") {
+        setMinting(false);
+      }
+    },
+    []
+  );
 
   const checkAvailability = useCallback(() => {
     if (!twitter || !twitter.accessToken) {
@@ -78,19 +87,19 @@ const TwitterAccountMint = () => {
     }
 
     setRedirectedFromTwitter(false);
-    tmSubscriptions.current = subscribeToEvents(
-      console.log,
-      console.log,
-      console.log,
-      console.error
-    );
+    subscribeToEvents({
+      onRequestSubmitted: handleTMEvent("TwitterAuthRequestSubmited"),
+      onRequestSucceeded: handleTMEvent("TwitterAuthRequestSucceeded"),
+      onRequestFailed: handleTMEvent("TwitterAuthRequestFailed"),
+      onError: console.error,
+    });
 
+    setMinting(true);
     mintTwitter(
       twitter.requestTokenData.oauthToken,
       twitter.requestTokenData.oauthVerifier
     )
-      .then((resp) => {
-        console.log(resp);
+      .then((tx) => {
         // TODO
       })
       .catch((err) => {
@@ -141,32 +150,44 @@ const TwitterAccountMint = () => {
           </Box>
         </Box>
       </Box>
-      <Flex p={6}>
-        {isAccountMinted === undefined ? (
-          <TwitterLoginBtn
-            mode="check"
-            label="Check availability"
-            onClick={() => {
-              setMode("check");
-            }}
-          />
-        ) : (
-          <Button size="lg" colorScheme={isAccountMinted ? "red" : "green"}>
-            {isAccountMinted
-              ? "Account already minted by someone else!"
-              : "Account is free to mint!"}
-          </Button>
-        )}
-
+      <Flex p={6} justifyContent="center" alignItems="center">
+        <Text>Check availability</Text>
         <Spacer />
-        <TwitterLoginBtn
-          mode="mint"
-          label="Mint"
-          disabled={isAccountMinted}
-          onClick={() => {
-            setMode("mint");
-          }}
+        <Switch
+          p="1"
+          size="lg"
+          isChecked={mode === "mint"}
+          onChange={(e) =>
+            isAccountMinted
+              ? null
+              : setMode(e.target.checked ? "mint" : "check")
+          }
         />
+        <Spacer />
+        <Text>Mint</Text>
+      </Flex>
+      <Flex alignItems="center" justifyContent="center" p={6}>
+        {mode === "check" && (
+          <>
+            {isAccountMinted === undefined ? (
+              <TwitterLoginBtn mode="check" label="Check availability" />
+            ) : (
+              <Button size="lg" colorScheme={isAccountMinted ? "red" : "green"}>
+                {isAccountMinted
+                  ? "Account already minted!"
+                  : "Account is free to mint!"}
+              </Button>
+            )}
+          </>
+        )}
+        {mode === "mint" && (
+          <TwitterLoginBtn
+            mode="mint"
+            label="Mint"
+            disabled={isAccountMinted}
+            loading={minting}
+          />
+        )}
       </Flex>
     </Box>
   );

@@ -21,12 +21,6 @@
   },
   "devDependencies": {},
   "scripts": {
-    "deploy-tao": "npx hardhat run scripts/1.1.deploy-tao.js",
-    "deploy-tm": "npx hardhat run scripts/1.2.deploy-tm.js",
-    "deploy-owsn": "npx hardhat run scripts/1.3.deploy-owsn.js",
-    "upgrade-tm": "npx hardhat run scripts/2.1.upgrade-tm.js",
-    "upgrade-owsn": "npx hardhat run scripts/2.2.upgrade-owsn.js",
-    "console": "npx hardhat console",
     "rinkeby:deploy-tao": "npx hardhat run --network rinkeby scripts/1.1.deploy-tao.js",
     "rinkeby:deploy-tm": "npx hardhat run --network rinkeby scripts/1.2.deploy-tm.js",
     "rinkeby:deploy-owsn": "npx hardhat run --network rinkeby scripts/1.3.deploy-owsn.js",
@@ -36,10 +30,13 @@
     "localhost:deploy-tao": "npx hardhat run --network localhost scripts/1.1.deploy-tao.js",
     "localhost:deploy-tm": "npx hardhat run --network localhost scripts/1.2.deploy-tm.js",
     "localhost:deploy-owsn": "npx hardhat run --network localhost scripts/1.3.deploy-owsn.js",
-    "localhost:upgrade-owsn": "npx hardhat run --network localhost scripts/2.1.upgrade-owsn.js",
+    "localhost:upgrade-tao": "npx hardhat run --network localhost scripts/2.1.upgrade-tao.js",
+    "localhost:upgrade-tm": "npx hardhat run --network localhost scripts/2.2.upgrade-tm.js",
+    "localhost:upgrade-owsn": "npx hardhat run --network localhost scripts/2.3.upgrade-owsn.js",
     "localhost:console": "npx hardhat console --network localhost",
     "localhost:deploy-all": "yarn localhost:deploy-tao && yarn localhost:deploy-tm && yarn localhost:deploy-owsn",
-    "localhost:clean": "rm locks/*.localhost.json",
+    "localhost:upgrade-all": "yarn localhost:upgrade-tao && yarn localhost:upgrade-tm && yarn localhost:upgrade-owsn",
+    "localhost:clean": "rm locks/*.localhost.json && rm -rf ./artifacts && rm -rf ./cache",
     "localhost:deposit": "npx hardhat --network localhost deposit",
     "test": "npx hardhat test"
   }

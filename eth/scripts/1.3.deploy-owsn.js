@@ -11,19 +11,21 @@ async function main() {
 
   const OwnYourSocialNetwork = await ethers.getContractFactory(NAME);
 
-  const tmLock = getLock(network.name, "TwitterMinter");
+  const tm = getLock(network.name, "TwitterMinter");
 
   const owsn = await upgrades.deployProxy(
     OwnYourSocialNetwork,
-    [NAME, SYMBOL, tmLock.address],
+    [NAME, SYMBOL],
     { initializer: "__OwnYourSocialNetwork__init" }
   );
   await owsn.deployed();
+  await owsn.updateTwitterMinterAddress(tm.address);
 
   writeLock(network.name, NAME, owsn.address);
   console.log(`${NAME} deployed to:`, owsn.address);
 
   populateAbiToWeb(NAME);
+  populateAbiToWeb("TwitterMinter", "minters/");
   replaceAddressInWeb(network.name, SYMBOL, owsn.address);
 }
 

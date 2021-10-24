@@ -4,11 +4,22 @@ import { useAuth } from "../hooks/useAuth";
 
 import { getAccessToken, getAuthLink } from "../utils/twitter";
 
-const TwitterLoginBtn = ({ mode, label, disabled, onClick }) => {
+const TwitterLoginBtn = ({
+  mode,
+  loading: passedLoading,
+  label,
+  disabled,
+  onClick,
+}) => {
   const { twitter, setTwitterAccessToken } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(passedLoading || false);
   const [error, setError] = useState();
 
+  useEffect(() => {
+    if (loading !== passedLoading) {
+      setLoading(passedLoading);
+    }
+  }, [passedLoading]);
   const initLoginFlow = useCallback(() => {
     if (onClick) {
       onClick();
@@ -21,16 +32,15 @@ const TwitterLoginBtn = ({ mode, label, disabled, onClick }) => {
       .then((authLink) => {
         window.location.href = authLink;
       })
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
+      .catch((err) => setError(err));
   }, [onClick, setLoading, setError]);
 
   useEffect(() => {
     if (twitter && twitter.requestTokenData && !twitter.accessToken) {
+      setLoading(true);
       if (mode === "mint") {
         return;
       }
-      setLoading(true);
       getAccessToken(twitter.requestTokenData)
         .then((accessToken) => {
           setTwitterAccessToken(accessToken);
@@ -46,7 +56,7 @@ const TwitterLoginBtn = ({ mode, label, disabled, onClick }) => {
         isLoading={loading}
         size="lg"
         colorScheme="twitter"
-        disabled={disabled}
+        disabled={loading || disabled}
         onClick={initLoginFlow}
       >
         {label || "Twitter"}

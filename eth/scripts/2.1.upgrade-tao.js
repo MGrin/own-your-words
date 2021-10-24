@@ -13,7 +13,6 @@ async function main() {
 
   writeLock(network.name, NAME, tao.address);
   console.log(`${NAME} deployed to:`, tao.address);
-
   populateAbiToApi(NAME, "oracles/");
   replaceAddressInApi(network, SYMBOL, tao.address);
 }

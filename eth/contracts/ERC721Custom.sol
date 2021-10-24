@@ -9,14 +9,15 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgrad
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-
+import "./utils/StringsUser.sol";
 
 contract ERC721Custom is
   Initializable,
   ContextUpgradeable,
   AccessControlEnumerableUpgradeable,
   ERC721EnumerableUpgradeable,
-  ERC721BurnableUpgradeable
+  ERC721BurnableUpgradeable,
+  StringsUser
 {
   using CountersUpgradeable for CountersUpgradeable.Counter;
 
@@ -57,7 +58,7 @@ contract ERC721Custom is
   function _mint_with_owner(address to) internal returns (uint256) {
     require(
       hasRole(MINTER_ROLE, _msgSender()),
-      "ERC721Custom: must have minter role to mint"
+      string(abi.encodePacked("ERC721Custom: ", toAsciiString(_msgSender()), " must have minter role to mint"))
     );
 
     uint256 _tokenId = _tokenIdTracker.current();

@@ -22,8 +22,8 @@ const loadOWWContract = async (library, account) => {
     .getVersion()
     .call({ sender: account });
 
-  window.OWW_CONTRACT_VERSION = version;
-  console.log(`OWW: ${version}, ${owwContract.address}`);
+  window.OWW = owwContract;
+  console.log(`OWW: ${version}, ${owwContract._address}`);
 
   return owwContract;
 };
@@ -41,7 +41,7 @@ const loadOWSNContract = async (library, account) => {
     .getVersion()
     .call({ sender: account });
 
-  window.OWSN_CONTRACT_VERSION = version;
+  window.OWSN = owsnContract;
   console.log(`OWSN: ${version}, ${owsnContract._address}`);
 
   const tmContract = await loadTMContract(library, account, owsnContract);
@@ -66,6 +66,7 @@ const loadTMContract = async (library, account, owsnContract) => {
     .oracle()
     .call({ sender: account });
 
+  window.TM = tmContract;
   console.log(`TM: ${tmContract._address}, using oracle at ${tmOracleAddress}`);
 
   return tmContract;
@@ -134,6 +135,27 @@ export const useOWSN = () => {
         .call({ sender: account });
       return res;
     },
+    getOwnedTokenIds: async () => {
+      const balance = await contextValue.owsn.methods
+        .balanceOf(account)
+        .call({ sender: account });
+
+      const tokenIdsPromises = [];
+      for (let i = 0; i < balance; i++) {
+        tokenIdsPromises.push(
+          contextValue.owsn.methods
+            .tokenOfOwnerByIndex(account, i)
+            .call({ sender: account })
+        );
+      }
+
+      return await Promise.all(tokenIdsPromises);
+    },
+    getOWSNById: async (tokenId) => {
+      return await contextValue.owsn.methods
+        .getOwnedAccountByToken(tokenId)
+        .call({ sender: account });
+    },
     mintTwitter: async (oauthToken, oauthVerifier) => {
       const price = await contextValue.tm.methods
         .getPriceWEI()
@@ -158,38 +180,52 @@ export const useTM = () => {
         .call({ sender: account });
       return res;
     },
-    subscribeToEvents: async (
+    subscribeToEvents: async ({
       onRequestSubmitted,
       onRequestSucceeded,
       onRequestFailed,
-      onError
-    ) => {
-      const requestSubmitted = contextValue.tm.events
-        .TwitterAuthRequestSubmited({
+      onError,
+    }) => {
+      contextValue.tm.once(
+        "TwitterAuthRequestSubmited",
+        ({
           filter: { address: account },
-        })
-        .on("data", (data) => onRequestSubmitted(data))
-        .on("error", (error) => onError(error));
+        },
+        (error, data) => {
+          if (error) {
+            return onError(error);
+          }
 
-      const requestSucceeded = contextValue.tm.events
-        .TwitterAuthRequestSucceeded({
-          filter: { address: account },
-        })
-        .on("data", (data) => onRequestSucceeded(data))
-        .on("error", (error) => onError(error));
+          onRequestSubmitted(data);
+          contextValue.tm.once(
+            "TwitterAuthRequestSucceeded",
+            ({
+              filter: { requestId: data.returnValues.requestId },
+            },
+            (error, data) => {
+              if (error) {
+                return onError(error);
+              }
 
-      const requestFailed = contextValue.tm.events
-        .TwitterAuthRequestFailed({
-          filter: { address: account },
-        })
-        .on("data", (data) => onRequestFailed(data))
-        .on("error", (error) => onError(error));
+              onRequestSucceeded(data);
+            })
+          );
 
-      return {
-        requestSubmitted,
-        requestSucceeded,
-        requestFailed,
-      };
+          contextValue.tm.once(
+            "TwitterAuthRequestFailed",
+            ({
+              filter: { requestId: data.returnValues.requestId },
+            },
+            (error, data) => {
+              if (error) {
+                return onError(error);
+              }
+
+              return onRequestFailed(data);
+            })
+          );
+        })
+      );
     },
   };
   return value;
