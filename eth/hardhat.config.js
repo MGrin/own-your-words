@@ -10,6 +10,19 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
+task(
+  "deposit",
+  "Send 3 ETH to deployer and mgrin.eth",
+  async (taskArgs, hre) => {
+    const accounts = await hre.ethers.getSigners();
+
+    await accounts[0].sendTransaction({
+      to: "0x01583D152E3225519D211B1F576d959F70ef9630",
+      value: ethers.utils.parseEther("1.0"),
+    });
+  }
+);
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -24,10 +37,18 @@ module.exports = {
     },
   },
   networks: {
-    hardhat: {},
+    hardhat: {
+      chainId: 1337,
+      accounts: [
+        {
+          privateKey: `0x${process.env.DEPLOYER_PRIVATE_KEY}`,
+          balance: `${10 * 1e18}`,
+        },
+      ],
+    },
     rinkeby: {
       url: process.env.RINKEBY_URL,
-      seeds: [process.env.DEPLOYER],
+      accounts: [`0x${process.env.DEPLOYER_PRIVATE_KEY}`],
     },
   },
 };

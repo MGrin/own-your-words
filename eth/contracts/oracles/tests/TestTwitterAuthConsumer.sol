@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.0;
 
-import "./TwitterAuthOracle.sol";
+import "../TwitterAuthOracle.sol";
 
 contract TestTwitterAuthConsumer {
   TwitterAuthOracle private oracle;
@@ -19,7 +19,7 @@ contract TestTwitterAuthConsumer {
     string memory oauthToken,
     string memory oauthVerifier
   ) external payable {
-    uint256 reqId = oracle.request{value: msg.value}(oauthToken, oauthVerifier, this.handleResponse, this.handleError);
+    uint256 reqId = oracle.request{value: msg.value}(oauthToken, oauthVerifier, msg.sender, this.handleResponse, this.handleError);
     requestId = reqId;
   }
 

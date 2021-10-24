@@ -1,23 +1,30 @@
 const { ethers, upgrades, network } = require("hardhat");
-const { writeLock, verifyNoLock, getLock } = require("./utils");
+const { writeLock, verifyNoLock, getLock } = require("./utils/locks");
+const { populateAbiToWeb } = require("./utils/abi");
+const { replaceAddressInWeb } = require("./utils/env");
 
 async function main() {
   const NAME = "OwnYourSocialNetwork";
+  const SYMBOL = "OWSN";
+
   verifyNoLock(network.name, NAME);
 
   const OwnYourSocialNetwork = await ethers.getContractFactory(NAME);
 
-  const taoLock = getLock(network.name, "TwitterAuthOracle");
+  const tmLock = getLock(network.name, "TwitterMinter");
 
   const owsn = await upgrades.deployProxy(
     OwnYourSocialNetwork,
-    [NAME, "OWSN", taoLock.address],
+    [NAME, SYMBOL, tmLock.address],
     { initializer: "__OwnYourSocialNetwork__init" }
   );
   await owsn.deployed();
 
   writeLock(network.name, NAME, owsn.address);
   console.log(`${NAME} deployed to:`, owsn.address);
+
+  populateAbiToWeb(NAME);
+  replaceAddressInWeb(network.name, SYMBOL, owsn.address);
 }
 
 main()

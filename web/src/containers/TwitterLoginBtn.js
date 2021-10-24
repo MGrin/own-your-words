@@ -1,14 +1,18 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Button, Text } from "@chakra-ui/react";
 import { useAuth } from "../hooks/useAuth";
+
 import { getAccessToken, getAuthLink } from "../utils/twitter";
 
-const TwitterLoginBtn = ({ onSuccess }) => {
+const TwitterLoginBtn = ({ mode, label, disabled, onClick }) => {
   const { twitter, setTwitterAccessToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState();
 
   const initLoginFlow = useCallback(() => {
+    if (onClick) {
+      onClick();
+    }
     setLoading(true);
     setError(undefined);
     const callbackUrl = `${window.location.origin}${window.location.pathname}#twitter`;
@@ -19,23 +23,22 @@ const TwitterLoginBtn = ({ onSuccess }) => {
       })
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
-  }, [setLoading, setError]);
+  }, [onClick, setLoading, setError]);
 
   useEffect(() => {
     if (twitter && twitter.requestTokenData && !twitter.accessToken) {
-      if (onSuccess) {
-        return onSuccess(twitter.requestTokenData);
+      if (mode === "mint") {
+        return;
       }
       setLoading(true);
       getAccessToken(twitter.requestTokenData)
         .then((accessToken) => {
-          console.log(accessToken);
           setTwitterAccessToken(accessToken);
         })
         .catch((err) => setError(err))
         .finally(() => setLoading(false));
     }
-  }, [twitter, setTwitterAccessToken]);
+  }, [twitter, setTwitterAccessToken, mode]);
 
   return (
     <>
@@ -43,9 +46,10 @@ const TwitterLoginBtn = ({ onSuccess }) => {
         isLoading={loading}
         size="lg"
         colorScheme="twitter"
+        disabled={disabled}
         onClick={initLoginFlow}
       >
-        Twitter
+        {label || "Twitter"}
       </Button>
       {error && <Text variant="error">{error.message}</Text>}
     </>

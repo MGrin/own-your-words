@@ -54,21 +54,16 @@ contract ERC721Custom is
     _setupRole(PAUSER_ROLE, _msgSender());
   }
 
-  function _mint_with_owner(address to) internal virtual {
+  function _mint_with_owner(address to) internal returns (uint256) {
     require(
       hasRole(MINTER_ROLE, _msgSender()),
       "ERC721Custom: must have minter role to mint"
     );
 
+    uint256 _tokenId = _tokenIdTracker.current();
     _mint(to, _tokenIdTracker.current());
     _tokenIdTracker.increment();
-  }
-
-  function _mint_without_owner(address to) internal virtual returns (uint256) {
-    uint256 _tokenId = _tokenIdTracker.current();
-    _mint(to, _tokenId);
-    _tokenIdTracker.increment();
-    return _tokenId;
+    return _tokenId; 
   }
 
   function tokenURI(uint256 tokenId)

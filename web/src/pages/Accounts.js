@@ -1,17 +1,11 @@
-import { Stack, Text, Flex } from "@chakra-ui/react";
+import { Stack } from "@chakra-ui/react";
 import React from "react";
-import TwitterLoginBtn from "../containers/TwitterLoginBtn";
-import { useAuth } from "../hooks/useAuth";
+import TwitterAccountMint from "../containers/TwitterAccountMint";
 
 const Accounts = () => {
-  const { twitter } = useAuth();
-
   return (
     <Stack>
-      <Flex>
-        <TwitterLoginBtn />
-        {twitter && twitter.accessToken && <Text>Connected</Text>}
-      </Flex>
+      <TwitterAccountMint />
     </Stack>
   );
 };

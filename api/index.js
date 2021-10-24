@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const twitter = require("./modules/twitter");
+const twitterAuthOracle = require("./modules/twitterAuthOracle");
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,8 @@ if (process.env.NODE_ENV !== "production") {
   console.log("⚠️  ENABLING CORS");
   app.use(cors());
 }
+
+twitterAuthOracle.start();
 
 app.post("/twitter/authUrl", async (req, res) => {
   const { callbackUrl } = req.body;

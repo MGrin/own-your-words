@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Flex,
   Spacer,
@@ -14,19 +14,31 @@ import {
   Image,
   IconButton,
   useBreakpointValue,
+  Text,
 } from "@chakra-ui/react";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import ConnectWeb3Button from "./ConnectWeb3Button";
 import ThemeSwitcher from "../components/ThemeSwitcher";
-import { HamburgerIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
-import { useWeb3 } from "../hooks/useWeb3";
+import { useWeb3, CHAINS } from "../hooks/useWeb3";
+import { ENV } from "../utils/constants";
 
 const Header = () => {
-  const { connected } = useWeb3();
+  const { connected, library } = useWeb3();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [network, setNetwork] = useState();
+
   const drawerButtonRef = useRef();
   const isMobile = useBreakpointValue([true, false]);
   const history = useHistory();
+
+  useEffect(() => {
+    if (!library) {
+      return;
+    }
+
+    setNetwork(CHAINS[library.givenProvider.networkVersion]);
+  }, [library]);
 
   const openDrawer = useCallback(() => {
     setIsDrawerOpen(true);
@@ -83,6 +95,7 @@ const Header = () => {
       <Spacer />
       {!isMobile && (
         <HStack>
+          {ENV !== "production" && library && <Text>{network}</Text>}
           <ThemeSwitcher />
           <ConnectWeb3Button />
         </HStack>

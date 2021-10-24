@@ -83,6 +83,15 @@ describe("TwitterAuthOracle and TwitterAuthConsumer", function () {
     );
   });
 
+  it("Should return a request by id", async () => {
+    const request = await tao.getRequestById(0);
+    expect(request.owner).to.equal(addr1.address);
+    expect(request.oauthToken).to.equal("aaa");
+    expect(request.oauthVerifier).to.equal("bbb");
+    expect(request.status).to.equal(1);
+    expect(request.err).to.equal("");
+  });
+
   it("Should not be able to succeed a request if not owner", async () => {
     await expect(tao.connect(addr1).succeeded(0, "a", "a")).to.be.revertedWith(
       "Ownable: caller is not the owner"
@@ -111,6 +120,8 @@ describe("TwitterAuthOracle and TwitterAuthConsumer", function () {
     const response = await client.response();
     expect(response.screenName).to.equal("a");
     expect(response.userId).to.equal("b");
+    expect(response.requestId).to.equal(0);
+    expect(response.owner).to.equal(addr1.address);
   });
 
   it("Should not be able to succeed an already succeeded request", async () => {

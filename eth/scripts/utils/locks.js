@@ -1,6 +1,7 @@
 const fs = require("fs");
 const getLockName = (network, name) => `${name}.${network}.json`;
 const LOCK_STORAGE = "./locks";
+const REQUIRE_LOCK_STORAGE = "../../locks";
 
 const writeLock = (network, name, address) => {
   const lockPath = `${LOCK_STORAGE}/${getLockName(network, name)}`;
@@ -29,7 +30,10 @@ const verifyNoLock = (network, name) => {
 
 const getLock = (network, name) => {
   try {
-    const lock = require(`.${LOCK_STORAGE}/${getLockName(network, name)}`);
+    const lock = require(`${REQUIRE_LOCK_STORAGE}/${getLockName(
+      network,
+      name
+    )}`);
     return lock;
   } catch (err) {
     throw new Error("Contract has never been deployed");

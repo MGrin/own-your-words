@@ -115,7 +115,6 @@ const getAccessToken = async ({ oauthToken, oauthVerifier }) => {
     oauthVerifier,
   });
 
-  console.log(oauthSignature);
   try {
     const res = await axios({
       url: apiUrl,

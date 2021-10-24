@@ -11,6 +11,7 @@ artifacts
 .DS_Store
 .mnemotic
 .env
+.env.template
 .env.local
 .env.development.local
 .env.test.local

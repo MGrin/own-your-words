@@ -3,8 +3,8 @@
 pragma solidity ^0.8.0;
 
 import "./ERC721Custom.sol";
-import "./TwitterAuthOracle.sol";
-
+import "./IOwnYourSocialNetwork.sol";
+import "./minters/TwitterMinter.sol";
 
 library OwnedAccount {
   struct data {
@@ -17,7 +17,7 @@ library OwnedAccount {
   }
 }
 
-contract OwnYourSocialNetwork is ERC721Custom {
+contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   using OwnedAccount for OwnedAccount.data;
 
   function getVersion() external pure returns (string memory) {
@@ -26,35 +26,20 @@ contract OwnYourSocialNetwork is ERC721Custom {
 
   mapping(string => uint256) private _owned_accounts_by_gen_id;
   mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
-
-  TwitterAuthOracle private twitterOracle;
-
-  event TwitterAuthRequestSubmited(
-    address indexed sender, uint256 requestId
-  );
-
-  event TwitterAuthRequestSucceeded(
-    uint256 indexed requestId,
-    uint256 tokenId
-  );
-
-  event TwitterAuthRequestFailed(
-    uint256 indexed requestId,
-    string error
-  );
-
+  TwitterMinter public twitterMinter;
   /////////////////////////////////////////////////////////////////////////////////////
 
-  function __OwnYourSocialNetwork__init(string memory name, string memory symbol, address twitterOracleAddress) initializer public  {
+  function __OwnYourSocialNetwork__init(string memory name, string memory symbol, address twitterMinterAddress) initializer public  {
     __ERC721Custom_init(name, symbol);
-    twitterOracle = TwitterAuthOracle(twitterOracleAddress);
+    twitterMinter = TwitterMinter(twitterMinterAddress);
   }
 
   function mint(
     string memory sn_name,
     string memory sn_id,
-    string memory sn_url
-  ) private returns (uint256) {
+    string memory sn_url,
+    address to
+  ) external override returns (uint256) {
     string memory gen_sn_id = string(
       abi.encodePacked(sn_name, sn_id)
     );
@@ -63,9 +48,9 @@ contract OwnYourSocialNetwork is ERC721Custom {
       _exists(_owned_accounts_by_gen_id[gen_sn_id]) == false,
       "OwnYourSocialNetwork: The account was already minted"
     );
-    uint256 _token_id = _mint_without_owner(_msgSender());
+    uint256 _token_id = _mint_with_owner(to);
     _owned_accounts_by_id[_token_id].id = _token_id;
-    _owned_accounts_by_id[_token_id].owner = _msgSender();
+    _owned_accounts_by_id[_token_id].owner = to;
     _owned_accounts_by_id[_token_id].sn_name = sn_name;
     _owned_accounts_by_id[_token_id].sn_id = sn_id;
     _owned_accounts_by_id[_token_id].sn_url = sn_url;
@@ -75,38 +60,13 @@ contract OwnYourSocialNetwork is ERC721Custom {
     return _token_id;
   }
 
-  function mintTwitterAccountStart(
+  function mintTwitter(
     string memory oauthToken,
     string memory oauthVerifier
   ) external payable {
-    uint256 reqId = twitterOracle.request{value: msg.value}(oauthToken, oauthVerifier, this.mintTwitterAccountSuccess, this.mintTwitterAccountFail);
-    emit TwitterAuthRequestSubmited(_msgSender(), reqId);
+    twitterMinter.startMint{ value: msg.value }(oauthToken, oauthVerifier, _msgSender(), this.mint);
   }
-
-  function mintTwitterAccountSuccess(
-    TwitterAuthData.Response memory res
-  ) external {
-    require(
-      hasRole(MINTER_ROLE, _msgSender()),
-      "ERC721Custom: must have minter role to mint"
-    );
-    
-    uint256 tokenId = mint("twitter", res.userId, string(abi.encodePacked("https://twitter.com/", res.screenName)));
-    emit TwitterAuthRequestSucceeded(res.requestId, tokenId);
-  }
-
-  function mintTwitterAccountFail(
-    uint256 reqId,
-    string memory err
-  ) external {
-    require(
-      hasRole(MINTER_ROLE, _msgSender()),
-      "ERC721Custom: must have minter role to mint"
-    );
-    
-    emit TwitterAuthRequestFailed(reqId, err);
-  }
-
+ 
   function getOwnedAccountByToken(uint256 token_id) external view returns (OwnedAccount.data memory) {
     require(
       _exists(token_id),
@@ -124,4 +84,13 @@ contract OwnYourSocialNetwork is ERC721Custom {
 
     return _owned_accounts_by_id[_owned_accounts_by_gen_id[gen_sn_id]];
   }
+
+  // function updateTwitterMinterAddress(address twitterMinterAddress) external {
+  //   require(
+  //     hasRole(MINTER_ROLE, _msgSender()),
+  //     "OwnYourSocialNetwork: must have minter role to mint"
+  //   );
+
+  //   twitterMinter = TwitterMinter(twitterMinterAddress);
+  // }
 }

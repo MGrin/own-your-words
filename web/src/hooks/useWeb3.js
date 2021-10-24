@@ -12,7 +12,7 @@ import { Web3ReactProvider } from "@web3-react/core";
 import Web3 from "web3";
 
 const injected = new InjectedConnector({
-  supportedChainIds: [1, 3, 4, 5, 42],
+  supportedChainIds: [1, 3, 4, 5, 42, 1337],
 });
 
 const context = createContext();
@@ -82,8 +82,18 @@ const Web3OWW = ({ children }) => {
       sweetAccount: sweetAccount,
       connect,
       disconnect,
+      library,
     }),
-    [active, loading, error, account, sweetAccount, connect, disconnect]
+    [
+      active,
+      loading,
+      error,
+      account,
+      sweetAccount,
+      connect,
+      disconnect,
+      library,
+    ]
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;
@@ -103,4 +113,11 @@ export const Web3Provider = ({ children }) => {
 
 export const useWeb3 = () => {
   return useContext(context);
+};
+
+export const CHAINS = {
+  1: "mainnet",
+  3: "ropsten",
+  4: "rinkeby",
+  1337: "localhost",
 };
