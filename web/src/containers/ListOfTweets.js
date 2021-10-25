@@ -59,7 +59,7 @@ const attachButtonToTweet = (twEl, onClick) => {
 
 const MAX_TRIES = 10;
 
-const ListOfTweets = ({ auth, onSelect, goToPrevStep }) => {
+const ListOfTweets = ({ auth, onSelect }) => {
   const tries = useRef(0);
   const amountOfFetchedTweets = useRef(0);
 
@@ -121,10 +121,6 @@ const ListOfTweets = ({ auth, onSelect, goToPrevStep }) => {
         Click on "Select this tween" button inside the Twitter timeline
       </Text>
       <Center>
-        <Button variant="outline" onClick={goToPrevStep}>
-          Change social account
-        </Button>
-        <Spacer />
         <Button size="xs" variant="ghost" onClick={attachButtonsToTweets}>
           Reload tweets
         </Button>

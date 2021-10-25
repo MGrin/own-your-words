@@ -13,7 +13,7 @@ export const getAccessToken = async ({ oauthToken, oauthVerifier }) => {
     }),
   });
 
-  if (res.status !== 200) {
+  if (res.status !== 200 && res.status !== 201) {
     const err = new Error(await res.text());
     throw err;
   }
@@ -35,12 +35,11 @@ export const getAuthLink = async (callbackUrl) => {
     }),
   });
 
-  if (res.status !== 200) {
+  if (res.status !== 200 && res.status !== 201) {
     const err = new Error(await res.text());
     throw err;
   }
 
   const body = await res.json();
-
   return body.authUrl;
 };

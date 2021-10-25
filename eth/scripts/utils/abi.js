@@ -22,7 +22,7 @@ const populateAbiToApi = (name, pathPrefix) => {
   const abi = require(`${CONTRACTS_PATH}/${
     pathPrefix || ""
   }${name}.sol/${name}.json`);
-  fs.writeFileSync(`${API_PATH}/abi/${name}.json`, JSON.stringify(abi));
+  fs.writeFileSync(`${API_PATH}/src/abi/${name}.json`, JSON.stringify(abi));
 };
 
 const replaceAddressInWeb = (network, symbol, address) => {
