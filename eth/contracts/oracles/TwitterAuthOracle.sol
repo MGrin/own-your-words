@@ -2,8 +2,10 @@
 
 pragma solidity ^0.8.0;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "../utils/QueueUint256.sol";
 
 library TwitterAuthData {
   struct Response {
@@ -15,6 +17,7 @@ library TwitterAuthData {
 
   struct Request {
     address owner;
+    uint256 id;
 
     string oauthToken;
     string oauthVerifier;
@@ -29,6 +32,7 @@ library TwitterAuthData {
   struct RequestSerialized {
     address owner;
 
+    uint256 id;
     string oauthToken;
     string oauthVerifier;
 
@@ -43,19 +47,27 @@ contract TwitterAuthOracle is Ownable {
   using TwitterAuthData for TwitterAuthData.RequestSerialized;
 
   using Counters for Counters.Counter;
+  using QueueUints256Funs for QueueUints256;
 
   uint256 public priceWEI;
   
   mapping(uint256 => TwitterAuthData.Request) private requests;
 
   Counters.Counter private counter;
-  
+  QueueUints256 private pendingRequestsQueue;
+
   event NewPendingRequest (
     uint256 requestId
   );
 
+  event RetrievePendingRequestsFromQueue (
+    uint256[] requestsIds,
+    uint8 count
+  );
+
   constructor() Ownable() {
-    priceWEI = 0.005 * 1e18;
+    priceWEI = 0.01 * 1e18;
+    pendingRequestsQueue.create(200);
   }
 
   function request(
@@ -72,6 +84,7 @@ contract TwitterAuthOracle is Ownable {
     uint256 id = counter.current();
     counter.increment();
 
+    req.id = id;
     req.owner = owner;
     req.oauthToken = oauthToken;
     req.oauthVerifier = oauthVerifier;
@@ -80,6 +93,8 @@ contract TwitterAuthOracle is Ownable {
     req.status = 1;
 
     requests[id] = req;
+
+    pendingRequestsQueue.append(id);
 
     emit NewPendingRequest(id);
     return id;
@@ -117,8 +132,37 @@ contract TwitterAuthOracle is Ownable {
 
   function getRequestById(uint256 id) external view onlyOwner returns (TwitterAuthData.RequestSerialized memory) {
     require(requests[id].status > 0, "Request with provided id is not in processing state, or does not exist");
+    return serializeRequest(id);
+  }
 
+  function getPendingRequestsIdsFromQueue() external onlyOwner returns (uint8 count){
+    (uint256 requestId, bool havePendingRequests) = pendingRequestsQueue.remove();
+    TwitterAuthData.Request memory req;
+    uint256[] memory requestsIds = new uint256[](pendingRequestsQueue.size);
+    uint8 pointer = 0;
+
+    while (havePendingRequests) {
+      req = requests[requestId];
+      if (req.status == 1) {
+        requestsIds[pointer] = req.id;
+        pointer++;
+      }
+
+      (requestId, havePendingRequests) = pendingRequestsQueue.remove();
+    }
+
+    emit RetrievePendingRequestsFromQueue(requestsIds, pointer);
+    return pointer;
+  }
+
+  function setPriceETH(uint256 _priceWEI) external onlyOwner {
+    priceWEI = _priceWEI;
+  }
+
+  function serializeRequest(uint256 id) private view onlyOwner returns (TwitterAuthData.RequestSerialized memory) {
     TwitterAuthData.RequestSerialized memory req;
+
+    req.id = requests[id].id;
     req.owner = requests[id].owner;
     req.oauthToken = requests[id].oauthToken;
     req.oauthVerifier = requests[id].oauthVerifier;
@@ -126,10 +170,5 @@ contract TwitterAuthOracle is Ownable {
     req.err = requests[id].err;
 
     return req;
-  }
-
-
-  function setPriceETH(uint256 _priceWEI) external onlyOwner {
-    priceWEI = _priceWEI;
   }
 }

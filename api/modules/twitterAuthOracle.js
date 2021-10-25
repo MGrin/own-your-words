@@ -1,75 +1,124 @@
-const Web3 = require("web3");
+const { ethers } = require("ethers");
 const { getAccessToken } = require("./twitter");
 const taoAbi = require("../abi/TwitterAuthOracle.json");
+const { handleOffChainError, mayFail } = require("../utils");
 
-const web3 = new Web3(process.env.WEB3_URL);
-const taoContract = new web3.eth.Contract(taoAbi.abi, process.env.TAO_CONTRACT);
-const account = web3.eth.accounts.privateKeyToAccount(
-  `0x${process.env.DEPLOYER_PRIVATE_KEY}`
+const PULL_TIMEOUT = 10 * 1000;
+
+const provider = new ethers.providers.JsonRpcBatchProvider(
+  process.env.WEB3_URL
 );
 
-const handleOffChainError = (error) => {
-  console.error(error);
-};
+const account = new ethers.Wallet(
+  `0x${process.env.DEPLOYER_PRIVATE_KEY}`,
+  provider
+);
+
+const taoContract = new ethers.Contract(
+  process.env.TAO_CONTRACT,
+  taoAbi.abi,
+  provider
+).connect(account);
 
 const processRequest = async (requestId) => {
+  console.log(`[processRequest] Processing request [requestId=${requestId}]`);
+  let startTx;
   try {
-    await taoContract.methods.startProcessing(requestId).send({
-      from: account.address,
-    });
-
-    const request = await taoContract.methods
-      .getRequestById(requestId)
-      .call({ sender: account.address });
+    startTx = await mayFail(taoContract, "startProcessing", requestId);
+    const request = await taoContract.getRequestById(requestId);
 
     const accessToken = await getAccessToken({
       oauthToken: request.oauthToken,
       oauthVerifier: request.oauthVerifier,
     });
 
-    await taoContract.methods
-      .succeeded(requestId, accessToken.screen_name, accessToken.user_id)
-      .send({ from: account.address });
+    await startTx.wait();
+    const succeedTx = await mayFail(
+      taoContract,
+      "succeeded",
+      requestId,
+      accessToken.screen_name,
+      accessToken.user_id
+    );
+    await succeedTx.wait();
   } catch (err) {
     handleOffChainError(err);
-    await taoContract.methods
-      .failed(requestId, String(err.message))
-      .send({ from: account.address });
+    if (startTx) {
+      await startTx.wait();
+    }
+    const failedTx = await mayFail(
+      taoContract,
+      "failed",
+      requestId,
+      String(err.message)
+    );
+    await failedTx.wait();
   }
 };
 
-const handleNewPendingRequestEvent = (subscribe) => async (error, event) => {
-  if (error) {
-    handleOffChainError(error);
-    return;
-  }
-
+const handleNewPendingRequestEvent = async (requestId) => {
   try {
-    const { requestId } = event.returnValues;
     console.log(
       `[NewPendingRequestEvent]: Received request [requestId=${requestId}]`
     );
     await processRequest(requestId);
-    subscribe();
   } catch (err) {
     handleOffChainError(err);
   }
 };
 
-const start = async () => {
-  const subscribe = () => {
-    taoContract.once(
-      "NewPendingRequest",
-      ({
-        fromBlock: "pending",
-      },
-      handleNewPendingRequestEvent(subscribe))
+const pullPendingRequests = async (pull) => {
+  try {
+    const pendingRequestsCount =
+      await taoContract.callStatic.getPendingRequestsIdsFromQueue();
+
+    console.log(
+      `[pullPendingRequests]: Pending requests count: ${pendingRequestsCount}`
     );
+    if (pendingRequestsCount === 0) {
+      return pull();
+    }
+
+    const tx = await taoContract.getPendingRequestsIdsFromQueue();
+    const receipt = await tx.wait();
+
+    const requestsIds = [];
+    for (let i = 0; i < receipt.events[0].args.count; i++) {
+      requestsIds.push(receipt.events[0].args.requestsIds[i]);
+    }
+
+    const requestsProcessing = requestsIds.map(async (requestId) => {
+      try {
+        processRequest(requestId);
+      } catch (err) {
+        handleOffChainError(err);
+      }
+    });
+    await Promise.all(requestsProcessing);
+  } catch (err) {
+    handleOffChainError(err);
+  }
+
+  return pull();
+};
+
+const start = async () => {
+  const pull = () => {
+    setTimeout(() => {
+      pullPendingRequests(pull);
+    }, PULL_TIMEOUT);
   };
 
-  subscribe();
+  taoContract.on("NewPendingRequest", handleNewPendingRequestEvent);
   console.log(
     `Listening for NewPendingRequest event of TAO contract at ${process.env.TAO_CONTRACT}`
+  );
+
+  pull();
+  console.log(
+    `Pulling pending requests from TAO contract at ${
+      process.env.TAO_CONTRACT
+    } every ${PULL_TIMEOUT / 1000}s.`
   );
 };
 

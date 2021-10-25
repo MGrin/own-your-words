@@ -24,6 +24,13 @@ module.exports = {
           privateKey: `0x${process.env.DEPLOYER_PRIVATE_KEY}`,
           balance: `${10 * 1e18}`,
         },
+        {
+          privateKey: `0x${process.env.DEPLOYER_PRIVATE_KEY.substring(
+            0,
+            process.env.DEPLOYER_PRIVATE_KEY.length - 8
+          )}00000000`,
+          balance: `${10 * 1e18}`,
+        },
       ],
     },
     rinkeby: {

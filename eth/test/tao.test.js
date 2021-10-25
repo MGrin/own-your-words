@@ -92,6 +92,10 @@ describe("TwitterAuthOracle and TwitterAuthConsumer", function () {
     expect(request.err).to.equal("");
   });
 
+  it("Should not return a request by id if no owner", async () => {
+    await expect(tao.connect(addr1).getRequestById(0)).to.be.revertedWith("");
+  });
+
   it("Should not be able to succeed a request if not owner", async () => {
     await expect(tao.connect(addr1).succeeded(0, "a", "a")).to.be.revertedWith(
       "Ownable: caller is not the owner"
@@ -164,4 +168,102 @@ describe("TwitterAuthOracle and TwitterAuthConsumer", function () {
       "Request with provided id is not in processing state, or does not exist"
     );
   });
+});
+
+describe("TwitterAuthOracle as queue", function () {
+  let tao;
+  let client;
+  let owner;
+  let addr1;
+
+  this.beforeAll(async () => {
+    const TwitterAuthOracle = await ethers.getContractFactory(
+      "TwitterAuthOracle"
+    );
+    tao = await TwitterAuthOracle.deploy();
+    await tao.deployed();
+
+    const TestTwitterAuthConsumer = await ethers.getContractFactory(
+      "TestTwitterAuthConsumer"
+    );
+    client = await TestTwitterAuthConsumer.deploy(tao.address);
+    await client.deployed();
+
+    const [_owner, _addr1] = await ethers.getSigners();
+    owner = _owner;
+    addr1 = _addr1;
+  });
+
+  it("Should create a request and add it to the queue", async () => {
+    let requestTx = await client.connect(addr1).sendRequest("aaa", "bbb", {
+      value: 0.005 * 1e18,
+    });
+    await requestTx.wait();
+
+    let requestId = await client.connect(addr1).requestId();
+    expect(requestId).to.equal(0);
+
+    requestTx = await client.connect(addr1).sendRequest("aaa", "bbb", {
+      value: 0.005 * 1e18,
+    });
+    await requestTx.wait();
+
+    requestId = await client.connect(addr1).requestId();
+    expect(requestId).to.equal(1);
+
+    requestTx = await client.connect(addr1).sendRequest("aaa", "bbb", {
+      value: 0.005 * 1e18,
+    });
+    await requestTx.wait();
+
+    requestId = await client.connect(addr1).requestId();
+
+    expect(requestId).to.equal(2);
+    requestTx = await client.connect(addr1).sendRequest("aaa", "bbb", {
+      value: 0.005 * 1e18,
+    });
+    await requestTx.wait();
+
+    requestId = await client.connect(addr1).requestId();
+    expect(requestId).to.equal(3);
+  });
+
+  it("Should not read the queue if not an owner", async () => {
+    await expect(
+      tao.connect(addr1).getPendingRequestsIdsFromQueue()
+    ).to.be.revertedWith("");
+  });
+
+  it("Should return all pending requests from the queue", async () => {
+    let startProcessingTx = await tao.startProcessing(0);
+    await startProcessingTx.wait();
+
+    startProcessingTx = await tao.startProcessing(2);
+    await startProcessingTx.wait();
+
+    const tx = await tao.getPendingRequestsIdsFromQueue();
+    const receipt = await tx.wait();
+
+    expect(receipt.events[0].args.count).to.equal(2);
+
+    expect(receipt.events[0].args.requestsIds[0]).to.equal(1);
+    expect(receipt.events[0].args.requestsIds[1]).to.equal(3);
+  });
+
+  it("Should return no requests from the queue if everything is done", async () => {
+    const tx = await tao.getPendingRequestsIdsFromQueue();
+    const receipt = await tx.wait();
+
+    expect(receipt.events[0].args.count).to.equal(0);
+  });
+
+  // it("Should return the first pending request from the queue", async () => {
+  //   const startProcessingTx = await tao.startProcessing(1);
+  //   await startProcessingTx.wait();
+
+  //   const tx = await tao.getPendingRequestIdFromQueue();
+  //   const receipt = await tx.wait();
+
+  //   expect(receipt.events[0].args.requestId).to.equal(2);
+  // });
 });
