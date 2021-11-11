@@ -10,96 +10,96 @@ import {
   getTwitterPriceSuccess,
   mintTwitterFailure,
   mintTwitterStart,
-} from ".";
-import ethersService from "../../../services/EthersService";
-import { Logger } from "../../../services/Logger";
-import { ThunkAC } from "../../utils";
-import { OWSNActionPayload, OWSNActionType } from "./types";
+} from '.'
+import ethersService from '../../../services/EthersService'
+import { Logger } from '../../../services/Logger'
+import type { ThunkAC } from '../../utils'
+import type { OWSNActionPayload, OWSNActionType } from './types'
 
-const logger = new Logger("OWSNAsyncActions");
+const logger = new Logger('OWSNAsyncActions')
 
 export const checkAccountAvailability: ThunkAC<
   OWSNActionPayload[OWSNActionType.checkAccountAvailabilityStart]
 > =
   ({ snName, snId }) =>
   async (dispatch) => {
-    dispatch(checkAccountAvailabilityStart({ snName, snId }));
+    dispatch(checkAccountAvailabilityStart({ snName, snId }))
     try {
-      const owsn = await ethersService.getOWSN();
+      const owsn = ethersService.getOWSN()
       if (!owsn) {
-        const error = new Error("OWSN contract is not yet ready!");
-        logger.error(error as Error);
+        const error = new Error('OWSN contract is not yet ready!')
+        logger.error(error as Error)
         dispatch(
           checkAccountAvailabilityFailure({ snName, error: error as Error })
-        );
-        return;
+        )
+        return
       }
 
-      await owsn.getOwnedAccountByGenSnId(owsn.getGenId(snName, snId));
-      dispatch(checkAccountAvailabilitySuccess({ snName, available: false }));
+      await owsn.getOwnedAccountByGenSnId(owsn.getGenId(snName, snId))
+      dispatch(checkAccountAvailabilitySuccess({ snName, available: false }))
     } catch (error) {
-      logger.error(error as Error);
-      dispatch(checkAccountAvailabilitySuccess({ snName, available: true }));
+      logger.error(error as Error)
+      dispatch(checkAccountAvailabilitySuccess({ snName, available: true }))
     }
-  };
+  }
 
 export const getTokenIds: ThunkAC<
   OWSNActionPayload[OWSNActionType.getTokenIdsStart]
 > = () => async (dispatch) => {
-  dispatch(getTokenIdsStart());
+  dispatch(getTokenIdsStart())
   try {
-    const owsn = await ethersService.getOWSN();
+    const owsn = ethersService.getOWSN()
     if (!owsn) {
-      throw new Error("OWSN contract is not yet ready!");
+      throw new Error('OWSN contract is not yet ready!')
     }
 
-    const tokenIds = await owsn.getOwnedAccountTokens();
-    dispatch(getTokenIdsSuccess({ tokenIds }));
+    const tokenIds = await owsn.getOwnedAccountTokens()
+    dispatch(getTokenIdsSuccess({ tokenIds }))
   } catch (error) {
-    logger.error(error as Error);
-    dispatch(getTokenIdsFailure({ error: error as Error }));
+    logger.error(error as Error)
+    dispatch(getTokenIdsFailure({ error: error as Error }))
   }
-};
+}
 
 export const getTwitterPrice: ThunkAC<
   OWSNActionPayload[OWSNActionType.getTwitterPriceStart]
 > = () => async (dispatch) => {
-  dispatch(getTwitterPriceStart());
+  dispatch(getTwitterPriceStart())
   try {
-    const tm = await ethersService.getTM();
+    const tm = ethersService.getTM()
     if (!tm) {
-      throw new Error("TM contract is not yet ready!");
+      throw new Error('TM contract is not yet ready!')
     }
 
-    const price = await tm.getPrice();
-    dispatch(getTwitterPriceSuccess({ price }));
+    const price = await tm.getPrice()
+    dispatch(getTwitterPriceSuccess({ price }))
   } catch (error) {
-    logger.error(error as Error);
-    dispatch(getTwitterPriceFailure({ error: error as Error }));
+    logger.error(error as Error)
+    dispatch(getTwitterPriceFailure({ error: error as Error }))
   }
-};
+}
 
 export const mintTwitter: ThunkAC<
   OWSNActionPayload[OWSNActionType.mintTwitterStart]
 > =
   ({ oauthToken, oauthVerifier }) =>
   async (dispatch) => {
-    dispatch(mintTwitterStart({ oauthToken, oauthVerifier }));
+    dispatch(mintTwitterStart({ oauthToken, oauthVerifier }))
     try {
-      const owsn = await ethersService.getOWSN();
+      const owsn = ethersService.getOWSN()
       if (!owsn) {
-        throw new Error("OWSN contract is not yet ready!");
+        throw new Error('OWSN contract is not yet ready!')
       }
 
-      const tm = await ethersService.getTM();
+      const tm = ethersService.getTM()
       if (!tm) {
-        throw new Error("TM contract is not yet ready!");
+        throw new Error('TM contract is not yet ready!')
       }
 
-      const price = await tm.getPrice();
-      await owsn.mintTwitterOWSN(oauthToken, oauthVerifier, price);
+      const price = await tm.getPrice()
+      await owsn.mintTwitterOWSN(oauthToken, oauthVerifier, price)
     } catch (error) {
-      logger.error(error as Error);
-      dispatch(mintTwitterFailure({ error: error as Error }));
+      logger.error(error as Error)
+      dispatch(mintTwitterFailure({ error: error as Error }))
     }
-  };
+  }

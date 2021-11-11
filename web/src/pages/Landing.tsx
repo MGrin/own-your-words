@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 import {
   Center,
   Stack,
@@ -6,9 +6,10 @@ import {
   Text,
   Image,
   useBreakpointValue,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react'
+
 const Landing = () => {
-  const isMobile = useBreakpointValue([true, false]);
+  const isMobile = useBreakpointValue([true, false])
 
   return (
     <Center>
@@ -23,11 +24,11 @@ const Landing = () => {
       </Stack>
       <Image
         hidden={isMobile}
-        src={process.env.PUBLIC_URL + "/logo.white.jpg"}
+        src={`${process.env.PUBLIC_URL}/logo.white.jpg`}
         borderRadius="base"
       />
     </Center>
-  );
-};
+  )
+}
 
-export default Landing;
+export default Landing

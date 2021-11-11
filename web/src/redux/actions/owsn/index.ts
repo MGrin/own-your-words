@@ -1,2 +1,2 @@
-export * from "./async";
-export * from "./plain";
+export * from './async'
+export * from './plain'

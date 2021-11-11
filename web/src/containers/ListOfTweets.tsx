@@ -1,4 +1,4 @@
-import React from "react";
+// import React from 'react'
 // import { Timeline } from "react-twitter-widgets";
 // import { Text, VStack, Button, Center, Spacer } from "@chakra-ui/react";
 
@@ -131,4 +131,6 @@ import React from "react";
 
 // export default ListOfTweets;
 
-export default () => null;
+const ListOfTweeters = () => null
+
+export default ListOfTweeters

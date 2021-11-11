@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from 'react'
 import {
   Flex,
   Spacer,
@@ -15,45 +15,45 @@ import {
   IconButton,
   useBreakpointValue,
   Text,
-} from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import ConnectWeb3Button from "./ConnectWeb3Button";
-import ThemeSwitcher from "../components/ThemeSwitcher";
-import { useHistory } from "react-router-dom";
-import { ENV } from "../constants";
-import { useSelector } from "react-redux";
-import web3Selector from "../redux/selectors/web3";
-import { WebRoutes } from "../WebRoutes";
+} from '@chakra-ui/react'
+import { HamburgerIcon } from '@chakra-ui/icons'
+import ConnectWeb3Button from './ConnectWeb3Button'
+import ThemeSwitcher from '../components/ThemeSwitcher'
+import { useHistory } from 'react-router-dom'
+import { ENV } from '../constants'
+import { useSelector } from 'react-redux'
+import web3Selector from '../redux/selectors/web3'
+import { WebRoutes } from '../WebRoutes'
 
 const Header = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
-  const drawerButtonRef = useRef(null);
-  const isMobile = useBreakpointValue([true, false]);
-  const history = useHistory();
+  const drawerButtonRef = useRef(null)
+  const isMobile = useBreakpointValue([true, false])
+  const history = useHistory()
 
-  const { connected, network } = useSelector(web3Selector);
+  const { connected, network } = useSelector(web3Selector)
 
   const openDrawer = useCallback(() => {
-    setIsDrawerOpen(true);
-  }, [setIsDrawerOpen]);
+    setIsDrawerOpen(true)
+  }, [setIsDrawerOpen])
 
   const closeDrawer = useCallback(() => {
-    setIsDrawerOpen(false);
-  }, [setIsDrawerOpen]);
+    setIsDrawerOpen(false)
+  }, [setIsDrawerOpen])
 
   const goToLanding = useCallback(() => {
-    history.push(WebRoutes.root);
-  }, [history]);
+    history.push(WebRoutes.root)
+  }, [history])
   const goToAccounts = useCallback(() => {
-    history.push(WebRoutes.accounts);
-  }, [history]);
+    history.push(WebRoutes.accounts)
+  }, [history])
   const goToWords = useCallback(() => {
-    history.push(WebRoutes.words);
-  }, [history]);
+    history.push(WebRoutes.words)
+  }, [history])
   const goToStatements = useCallback(() => {
-    history.push(WebRoutes.statements);
-  }, [history]);
+    history.push(WebRoutes.statements)
+  }, [history])
 
   const navigationList = (
     <>
@@ -63,7 +63,7 @@ const Header = () => {
           onClick={goToLanding}
           icon={
             <Image
-              src={process.env.PUBLIC_URL + "/logo.jpg"}
+              src={`${process.env.PUBLIC_URL}/logo.jpg`}
               width="40px"
               borderRadius="base"
             />
@@ -80,16 +80,16 @@ const Header = () => {
         Statements
       </Button>
     </>
-  );
+  )
 
   return (
-    <Flex paddingBottom={["12", "6"]}>
+    <Flex paddingBottom={['12', '6']}>
       {isMobile && <ConnectWeb3Button />}
       {connected && !isMobile && <HStack>{navigationList}</HStack>}
       <Spacer />
       {!isMobile && (
         <HStack>
-          {ENV !== "production" && <Text>{network?.chainId}</Text>}
+          {ENV !== 'production' && <Text>{network?.chainId}</Text>}
           <ThemeSwitcher />
           <ConnectWeb3Button />
         </HStack>
@@ -129,7 +129,7 @@ const Header = () => {
         </>
       )}
     </Flex>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

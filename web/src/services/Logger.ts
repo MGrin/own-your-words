@@ -1,30 +1,30 @@
 export class Logger {
-  private context: string;
+  private context: string
 
   constructor(context: string) {
-    this.context = context;
+    this.context = context
   }
 
   public log(...messages: string[]) {
     console.log(
       `[${new Date().toLocaleString()}][${this.context}] ${messages.join(
-        "\n\t"
+        '\n\t'
       )}`
-    );
+    )
   }
 
   public warn(...messages: string[]) {
     console.warn(
       `[${new Date().toLocaleString()}][${this.context}] ${messages.join(
-        "\n\t"
+        '\n\t'
       )}`
-    );
+    )
   }
 
   public error(...messages: Error[]) {
-    console.error(`[${new Date().toLocaleString()}][${this.context}]: Error`);
-    for (let err of messages) {
-      console.error(err);
+    console.error(`[${new Date().toLocaleString()}][${this.context}]: Error`)
+    for (const err of messages) {
+      console.error(err)
     }
   }
 }

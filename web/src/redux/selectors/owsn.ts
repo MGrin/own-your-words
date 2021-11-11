@@ -1,10 +1,11 @@
-import { State } from "../store";
+import type { State } from '../store'
 
-export default (state: State) => state.owsn;
+const selector = (state: State) => state.owsn
+export default selector
 
 export const owsnTwitterSelector = (state: State) => ({
   loading: state.owsn.twitterLoading,
   error: state.owsn.twitterError,
   price: state.owsn.twitterPrice,
   available: state.owsn.twitterAccountAvailable,
-});
+})

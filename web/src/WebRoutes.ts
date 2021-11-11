@@ -1,6 +1,6 @@
 export enum WebRoutes {
-  root = "/",
-  accounts = "/accounts",
-  words = "/words",
-  statements = "/statements",
+  root = '/',
+  accounts = '/accounts',
+  words = '/words',
+  statements = '/statements',
 }

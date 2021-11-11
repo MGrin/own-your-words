@@ -1,3 +1,4 @@
-import { State } from "../store";
+import type { State } from '../store'
 
-export default (state: State) => state.web3;
+const selector = (state: State) => state.web3
+export default selector

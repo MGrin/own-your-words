@@ -1,3 +1,4 @@
-import { State } from "../store";
+import type { State } from '../store'
 
-export default (state: State) => state.twitterAuth;
+const selector = (state: State) => state.twitterAuth
+export default selector

@@ -1,14 +1,15 @@
-import React from "react";
-import { Route, Redirect, RouteProps } from "react-router-dom";
+import React from 'react'
+import type { RouteProps } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 
-import { useSelector } from "react-redux";
-import web3Selector from "../redux/selectors/web3";
+import { useSelector } from 'react-redux'
+import web3Selector from '../redux/selectors/web3'
 
 const ProtectedRoute: React.FC<RouteProps> = ({
   component: Component,
   ...routerProps
 }) => {
-  const { connected } = useSelector(web3Selector);
+  const { connected } = useSelector(web3Selector)
   return (
     <Route
       {...routerProps}
@@ -17,7 +18,7 @@ const ProtectedRoute: React.FC<RouteProps> = ({
         connected ? <Component {...props} /> : <Redirect to="/" />
       }
     />
-  );
-};
+  )
+}
 
-export default ProtectedRoute;
+export default ProtectedRoute

@@ -1,5 +1,6 @@
-import { AC } from "../../utils";
-import { OWSNActionPayload, OWSNActionType } from "./types";
+import type { AC } from '../../utils'
+import type { OWSNActionPayload } from './types'
+import { OWSNActionType } from './types'
 
 export const checkAccountAvailabilityStart: AC<
   OWSNActionType.checkAccountAvailabilityStart,
@@ -10,7 +11,7 @@ export const checkAccountAvailabilityStart: AC<
     snName,
     snId,
   },
-});
+})
 export const checkAccountAvailabilitySuccess: AC<
   OWSNActionType.checkAccountAvailabilitySuccess,
   OWSNActionPayload[OWSNActionType.checkAccountAvailabilitySuccess]
@@ -20,7 +21,7 @@ export const checkAccountAvailabilitySuccess: AC<
     snName,
     available,
   },
-});
+})
 export const checkAccountAvailabilityFailure: AC<
   OWSNActionType.checkAccountAvailabilityFailure,
   OWSNActionPayload[OWSNActionType.checkAccountAvailabilityFailure]
@@ -30,7 +31,7 @@ export const checkAccountAvailabilityFailure: AC<
     snName,
     error,
   },
-});
+})
 
 export const getTokenIdsStart: AC<
   OWSNActionType.getTokenIdsStart,
@@ -38,7 +39,7 @@ export const getTokenIdsStart: AC<
 > = () => ({
   type: OWSNActionType.getTokenIdsStart,
   payload: undefined,
-});
+})
 
 export const getTokenIdsSuccess: AC<
   OWSNActionType.getTokenIdsSuccess,
@@ -48,7 +49,7 @@ export const getTokenIdsSuccess: AC<
   payload: {
     tokenIds,
   },
-});
+})
 
 export const getTokenIdsFailure: AC<
   OWSNActionType.getTokenIdsFailure,
@@ -58,7 +59,7 @@ export const getTokenIdsFailure: AC<
   payload: {
     error,
   },
-});
+})
 
 export const getTwitterPriceStart: AC<
   OWSNActionType.getTwitterPriceStart,
@@ -66,7 +67,7 @@ export const getTwitterPriceStart: AC<
 > = () => ({
   type: OWSNActionType.getTwitterPriceStart,
   payload: undefined,
-});
+})
 
 export const getTwitterPriceSuccess: AC<
   OWSNActionType.getTwitterPriceSuccess,
@@ -76,7 +77,7 @@ export const getTwitterPriceSuccess: AC<
   payload: {
     price,
   },
-});
+})
 
 export const getTwitterPriceFailure: AC<
   OWSNActionType.getTwitterPriceFailure,
@@ -86,7 +87,7 @@ export const getTwitterPriceFailure: AC<
   payload: {
     error,
   },
-});
+})
 
 export const mintTwitterStart: AC<
   OWSNActionType.mintTwitterStart,
@@ -97,7 +98,7 @@ export const mintTwitterStart: AC<
     oauthToken,
     oauthVerifier,
   },
-});
+})
 
 export const mintTwitterSuccess: AC<
   OWSNActionType.mintTwitterSuccess,
@@ -107,7 +108,7 @@ export const mintTwitterSuccess: AC<
   payload: {
     tokenId,
   },
-});
+})
 
 export const mintTwitterFailure: AC<
   OWSNActionType.mintTwitterFailure,
@@ -117,4 +118,4 @@ export const mintTwitterFailure: AC<
   payload: {
     error,
   },
-});
+})

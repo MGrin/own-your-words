@@ -6,44 +6,44 @@ import {
   Button,
   Text,
   Spacer,
-} from "@chakra-ui/react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import twitterAuthService, { MODE } from "../services/TwitterAuthService";
-import twitterAuthSelector from "../redux/selectors/twitterAuth";
-import { fetchRequestToken } from "../redux/actions/twitterAuth";
-import { getTwitterPrice } from "../redux/actions/owsn";
-import { owsnTwitterSelector } from "../redux/selectors/owsn";
+} from '@chakra-ui/react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import twitterAuthService, { MODE } from '../services/TwitterAuthService'
+import twitterAuthSelector from '../redux/selectors/twitterAuth'
+import { fetchRequestToken } from '../redux/actions/twitterAuth'
+import { getTwitterPrice } from '../redux/actions/owsn'
+import { owsnTwitterSelector } from '../redux/selectors/owsn'
 
 const TwitterAccountMint = () => {
-  const [mode, setMode] = useState<MODE>(twitterAuthService.mode || MODE.check);
-  const dispatch = useDispatch();
+  const [mode, setMode] = useState<MODE>(twitterAuthService.mode || MODE.check)
+  const dispatch = useDispatch()
 
   const { loading: authLoading, error: authError } =
-    useSelector(twitterAuthSelector);
+    useSelector(twitterAuthSelector)
 
   const {
     price,
     loading: owsnLoading,
     error: owsnError,
     available: owsnAvailable,
-  } = useSelector(owsnTwitterSelector);
+  } = useSelector(owsnTwitterSelector)
 
-  const loading = authLoading || owsnLoading;
+  const loading = authLoading || owsnLoading
 
-  const error = authError || owsnError;
+  const error = authError || owsnError
 
   useEffect(() => {
-    dispatch(getTwitterPrice());
-  }, [dispatch]);
+    dispatch(getTwitterPrice())
+  }, [dispatch])
 
   const onClick = useCallback(() => {
     dispatch(
       fetchRequestToken({
         callbackUrl: `${window.location.href}#twitter-${mode}`,
       })
-    );
-  }, [dispatch, mode]);
+    )
+  }, [dispatch, mode])
 
   return (
     <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
@@ -91,7 +91,7 @@ const TwitterAccountMint = () => {
               onClick={onClick}
               isLoading={loading}
             >
-              {mode === MODE.check ? "Check availability" : "Mint"}
+              {mode === MODE.check ? 'Check availability' : 'Mint'}
             </Button>
           )
         ) : (
@@ -99,7 +99,7 @@ const TwitterAccountMint = () => {
         )}
       </Flex>
     </Box>
-  );
-};
+  )
+}
 
-export default TwitterAccountMint;
+export default TwitterAccountMint

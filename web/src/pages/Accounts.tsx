@@ -1,11 +1,8 @@
-import { Stack } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import TwitterAccountMint from "../containers/TwitterAccountMint";
+import { Stack } from '@chakra-ui/react'
+import React from 'react'
+import TwitterAccountMint from '../containers/TwitterAccountMint'
 
 const Accounts = () => {
-  const [tokenIds, setTokenIds] = useState([]);
-  const [tokens, setTokens] = useState([]);
-
   // useEffect(() => {
   //   getOwnedTokenIds().then((response) => {
   //     setTokenIds(response);
@@ -19,7 +16,7 @@ const Accounts = () => {
     <Stack>
       <TwitterAccountMint />
     </Stack>
-  );
-};
+  )
+}
 
-export default Accounts;
+export default Accounts

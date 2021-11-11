@@ -1,5 +1,6 @@
-import { AC } from "../../utils";
-import { TwitterAuthActionPayload, TwitterAuthActionType } from "./types";
+import type { AC } from '../../utils'
+import type { TwitterAuthActionPayload } from './types'
+import { TwitterAuthActionType } from './types'
 
 export const getRequestToken: AC<
   TwitterAuthActionType.getRequestToken,
@@ -7,7 +8,7 @@ export const getRequestToken: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.getRequestToken,
   payload,
-});
+})
 
 export const readRequestTokenSuccess: AC<
   TwitterAuthActionType.readRequestTokenSuccess,
@@ -15,7 +16,7 @@ export const readRequestTokenSuccess: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.readRequestTokenSuccess,
   payload,
-});
+})
 
 export const readRequestTokenFailure: AC<
   TwitterAuthActionType.readRequestTokenFailure,
@@ -23,7 +24,7 @@ export const readRequestTokenFailure: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.readRequestTokenFailure,
   payload,
-});
+})
 
 export const fetchAccessTokenStart: AC<
   TwitterAuthActionType.fetchAccessTokenStart,
@@ -31,7 +32,7 @@ export const fetchAccessTokenStart: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.fetchAccessTokenStart,
   payload,
-});
+})
 
 export const fetchAccessTokenSuccess: AC<
   TwitterAuthActionType.fetchAccessTokenSuccess,
@@ -39,7 +40,7 @@ export const fetchAccessTokenSuccess: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.fetchAccessTokenSuccess,
   payload,
-});
+})
 
 export const fetchAccessTokenFailure: AC<
   TwitterAuthActionType.fetchAccessTokenFailure,
@@ -47,4 +48,4 @@ export const fetchAccessTokenFailure: AC<
 > = (payload) => ({
   type: TwitterAuthActionType.fetchAccessTokenFailure,
   payload,
-});
+})

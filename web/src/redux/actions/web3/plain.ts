@@ -1,5 +1,6 @@
-import { AC } from "../../utils";
-import { Web3ActionPayload, Web3ActionType } from "./types";
+import type { AC } from '../../utils'
+import type { Web3ActionPayload } from './types'
+import { Web3ActionType } from './types'
 
 export const changeLoading: AC<
   Web3ActionType.changeLoading,
@@ -9,7 +10,7 @@ export const changeLoading: AC<
   payload: {
     loading,
   },
-});
+})
 
 export const changeAvailability: AC<
   Web3ActionType.changeAvailability,
@@ -19,7 +20,7 @@ export const changeAvailability: AC<
   payload: {
     available,
   },
-});
+})
 
 export const connectStart: AC<
   Web3ActionType.connectStart,
@@ -27,7 +28,7 @@ export const connectStart: AC<
 > = () => ({
   type: Web3ActionType.connectStart,
   payload: undefined,
-});
+})
 
 export const connectSuccess: AC<
   Web3ActionType.connectSuccess,
@@ -35,7 +36,7 @@ export const connectSuccess: AC<
 > = (payload) => ({
   type: Web3ActionType.connectSuccess,
   payload,
-});
+})
 
 export const connectFailure: AC<
   Web3ActionType.connectFailure,
@@ -43,4 +44,4 @@ export const connectFailure: AC<
 > = (payload) => ({
   type: Web3ActionType.connectFailure,
   payload,
-});
+})

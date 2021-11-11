@@ -1,18 +1,18 @@
-import { Reducer } from "react";
-import {
+import type { Reducer } from 'react'
+import type {
   TwitterAuthAction,
   TwitterAuthActionPayload,
-  TwitterAuthActionType,
-} from "../actions/twitterAuth/types";
+} from '../actions/twitterAuth/types'
+import { TwitterAuthActionType } from '../actions/twitterAuth/types'
 
 export type TwitterAuthState = {
-  loading?: boolean;
-  error?: Error;
-};
+  loading?: boolean
+  error?: Error
+}
 
 const initialState: TwitterAuthState = {
   loading: false,
-};
+}
 
 const reducer: Reducer<TwitterAuthState, TwitterAuthAction> = (
   state = initialState,
@@ -24,16 +24,16 @@ const reducer: Reducer<TwitterAuthState, TwitterAuthAction> = (
         ...state,
         error: undefined,
         loading: true,
-      };
+      }
     }
     case TwitterAuthActionType.readRequestTokenFailure: {
       const payload =
-        action.payload as TwitterAuthActionPayload[TwitterAuthActionType.readRequestTokenFailure];
+        action.payload as TwitterAuthActionPayload[TwitterAuthActionType.readRequestTokenFailure]
       return {
         ...state,
         loading: false,
         error: payload.error,
-      };
+      }
     }
 
     case TwitterAuthActionType.readRequestTokenSuccess: {
@@ -41,7 +41,7 @@ const reducer: Reducer<TwitterAuthState, TwitterAuthAction> = (
         ...state,
         loading: false,
         error: undefined,
-      };
+      }
     }
 
     case TwitterAuthActionType.fetchAccessTokenStart: {
@@ -49,33 +49,31 @@ const reducer: Reducer<TwitterAuthState, TwitterAuthAction> = (
         ...state,
         error: undefined,
         loading: true,
-      };
+      }
     }
 
     case TwitterAuthActionType.fetchAccessTokenFailure: {
       const payload =
-        action.payload as TwitterAuthActionPayload[TwitterAuthActionType.fetchAccessTokenFailure];
+        action.payload as TwitterAuthActionPayload[TwitterAuthActionType.fetchAccessTokenFailure]
       return {
         ...state,
         loading: false,
         error: payload.error,
-      };
+      }
     }
 
     case TwitterAuthActionType.fetchAccessTokenSuccess: {
-      const payload =
-        action.payload as TwitterAuthActionPayload[TwitterAuthActionType.fetchAccessTokenSuccess];
       return {
         ...state,
         loading: false,
         error: undefined,
-      };
+      }
     }
 
     default: {
-      return state;
+      return state
     }
   }
-};
+}
 
-export default reducer;
+export default reducer
