@@ -72,7 +72,7 @@ export class TwitterAuthOracleService {
     await Promise.all(requestsProcessing);
   }
 
-  public async processRequest(requestId: number) {
+  private async processRequest(requestId: number) {
     this.logger.log(`Process request [requestId=${requestId}]`);
     let startTx;
     try {

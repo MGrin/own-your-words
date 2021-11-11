@@ -1,44 +1,35 @@
 {
-  "name": "own-your-words",
-  "version": "1.0.0",
+  "name": "oww-web",
+  "version": "0.1.0",
   "private": true,
-  "author": {
-    "email": "mr6r1n@gmail.com",
-    "name": "MGrin"
-  },
   "dependencies": {
-    "@chakra-ui/icons": "^1.0.15",
-    "@chakra-ui/react": "^1.6.7",
+    "@chakra-ui/icons": "^1.0.16",
+    "@chakra-ui/react": "^1.6.10",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@ensdomains/ens": "ensdomains/ens",
-    "@fontsource/open-sans": "^4.5.0",
+    "@fontsource/open-sans": "^4.5.1",
     "@fontsource/raleway": "^4.5.0",
     "@metamask/jazzicon": "^2.0.0",
-    "@openzeppelin/truffle-upgrades": "^1.9.1",
-    "@web3-react/core": "^6.1.9",
-    "@web3-react/injected-connector": "^6.0.7",
-    "chakra-ui-steps": "^1.3.0",
-    "crypto-js": "^4.1.1",
-    "framer-motion": "^4",
-    "idna-uts46-hx": "^3.4.0",
-    "js-sha3": "^0.8.0",
-    "mobx": "^6.3.5",
-    "mobx-react-lite": "^3.2.1",
-    "nft.storage": "^3.2.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
-    "react-twitter-widgets": "^1.10.0",
-    "uuid": "^8.3.2",
-    "web-vitals": "^1.0.1",
-    "web3": "^1.5.2"
-  },
-  "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10"
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/redux-logger": "^3.0.9",
+    "ethers": "^5.5.1",
+    "framer-motion": "^4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-redux": "^7.2.6",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "redux": "^4.1.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -63,5 +54,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-router-dom": "^5.3.1"
   }
 }

@@ -23,7 +23,7 @@ export type TwitterOAuthRequestTokenResponse = {
 
 export type TwitterOAuthAccessTokenResponse = {
   oauth_token: string;
-  oauth_verifier: string;
+  oauth_token_secret: string;
   user_id: string;
   screen_name: string;
 };

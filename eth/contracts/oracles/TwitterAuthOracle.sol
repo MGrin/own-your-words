@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "../utils/QueueUint256.sol";
@@ -170,5 +169,9 @@ contract TwitterAuthOracle is Ownable {
     req.err = requests[id].err;
 
     return req;
+  }
+
+  function retrieveFunds() public onlyOwner {
+    payable(_msgSender()).transfer(address(this).balance);
   }
 }

@@ -26,7 +26,10 @@
     "rinkeby:deploy-owsn": "npx hardhat run --network rinkeby scripts/1.3.deploy-owsn.js",
     "rinkeby:upgrade-tm": "npx hardhat run --network rinkeby scripts/2.1.upgrade-tm.js",
     "rinkeby:upgrade-owsn": "npx hardhat run --network rinkeby scripts/2.2.upgrade-owsn.js",
+    "rinkeby:verify": "npx hardhat verify --network rinkeby",
     "rinkeby:console": "npx hardhat console --network rinkeby",
+    "hardhat:node": "hardhat node",
+    "hardhat:fund": "hardhat --network localhost fund --to",
     "localhost:deploy-tao": "npx hardhat run --network localhost scripts/1.1.deploy-tao.js",
     "localhost:deploy-tm": "npx hardhat run --network localhost scripts/1.2.deploy-tm.js",
     "localhost:deploy-owsn": "npx hardhat run --network localhost scripts/1.3.deploy-owsn.js",
@@ -37,7 +40,6 @@
     "localhost:deploy-all": "yarn localhost:deploy-tao && yarn localhost:deploy-tm && yarn localhost:deploy-owsn",
     "localhost:upgrade-all": "yarn localhost:upgrade-tao && yarn localhost:upgrade-tm && yarn localhost:upgrade-owsn",
     "localhost:clean": "rm locks/*.localhost.json && rm -rf ./artifacts && rm -rf ./cache",
-    "localhost:deposit": "npx hardhat --network localhost deposit",
     "test": "npx hardhat test"
   }
 }

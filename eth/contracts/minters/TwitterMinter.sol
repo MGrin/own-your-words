@@ -62,7 +62,7 @@ contract TwitterMinter is AccessControl, IMinter {
   ) external payable {
     uint256 reqId = oracle.request{value: msg.value}(oauthToken, oauthVerifier, owner, this.succeedMint, this.failMint);
     _callback_by_req_id[reqId] = TwitterMintState.SuccessCallback(cb);
-    emit TwitterAuthRequestSubmited(msg.sender, reqId);
+    emit TwitterAuthRequestSubmited(owner, reqId);
   }
 
   function succeedMint(
@@ -86,5 +86,9 @@ contract TwitterMinter is AccessControl, IMinter {
 
   function getPriceWEI() public view override returns (uint256) {
     return oracle.priceWEI();
+  }
+
+  function retrieveFunds() public onlyRole(ADMIN_ROLE) {
+    payable(_msgSender()).transfer(address(this).balance);
   }
 }

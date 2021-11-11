@@ -8,19 +8,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task(
-  "deposit",
-  "Send 3 ETH to deployer and mgrin.eth",
-  async (taskArgs, hre) => {
-    const accounts = await hre.ethers.getSigners();
-
-    await accounts[0].sendTransaction({
-      to: "0x01583D152E3225519D211B1F576d959F70ef9630",
-      value: ethers.utils.parseEther("1.0"),
-    });
-  }
-);
-
 task("getRequest", "Show request state by id")
   .addParam("id", "Request id")
   .setAction(async ({ id }, hre) => {
@@ -45,6 +32,17 @@ task("getOWSNToken", "Get OWSN Token by id")
     const OWSN = await hre.ethers.getContractFactory("OwnYourSocialNetwork");
     const owsn = await OWSN.attach(owsnLock.address);
     console.log(await owsn.getOwnedAccountByToken(token));
+  });
+
+task("fund", "Send 1 eth to a given address")
+  .addParam("to", "Address")
+  .setAction(async ({ to }, hre) => {
+    const accounts = await hre.ethers.getSigners();
+
+    await accounts[0].sendTransaction({
+      to,
+      value: ethers.utils.parseEther("1.0"),
+    });
   });
 
 task("getBalance", "Get OWSN balance for owner address")
