@@ -1,4 +1,6 @@
-FROM node:16.10.0
+FROM node:16.10.0-alpine
+
+RUN apk add --no-cache g++ make python
 
 WORKDIR /usr/src/app
 
