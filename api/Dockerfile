@@ -1,6 +1,4 @@
-FROM node:16.10.0
-
-RUN apk add --no-cache g++ make python
+FROM node:16.10.0-buster-slim
 
 WORKDIR /usr/src/app
 
