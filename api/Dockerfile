@@ -1,6 +1,6 @@
 FROM node:16.10.0-buster-slim
 
-RUN apt install make gcc g++ python
+RUN apt update && apt install make gcc g++ python
 WORKDIR /usr/src/app
 
 COPY package.json ./
