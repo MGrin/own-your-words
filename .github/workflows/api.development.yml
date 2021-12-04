@@ -13,9 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install
-        run: cd api && npm run install
+        run: cd api && yarn install
       - name: Lint
-        run: cd api && npm run lint
+        run: cd api && yarn lint
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
