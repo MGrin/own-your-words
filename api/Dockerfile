@@ -11,6 +11,6 @@ COPY . .
 
 ENV NODE_ENV=${NODE_ENV:-local}
 RUN ls src/modules
-RUN npm run build
+RUN yarn build
 
-CMD ["npm", "start:prod"]
+CMD ["npm", "run", "start:prod"]
