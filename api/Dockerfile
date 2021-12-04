@@ -14,4 +14,7 @@ ENV NODE_ENV=${NODE_ENV:-local}
 RUN ls src/modules
 RUN yarn build
 
+EXPOSE 80
+ENV PORT=80
+
 CMD ["npm", "run", "start:prod"]

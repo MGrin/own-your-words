@@ -25,6 +25,7 @@
     "rinkeby:getOWSNToken": "hardhat --network rinkeby getOWSNToken --token",
     "rinkeby:getTokenUri": "hardhat --network rinkeby getTokenUri",
     "rinkeby:setOraclePrice": "hardhat --network rinkeby setOraclePrice",
+    "rinkeby:getBalance": "hardhat --network rinkeby getBalance --owner",
     "rinkeby:deploy-tao": "npx hardhat run --network rinkeby scripts/1.1.deploy-tao.js",
     "rinkeby:deploy-tm": "npx hardhat run --network rinkeby scripts/1.2.deploy-tm.js",
     "rinkeby:deploy-owsn": "npx hardhat run --network rinkeby scripts/1.3.deploy-owsn.js",
