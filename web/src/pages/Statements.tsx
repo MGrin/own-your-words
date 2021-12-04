@@ -1,7 +1,8 @@
+import { Heading } from '@chakra-ui/react'
 import React from 'react'
 
 const Statements = () => {
-  return <h1>Statements</h1>
+  return <Heading>Work in progress</Heading>
 }
 
 export default Statements

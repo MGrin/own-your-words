@@ -44,12 +44,36 @@ export class OWSNService {
     return this.contract.getOwnedAccountByGenSnId(genSnId)
   }
 
-  public async getOwnedAccountTokens() {
-    this.logger.log(`Get owned accounts`)
-    const tokenIds: ethers.BigNumberish[] = await this.contract.balanceOf(
+  public async getOwnedAccountByToken(token: number): Promise<OwnedAccount> {
+    this.logger.log(`Get owned account by token [token=${token}]`)
+    const result = await this.contract.getOwnedAccountByToken(token)
+    return {
+      id: result.id.toNumber(),
+      owner: result.owner,
+      sn_id: result.sn_id,
+      sn_name: result.sn_name,
+      sn_url: result.sn_url,
+    }
+  }
+
+  public async getOwnedAccountTokens(address: string) {
+    this.logger.log(`Get owned tokens`)
+    const amountOfTokensBN: ethers.BigNumber = await this.contract.balanceOf(
       ethersService.address
     )
-    return tokenIds.map((tokenId) => ethers.utils.formatEther(tokenId))
+
+    const amountOfTokens = amountOfTokensBN.toNumber()
+
+    const tokenIds: number[] = []
+    for (let i = 0; i < amountOfTokens; i++) {
+      const tokenId: ethers.BigNumber = await this.contract.tokenOfOwnerByIndex(
+        address,
+        i
+      )
+      tokenIds.push(tokenId.toNumber() || 0)
+    }
+
+    return tokenIds
   }
 
   public getGenId(snName: string, snId: string) {

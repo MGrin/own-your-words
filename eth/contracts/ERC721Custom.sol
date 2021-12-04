@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgrad
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract ERC721Custom is
   Initializable,
@@ -24,17 +25,20 @@ contract ERC721Custom is
 
   CountersUpgradeable.Counter internal _tokenIdTracker;
 
-  function initialize(string memory name, string memory symbol)
+  string private baseURI;
+
+  function initialize(string memory name, string memory symbol, string memory _baseURI)
     public
     virtual
     initializer
   {
-    __ERC721Custom_init(name, symbol);
+    __ERC721Custom_init(name, symbol, _baseURI);
   }
 
   function __ERC721Custom_init(
     string memory name,
-    string memory symbol
+    string memory symbol,
+    string memory _baseURI
   ) internal initializer {
     __Context_init_unchained();
     __ERC165_init_unchained();
@@ -44,6 +48,8 @@ contract ERC721Custom is
     __ERC721Enumerable_init_unchained();
     __ERC721Burnable_init_unchained();
     __ERC721Custom_init_unchained();
+    baseURI = _baseURI;
+
   }
 
   function __ERC721Custom_init_unchained() internal initializer {
@@ -77,7 +83,7 @@ contract ERC721Custom is
       "ERC721Metadata: URI query for nonexistent token"
     );
 
-    return "NOT IMPLEMENTED YET";
+    return string(abi.encodePacked(baseURI, "/", Strings.toString(tokenId)));
   }
 
   function _beforeTokenTransfer(

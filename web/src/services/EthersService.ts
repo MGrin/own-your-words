@@ -19,7 +19,14 @@ export enum AvailableContracts {
   tm = 'TM',
 }
 
+export const getSweetAddress = (address: string) =>
+  `${address.slice(0, 6)}...${address.slice(
+    address.length - 4,
+    address.length
+  )}`
+
 export const getOWSNContractAddress = (network: SupportedNetworks) => {
+  console.log(network)
   switch (network) {
     case SupportedNetworks.localhost:
       return OWSN_CONTRACT_LOCALHOST
@@ -87,10 +94,18 @@ class EthersService {
 
     this.account = this.provider.getSigner()
     this.address = await this.account.getAddress()
-    this.sweetAddress = `${this.address.slice(0, 6)}...${this.address.slice(
-      this.address.length - 4,
-      this.address.length
-    )}`
+
+    try {
+      const ens = await this.provider.lookupAddress(this.address)
+      if (ens) {
+        this.sweetAddress = ens
+      } else {
+        this.sweetAddress = getSweetAddress(this.address)
+      }
+    } catch (err) {
+      this.sweetAddress = getSweetAddress(this.address)
+    }
+
     this.network = await this.provider.getNetwork()
     if (this.network.name === 'unknown') {
       this.network.name = 'localhost'

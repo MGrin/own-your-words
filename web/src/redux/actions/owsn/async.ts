@@ -52,8 +52,11 @@ export const getTokenIds: ThunkAC<
     if (!owsn) {
       throw new Error('OWSN contract is not yet ready!')
     }
+    if (!ethersService.address) {
+      throw new Error('Account is not yet connected!')
+    }
 
-    const tokenIds = await owsn.getOwnedAccountTokens()
+    const tokenIds = await owsn.getOwnedAccountTokens(ethersService.address)
     dispatch(getTokenIdsSuccess({ tokenIds }))
   } catch (error) {
     logger.error(error as Error)

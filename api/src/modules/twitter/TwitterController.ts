@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { TwitterService } from './TwitterService';
 import { AuthURLResponse, TwitterOAuthAccessTokenResponse } from './types';
 

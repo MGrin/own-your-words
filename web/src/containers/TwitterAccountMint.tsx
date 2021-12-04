@@ -1,22 +1,13 @@
-import {
-  Box,
-  Flex,
-  Image,
-  Switch,
-  Button,
-  Text,
-  Spacer,
-} from '@chakra-ui/react'
+import { Box, Flex, Image, Button, Text } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import twitterAuthService, { MODE } from '../services/TwitterAuthService'
+import { MODE } from '../services/TwitterAuthService'
 import twitterAuthSelector from '../redux/selectors/twitterAuth'
 import { fetchRequestToken } from '../redux/actions/twitterAuth'
 import { getTwitterPrice } from '../redux/actions/owsn'
 import { owsnTwitterSelector } from '../redux/selectors/owsn'
 
 const TwitterAccountMint = () => {
-  const [mode, setMode] = useState<MODE>(twitterAuthService.mode || MODE.check)
   const dispatch = useDispatch()
 
   const { loading: authLoading, error: authError } =
@@ -28,6 +19,16 @@ const TwitterAccountMint = () => {
     error: owsnError,
     available: owsnAvailable,
   } = useSelector(owsnTwitterSelector)
+
+  const [mode, setMode] = useState<MODE>(
+    owsnAvailable === true ? MODE.mint : MODE.check
+  )
+
+  useEffect(() => {
+    if (owsnAvailable) {
+      setMode(MODE.mint)
+    }
+  }, [owsnAvailable])
 
   const loading = authLoading || owsnLoading
 
@@ -44,6 +45,23 @@ const TwitterAccountMint = () => {
       })
     )
   }, [dispatch, mode])
+
+  let btn
+  if (owsnAvailable !== false) {
+    btn = (
+      <Button
+        size="lg"
+        colorScheme="twitter"
+        disabled={loading}
+        onClick={onClick}
+        isLoading={loading}
+      >
+        {mode === MODE.check ? 'Check availability' : 'Mint'}
+      </Button>
+    )
+  } else {
+    btn = <Text>Account is not available</Text>
+  }
 
   return (
     <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
@@ -64,40 +82,10 @@ const TwitterAccountMint = () => {
           </Box>
         </Box>
       </Box>
-      <Flex p={6} justifyContent="center" alignItems="center">
-        <Text>Check availability</Text>
-        <Spacer />
-        <Switch
-          p="1"
-          size="lg"
-          isChecked={mode === MODE.mint}
-          onChange={(e) =>
-            owsnAvailable
-              ? setMode(e.target.checked ? MODE.mint : MODE.check)
-              : undefined
-          }
-        />
-        <Spacer />
-        <Text>Mint</Text>
-      </Flex>
       <Flex alignItems="center" justifyContent="center" p={6}>
-        {owsnAvailable ? (
-          error ? (
-            <Text>Error: {error.message}</Text>
-          ) : (
-            <Button
-              size="lg"
-              colorScheme="twitter"
-              onClick={onClick}
-              isLoading={loading}
-            >
-              {mode === MODE.check ? 'Check availability' : 'Mint'}
-            </Button>
-          )
-        ) : (
-          <Text>Account is not available</Text>
-        )}
+        {btn}
       </Flex>
+      {error && <Text color="tomato">{error.message}</Text>}
     </Box>
   )
 }

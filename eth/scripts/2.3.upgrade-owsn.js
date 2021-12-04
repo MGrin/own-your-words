@@ -1,8 +1,8 @@
 const { ethers, upgrades, network } = require("hardhat");
 const { writeLock, getLock } = require("./utils/locks");
-const { populateAbiToWeb } = require("./utils/abi");
+const { populateAbiToWeb, populateAbiToApi } = require("./utils/abi");
 const { replaceAddressInWeb } = require("./utils/env");
-
+const { getBaseUri } = require("./utils/baseUri");
 async function main() {
   const NAME = "OwnYourSocialNetwork";
   const SYMBOL = "OWSN";
@@ -15,7 +15,7 @@ async function main() {
   const owsn = await upgrades.upgradeProxy(
     existingDeployment.address,
     OwnYourSocialNetwork,
-    [NAME, SYMBOL],
+    [NAME, SYMBOL, getBaseUri(network.name)],
     { initializer: "__OwnYourSocialNetwork__init" }
   );
   await owsn.deployed();
@@ -25,6 +25,7 @@ async function main() {
   console.log(`${NAME} deployed to:`, owsn.address);
 
   populateAbiToWeb(NAME);
+  populateAbiToApi(NAME);
   replaceAddressInWeb(network.name, SYMBOL, owsn.address);
 }
 

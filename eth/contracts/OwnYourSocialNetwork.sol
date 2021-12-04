@@ -25,8 +25,8 @@ contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   TwitterMinter public twitterMinter;
   /////////////////////////////////////////////////////////////////////////////////////
 
-  function __OwnYourSocialNetwork__init(string memory name, string memory symbol) initializer public  {
-    __ERC721Custom_init(name, symbol);
+  function __OwnYourSocialNetwork__init(string memory name, string memory symbol, string memory baseURI) initializer public  {
+    __ERC721Custom_init(name, symbol, string(abi.encodePacked(baseURI, symbol)));
   }
 
   function mint(

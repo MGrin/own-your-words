@@ -45,6 +45,23 @@ task("fund", "Send 1 eth to a given address")
     });
   });
 
+task("setOraclePrice", "Changes the oracle commission price")
+  .addParam("oracle", "Oracle name")
+  .addParam("price", "New price")
+  .setAction(async ({ oracle, price }, hre) => {
+    // setPriceETH
+    const accounts = await hre.ethers.getSigners();
+
+    const Oracle = await hre.ethers.getContractFactory(oracle);
+    const lock = getLock(hre.network.name, oracle);
+    const oracleInstance = (await Oracle.attach(lock.address)).connect(
+      accounts[0]
+    );
+
+    const ethPrice = hre.ethers.utils.parseEther(price);
+    await oracleInstance.setPriceETH(ethPrice);
+  });
+
 task("getBalance", "Get OWSN balance for owner address")
   .addParam("owner", "Owner address")
   .setAction(async ({ owner }, hre) => {
@@ -53,4 +70,19 @@ task("getBalance", "Get OWSN balance for owner address")
     const owsn = await OWSN.attach(owsnLock.address);
     // console.log(owsn);
     console.log((await owsn.balanceOf(owner)).toString());
+  });
+
+task("getTokenUri", "Get token URI")
+  .addParam("contract", "Contract name")
+  .addParam("token", "Token id")
+  .setAction(async ({ contract, token }, hre) => {
+    const accounts = await hre.ethers.getSigners();
+
+    const Contract = await hre.ethers.getContractFactory(contract);
+    const lock = getLock(hre.network.name, contract);
+    const contractInstance = (await Contract.attach(lock.address)).connect(
+      accounts[0]
+    );
+
+    console.log(await contractInstance.tokenURI(token));
   });

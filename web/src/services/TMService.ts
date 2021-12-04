@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { mintTwitterFailure, mintTwitterSuccess } from '../redux/actions/owsn'
 import store from '../redux/store'
+import { WebRoutes } from '../WebRoutes'
 import { Logger } from './Logger'
 
 export enum TMEvents {
@@ -18,7 +19,7 @@ export class TMService {
 
   private user?: string
 
-  private pendingRequests: string[] = []
+  private pendingRequests: number[] = []
 
   constructor(_contract: ethers.Contract, _address: string) {
     this.logger.log('Constructor')
@@ -45,7 +46,7 @@ export class TMService {
 
   private async onRequestSubmitted(
     sender: string,
-    requestId: ethers.BigNumberish
+    requestId: ethers.BigNumber
   ) {
     if (sender !== this.user) {
       return
@@ -57,7 +58,7 @@ export class TMService {
       } event handler [sender=${sender}][requestId=${requestId.toString()}]`
     )
 
-    this.addPendingRequest(ethers.utils.formatEther(requestId))
+    this.addPendingRequest(requestId.toNumber())
   }
 
   private async onRequestSucceeded(
@@ -67,7 +68,7 @@ export class TMService {
     const reqId = ethers.utils.formatEther(requestId)
     const tokId = ethers.utils.formatEther(tokenId)
 
-    if (!this.pendingRequests.includes(reqId)) {
+    if (!this.pendingRequests.includes(Number(reqId))) {
       return
     }
 
@@ -76,13 +77,14 @@ export class TMService {
     )
 
     store.dispatch(mintTwitterSuccess({ tokenId: tokId }))
-    this.removePendingRequest(reqId)
+    window.location.href = `${window.location.origin}${WebRoutes.accounts}`
+    this.removePendingRequest(Number(reqId))
   }
 
   private async onRequestFailed(requestId: ethers.BigNumberish, error: string) {
     const reqId = ethers.utils.formatEther(requestId)
 
-    if (!this.pendingRequests.includes(reqId)) {
+    if (!this.pendingRequests.includes(Number(reqId))) {
       return
     }
 
@@ -91,10 +93,10 @@ export class TMService {
     )
 
     store.dispatch(mintTwitterFailure({ error: new Error(error) }))
-    this.removePendingRequest(reqId)
+    this.removePendingRequest(Number(reqId))
   }
 
-  private addPendingRequest(requestId: string) {
+  private addPendingRequest(requestId: number) {
     this.pendingRequests.push(requestId)
     localStorage.setItem(
       TMService.PENDING_REQUESTS_STORAGE_KEY,
@@ -102,8 +104,8 @@ export class TMService {
     )
   }
 
-  private removePendingRequest(requestId: string) {
-    this.pendingRequests = this.pendingRequests.filter((id) => id === requestId)
+  private removePendingRequest(requestId: number) {
+    this.pendingRequests = this.pendingRequests.filter((id) => id !== requestId)
     localStorage.setItem(
       TMService.PENDING_REQUESTS_STORAGE_KEY,
       JSON.stringify(this.pendingRequests)

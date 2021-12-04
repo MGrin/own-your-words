@@ -9,3 +9,7 @@ export const owsnTwitterSelector = (state: State) => ({
   price: state.owsn.twitterPrice,
   available: state.owsn.twitterAccountAvailable,
 })
+
+export const tokenIdsSelector = (state: State) => {
+  return state.owsn.tokenIds
+}

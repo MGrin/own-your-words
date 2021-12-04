@@ -1,19 +1,19 @@
 import type { Reducer } from 'react'
-import type { OwnedAccount } from '../../services/OWSNService'
 import type { OWSNAction, OWSNActionPayload } from '../actions/owsn/types'
 import { OWSNActionType } from '../actions/owsn/types'
 
 export type OWSNTwitterState = {
   twitterPrice: string
-  twitterAccountAvailable: boolean
+  twitterAccountAvailable?: boolean
   twitterLoading?: boolean
   twitterError?: Error
 }
 
 export type OWSNState = {
   tokenIds: number[]
-  ownedAccounts: {
-    [tokenId: number]: OwnedAccount
+
+  errors: {
+    [tokenId: number]: Error
   }
 
   loading?: boolean
@@ -22,13 +22,11 @@ export type OWSNState = {
 
 const twitterInitialState: OWSNTwitterState = {
   twitterPrice: '0.01',
-  twitterAccountAvailable: true,
 }
 
 const initialState: OWSNState = {
   tokenIds: [],
-  ownedAccounts: {},
-
+  errors: {},
   ...twitterInitialState,
 }
 
@@ -58,6 +56,33 @@ const reducer: Reducer<OWSNState, OWSNAction> = (
       return {
         ...state,
         twitterError: payload.error,
+      }
+    }
+
+    case OWSNActionType.getTokenIdsStart: {
+      return {
+        ...state,
+        loading: true,
+      }
+    }
+    case OWSNActionType.getTokenIdsSuccess: {
+      const payload =
+        action.payload as OWSNActionPayload[OWSNActionType.getTokenIdsSuccess]
+      return {
+        ...state,
+        loading: false,
+        error: undefined,
+        tokenIds: payload.tokenIds,
+      }
+    }
+    case OWSNActionType.getTokenIdsFailure: {
+      const payload =
+        action.payload as OWSNActionPayload[OWSNActionType.getTokenIdsFailure]
+      return {
+        ...state,
+        loading: false,
+        tokenIds: [],
+        error: payload.error,
       }
     }
 
@@ -141,6 +166,7 @@ const reducer: Reducer<OWSNState, OWSNAction> = (
         twitterError: payload.error,
       }
     }
+
     default: {
       return state
     }

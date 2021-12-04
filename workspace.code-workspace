@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "eth"
+    },
+    {
+      "path": "api"
+    },
+    {
+      "path": "web"
+    },
+    {
+      "path": ".github"
+    }
+  ],
+  "settings": {}
+}

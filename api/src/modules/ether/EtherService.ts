@@ -34,7 +34,7 @@ export class EtherService {
       this.provider,
     ).connect(this.account);
 
-    // @ts-expect-error
+    // @ts-expect-error yeah
     contract.safeCall = {};
     mayFailOverrides.forEach((method) => {
       contract.safeCall[method] = this.createSafeMethod(contract, method);

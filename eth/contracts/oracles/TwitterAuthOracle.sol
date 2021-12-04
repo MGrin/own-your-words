@@ -65,7 +65,7 @@ contract TwitterAuthOracle is Ownable {
   );
 
   constructor() Ownable() {
-    priceWEI = 0.01 * 1e18;
+    priceWEI = 0.05 * 1e18;
     pendingRequestsQueue.create(200);
   }
 

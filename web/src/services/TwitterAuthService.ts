@@ -2,7 +2,7 @@ import { API_URL } from '../constants'
 import { WebRoutes } from '../WebRoutes'
 import { Logger } from './Logger'
 
-const SUPPORTED_REDIRECT_PATHNAME = [WebRoutes.accounts]
+const SUPPORTED_REDIRECT_PATHNAME = [WebRoutes.accountMint]
 const REDIRECT_HASH_PREFIX = '#twitter-'
 
 export enum MODE {

@@ -12,6 +12,7 @@ import ethersService from './services/EthersService'
 import { WebRoutes } from './WebRoutes'
 import { changeLoading, connect } from './redux/actions/web3'
 import web3Selector from './redux/selectors/web3'
+import AccountMint from './pages/AccountMint'
 
 const App = () => {
   const { loading } = useSelector(web3Selector)
@@ -29,10 +30,15 @@ const App = () => {
   return (
     <Box p="6">
       <Header />
-      <Container>
+      <Container maxW="container.lg">
         {!loading && (
           <Switch>
             <Route path={WebRoutes.root} exact component={Landing} />
+            <ProtectedRoute
+              path={WebRoutes.accountMint}
+              exact
+              component={AccountMint}
+            />
             <ProtectedRoute
               path={WebRoutes.accounts}
               exact

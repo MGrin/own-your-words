@@ -14,6 +14,10 @@ export enum OWSNActionType {
   mintTwitterStart = 'OWSN/mint/twitter/START',
   mintTwitterSuccess = 'OWSN/mint/twitter/SUCCESS',
   mintTwitterFailure = 'OWSN/mint/twitter/FAILURE',
+
+  getOWSNByTokenStart = 'OWSN/getByToken/START',
+  getOWSNByTokenSuccess = 'OWSN/getByToken/SUCCESS',
+  getOWSNByTokenFailure = 'OWSN/getByToken/FAILURE',
 }
 
 export type OWSNActionPayload = {
@@ -32,7 +36,7 @@ export type OWSNActionPayload = {
 
   [OWSNActionType.getTokenIdsStart]: void
   [OWSNActionType.getTokenIdsSuccess]: {
-    tokenIds: string[]
+    tokenIds: number[]
   }
   [OWSNActionType.getTokenIdsFailure]: {
     error: Error
@@ -94,4 +98,16 @@ export type OWSNAction =
   | {
       type: OWSNActionType.mintTwitterFailure
       payload: OWSNActionPayload[OWSNActionType.mintTwitterFailure]
+    }
+  | {
+      type: OWSNActionType.getTokenIdsStart
+      payload: OWSNActionPayload[OWSNActionType.getTokenIdsStart]
+    }
+  | {
+      type: OWSNActionType.getTokenIdsSuccess
+      payload: OWSNActionPayload[OWSNActionType.getTokenIdsSuccess]
+    }
+  | {
+      type: OWSNActionType.getTokenIdsFailure
+      payload: OWSNActionPayload[OWSNActionType.getTokenIdsFailure]
     }
