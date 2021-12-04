@@ -1,6 +1,6 @@
 FROM node:16.10.0-buster-slim
 
-RUN apt update && apt install curl bzip2 build-essential g++ python git make gcc node-gyp pkg-config xserver-xorg-dev libxext-dev pkg-config libxi-dev libglu1-mesa-dev libglew-dev -y
+RUN apt update && apt install make gcc g++ python pkg-config -y
 WORKDIR /usr/src/app
 
 COPY package.json ./
