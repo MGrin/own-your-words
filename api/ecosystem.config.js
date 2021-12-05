@@ -10,7 +10,7 @@ module.exports = {
       user: 'admin',
       key: process.env.PATH_TO_SSH_KEY || '~/.ssh/ya_oww',
       ssh_options: 'StrictHostKeyChecking=no',
-      host: 'rinkeby.oww-api.famio.app',
+      host: '51.250.16.128',
       ref: 'origin/main',
       repo: 'https://github.com/MGrin/own-your-words.git',
       path: '/home/admin/oww-api',
