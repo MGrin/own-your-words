@@ -14,8 +14,8 @@ module.exports = {
       ref: 'origin/main',
       repo: 'https://github.com/MGrin/own-your-words.git',
       path: '/home/admin/oww-api',
-      'post-deploy': `PATH=/home/admin/.nvm/versions/node/v16.10.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/admin/.yarn/bin && \
-        souce ~/.bashrc && cd api && yarn && yarn build && \
+      'post-deploy': `export PATH=/home/admin/.nvm/versions/node/v16.10.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/admin/.yarn/bin && \
+        cd api && yarn && yarn build && \
         pm2 startOrRestart ecosystem.config.js development`,
       env: {
         PORT: 4000,
