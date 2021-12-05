@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/ya_oww
-          sudo chmod 600 ./deploy.key
+          sudo chmod 600 ~/.ssh/ya_oww
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.YA_SSH_PRIVATE_KEY}}
