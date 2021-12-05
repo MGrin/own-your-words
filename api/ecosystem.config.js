@@ -8,7 +8,7 @@ module.exports = {
   deploy: {
     development: {
       user: 'admin',
-      key: process.env.PATH_TO_SSH_KEY || '~/.ssh/ya_oww',
+      key: '~/.ssh/ya_oww',
       ssh_options: 'StrictHostKeyChecking=no',
       host: '51.250.16.128',
       ref: 'origin/main',
