@@ -16,7 +16,7 @@ module.exports = {
       path: '/home/admin/oww-api',
       'post-deploy': `export PATH=/home/admin/.nvm/versions/node/v16.10.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/admin/.yarn/bin && \
         cd api && yarn && yarn build && \
-        pm2 startOrRestart ecosystem.config.js development`,
+        pm2 startOrRestart ecosystem.config.js --env development`,
       env: {
         PORT: 4000,
         NETWORK: 'rinkeby',
