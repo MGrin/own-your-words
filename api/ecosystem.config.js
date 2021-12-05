@@ -15,8 +15,9 @@ module.exports = {
       repo: 'https://github.com/MGrin/own-your-words.git',
       path: '/home/admin/oww-api',
       'post-deploy':
-        'cd api && npm install && npm run build && pm2 reload ecosystem.config.js --env development && pm2 save',
+        'souce ~/.bashrc && cd api && yarn && yarn build && pm2 reload ecosystem.config.js --env development && pm2 save',
       env: {
+        PORT: 4000,
         NETWORK: 'rinkeby',
         TAO_CONTRACT: '0x9b26DeB2a220755A6E1264b9c14E02C393a37735',
         OWSN_CONTRACT: '0xE3f4b3a5F2b26E029D742f1Ef6D7a2Dcdbd0Db62',
