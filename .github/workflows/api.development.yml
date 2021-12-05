@@ -45,6 +45,6 @@ jobs:
           prefix_prod: DEVELOPMENT_
           file_name_prod: .env
       - name: Install PM2
-        run: cd api && yarn add pm2
+        run: cd api && yarn global add pm2
       - name: Deploy
         run: env $(cat .env | grep -v \"#\" | xargs) pm2 deploy api/ecosystem.config.js development
