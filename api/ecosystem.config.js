@@ -2,8 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'oww-api',
-      script: 'yarn',
-      arg: 'start:prod',
+      script: 'yarn start:prod',
     },
   ],
   deploy: {
