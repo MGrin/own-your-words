@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'oww-api',
-      script: 'dist/main.js',
+      script: 'node dist/main.js',
     },
   ],
   deploy: {
