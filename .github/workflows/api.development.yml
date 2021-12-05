@@ -27,7 +27,7 @@ jobs:
       - name: Lint
         run: cd api && yarn lint
       - name: Building application
-        run: yarn build
+        run: cd api && yarn build
         env:
           NODE_ENV: development
       - name: Set up SSH
@@ -45,6 +45,6 @@ jobs:
           prefix_prod: DEVELOPMENT_
           file_name_prod: .env
       - name: Install PM2
-        run: yarn pm2
+        run: cd api && yarn pm2
       - name: Deploy
-        run: env $(cat .env | grep -v \"#\" | xargs) pm2 deploy ecosystem.config.js development
+        run: env $(cat .env | grep -v \"#\" | xargs) pm2 deploy api/ecosystem.config.js development
