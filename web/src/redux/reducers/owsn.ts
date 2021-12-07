@@ -63,6 +63,8 @@ const reducer: Reducer<OWSNState, OWSNAction> = (
       return {
         ...state,
         loading: true,
+        error: undefined,
+        tokenIds: [],
       }
     }
     case OWSNActionType.getTokenIdsSuccess: {
