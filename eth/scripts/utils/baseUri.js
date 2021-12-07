@@ -4,7 +4,7 @@ const getBaseUri = (network) => {
       return "http://localhost:4001/";
     }
     case "rinkeby": {
-      return "https://bbadsh7q3pqrt2iainf0.containers.yandexcloud.net/";
+      return "https://rinkeby.oww-api.famio.app/";
     }
     default: {
       throw new Error(`BaseURI is not yet defined for ${network}!`);
