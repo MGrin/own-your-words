@@ -92,6 +92,11 @@ contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   }
 
   function getVersion() external pure returns (string memory) {
-    return "1.0.1";
+    return "1.0.2";
   }
+
+  function _baseURI() internal pure override returns (string memory) {
+    return "https://rinkeby.oww-api.famio.app/OWSN/";
+  }
+
 }
