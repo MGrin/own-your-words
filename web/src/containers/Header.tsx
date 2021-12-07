@@ -89,7 +89,7 @@ const Header = () => {
       <Spacer />
       {!isMobile && (
         <HStack>
-          {ENV !== 'production' && <Text>{network?.chainId}</Text>}
+          {ENV !== 'production' && <Text>{network?.name}</Text>}
           <ThemeSwitcher />
           <ConnectWeb3Button />
         </HStack>

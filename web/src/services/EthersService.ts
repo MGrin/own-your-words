@@ -7,7 +7,7 @@ import TM from '../abi/TwitterMinter.json'
 
 import { TMService } from './TMService'
 import store from '../redux/store'
-import { changeAvailability } from '../redux/actions/web3'
+import { changeAvailability, connect } from '../redux/actions/web3'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -76,6 +76,11 @@ class EthersService {
       window.ethereum || 'http://localhost:8545',
       'any'
     )
+
+    // @ts-expect-error
+    window.ethereum.on('networkChanged', () => {
+      store.dispatch(connect())
+    })
   }
 
   public async connect() {

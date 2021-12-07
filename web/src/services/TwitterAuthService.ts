@@ -1,4 +1,4 @@
-import { API_URL } from '../constants'
+import { getApiUrl } from '../utils'
 import { WebRoutes } from '../WebRoutes'
 import { Logger } from './Logger'
 
@@ -63,7 +63,7 @@ class TwitterAuth {
   public async getAuthUrl(callbackUrl: string): Promise<string> {
     this.logger.log(`Get auth url [callbackUrl=${callbackUrl}]`)
 
-    const res = await fetch(`${API_URL}/twitter/authUrl`, {
+    const res = await fetch(`${getApiUrl()}/twitter/authUrl`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ class TwitterAuth {
       throw new Error('No oauthToken is provided!')
     }
 
-    const res = await fetch(`${API_URL}/twitter/accessToken`, {
+    const res = await fetch(`${getApiUrl()}/twitter/accessToken`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

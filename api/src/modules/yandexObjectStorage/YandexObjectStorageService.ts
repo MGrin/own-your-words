@@ -28,13 +28,16 @@ export class YandexObjectStorageService {
 
   public async get(bucket: Bucket, key: string): Promise<string | undefined> {
     const params = {
-      Bucket: bucket,
+      Bucket: this.getBucketName(bucket),
       Key: key,
     };
 
     const result: any = await new Promise((resolve, reject) => {
       this.aws.headObject(params, (err) => {
-        if (err) return reject(err);
+        if (err) {
+          console.log(err);
+          return resolve(undefined);
+        }
 
         return resolve(
           `https://${bucket}-${this.network}.storage.yandexcloud.net/${key}`,
@@ -51,7 +54,7 @@ export class YandexObjectStorageService {
     content: Buffer,
   ): Promise<string> {
     const params = {
-      Bucket: `${bucket}-${this.network}`,
+      Bucket: this.getBucketName(bucket),
       Key: key,
       Body: content,
       ContentType: 'text/plain',
@@ -65,5 +68,9 @@ export class YandexObjectStorageService {
     });
 
     return result.Location;
+  }
+
+  private getBucketName(bucket: Bucket) {
+    return `${bucket}-${this.network}`;
   }
 }

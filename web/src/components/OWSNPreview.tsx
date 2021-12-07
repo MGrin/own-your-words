@@ -1,6 +1,6 @@
 import { Box, Text, Skeleton, Image } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import { API_URL } from '../constants'
+import { getApiUrl } from '../utils'
 
 export type OWSNMetadata = {
   name: string
@@ -19,7 +19,7 @@ const OWSNPreview = ({ tokenId }: OWSNPreviewProps) => {
   const [metadata, setMetadata] = useState<OWSNMetadata>()
 
   useEffect(() => {
-    fetch(`${API_URL}/OWSN/${tokenId}`)
+    fetch(`${getApiUrl()}/OWSN/${tokenId}`)
       .then((res) => res.json())
       .then((data) => setMetadata(data))
       .catch((err) => setError(err))
