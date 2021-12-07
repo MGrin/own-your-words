@@ -11,6 +11,7 @@ export class EtherService {
 
   constructor(private readonly configs: ConfigService) {
     const rpcProviderUrl = this.configs.get<string>('RPC_PROVIDER_URL');
+    this.logger.log(rpcProviderUrl);
     const deployerPrivateKey = this.configs.get<string>('DEPLOYER_PRIVATE_KEY');
 
     this.provider = new ethers.providers.JsonRpcBatchProvider(rpcProviderUrl);
