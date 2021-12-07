@@ -2,7 +2,11 @@ module.exports = {
   apps: [
     {
       name: 'oww-api',
-      script: 'dist/main',
+      script: 'yarn',
+      args: 'start:prod',
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '500mb',
     },
   ],
   deploy: {
