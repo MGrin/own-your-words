@@ -6,7 +6,6 @@ module.exports = {
       args: 'start:prod',
       autorestart: true,
       watch: false,
-      max_memory_restart: '500mb',
     },
   ],
   deploy: {
