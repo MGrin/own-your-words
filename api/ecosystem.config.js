@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'oww-api',
-      script: 'dist/main.js',
+      script: 'dist/main',
     },
   ],
   deploy: {
@@ -14,11 +14,10 @@ module.exports = {
       ref: 'origin/main',
       repo: 'https://github.com/MGrin/own-your-words.git',
       path: '/home/admin/oww-api',
-      'post-deploy': `source ~/.bashrc && \
+      'post-deploy': `export PATH=/home/admin/.nvm/versions/node/v16.10.0/bin:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/admin/.yarn/bin && \
         cd api && yarn && yarn build && \
         pm2 startOrRestart ecosystem.config.js --env development`,
       env: {
-        NODE_ENV: 'development',
         PORT: 4000,
         NETWORK: 'rinkeby',
         TAO_CONTRACT: '0x9b26DeB2a220755A6E1264b9c14E02C393a37735',
