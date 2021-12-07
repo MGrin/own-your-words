@@ -64,7 +64,7 @@ export class TwitterAuthOracleService {
 
     const requestsProcessing = requestsIds.map(async (requestId) => {
       try {
-        this.processRequest(requestId);
+        await this.processRequest(requestId);
       } catch (err) {
         this.logger.error(err);
       }
