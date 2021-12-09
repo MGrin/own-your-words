@@ -6,12 +6,17 @@ import * as crypto from 'crypto';
 export class EtherService {
   private readonly logger: Logger = new Logger('EtherService');
 
+  private network: string;
   private provider: ethers.providers.BaseProvider;
   private account: ethers.Wallet;
   private encryptionKey: Buffer;
 
   constructor(private readonly configs: ConfigService) {
+    this.network = this.configs.get<string>('NETWORK');
+
     const rpcProviderUrl = this.configs.get<string>('RPC_PROVIDER_URL');
+    const alchemyAPIKey = this.configs.get<string>('ALCHEMY_API_KEY');
+
     const deployerPrivateKey = this.configs.get<string>('DEPLOYER_PRIVATE_KEY');
     this.encryptionKey = Buffer.from(
       crypto
@@ -21,18 +26,25 @@ export class EtherService {
         .substr(0, 32),
     );
 
-    this.provider = new ethers.providers.JsonRpcBatchProvider(rpcProviderUrl);
+    if (this.network === 'localhost') {
+      this.provider = new ethers.providers.JsonRpcProvider(rpcProviderUrl);
+    } else {
+      this.provider = ethers.providers.AlchemyProvider.getWebSocketProvider(
+        this.network,
+        alchemyAPIKey,
+      );
+    }
+
     this.account = new ethers.Wallet(`0x${deployerPrivateKey}`, this.provider);
   }
 
   public getContractDetails(symbol: string) {
-    const network = this.configs.get<string>('NETWORK');
     const address = this.configs.get<string>(
-      `${symbol.toUpperCase()}_CONTRACT_${network.toUpperCase()}`,
+      `${symbol.toUpperCase()}_CONTRACT_${this.network.toUpperCase()}`,
     );
 
     // eslint-disable-next-line
-    const abi = require(`../../abi/${network}/${symbol}.json`);
+    const abi = require(`../../abi/${this.network}/${symbol}.json`);
     return { address, abi };
   }
 

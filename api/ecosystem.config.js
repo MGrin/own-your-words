@@ -34,6 +34,7 @@ module.exports = {
         TAO_CONTRACT_HOMESTEAD: '',
         TAO_REQUESTS_PULL_TIMEOUT_SECONDS: 10,
         RPC_PROVIDER_URL: process.env.RPC_PROVIDER_URL,
+        ALCHEMY_API_KEY: process.env.ALCHEMY_API_KEY,
         AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
         AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
         DEPLOYER_PRIVATE_KEY: process.env.DEPLOYER_PRIVATE_KEY,
