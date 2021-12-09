@@ -142,6 +142,10 @@ class TwitterAuth {
       oauthVerifier: body.encrypted.oauthVerifier.toString(),
     }
   }
+
+  public setMode(mode?: MODE) {
+    this.mode = mode || null
+  }
 }
 
 const twitterAuthService = new TwitterAuth()

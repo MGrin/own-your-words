@@ -11,8 +11,6 @@ export enum TMEvents {
 }
 
 export class TMService {
-  public static PENDING_REQUESTS_STORAGE_KEY: string = 'TM_pendingRequests'
-
   private readonly logger = new Logger('TMService')
 
   private contract: ethers.Contract
@@ -25,13 +23,6 @@ export class TMService {
     this.logger.log('Constructor')
     this.contract = _contract
     this.user = _address
-
-    const pendingRequests = localStorage.getItem(
-      TMService.PENDING_REQUESTS_STORAGE_KEY
-    )
-    if (pendingRequests) {
-      this.pendingRequests = JSON.parse(pendingRequests)
-    }
 
     this.contract.on(TMEvents.authRequestSubmited, (sender, requestId) => {
       this.onRequestSubmitted(sender, requestId)
@@ -108,18 +99,10 @@ export class TMService {
 
   private addPendingRequest(requestId: number) {
     this.pendingRequests.push(requestId)
-    localStorage.setItem(
-      TMService.PENDING_REQUESTS_STORAGE_KEY,
-      JSON.stringify(this.pendingRequests)
-    )
   }
 
   private removePendingRequest(requestId: number) {
     this.pendingRequests = this.pendingRequests.filter((id) => id !== requestId)
-    localStorage.setItem(
-      TMService.PENDING_REQUESTS_STORAGE_KEY,
-      JSON.stringify(this.pendingRequests)
-    )
   }
 
   public async getPrice() {

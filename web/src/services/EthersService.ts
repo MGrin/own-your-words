@@ -5,6 +5,7 @@ import { TMService } from './TMService'
 import store from '../redux/store'
 import { changeAvailability, connect } from '../redux/actions/web3'
 import { getApiUrl } from '../utils'
+import twitterAuthService from './TwitterAuthService'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -64,6 +65,13 @@ class EthersService {
 
     // @ts-expect-error
     window.ethereum.on('networkChanged', () => {
+      twitterAuthService.setMode()
+      store.dispatch(connect())
+    })
+
+    // @ts-expect-error
+    window.ethereum.on('accountsChanged', () => {
+      twitterAuthService.setMode()
       store.dispatch(connect())
     })
   }
