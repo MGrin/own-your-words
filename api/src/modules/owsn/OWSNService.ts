@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ethers } from 'ethers';
 import { createCanvas, NodeCanvasRenderingContext2D, loadImage } from 'canvas';
-import { abi } from '../../abi/OwnYourSocialNetwork.json';
 import { EtherService } from '../ether/EtherService';
 import { SocialNetwork } from './SocialNetwork';
 
@@ -63,7 +62,7 @@ export class OWSNService {
   private owsn: ethers.Contract;
 
   constructor(private readonly etherService: EtherService) {
-    this.owsn = this.etherService.loadContract('OWSN', abi);
+    this.owsn = this.etherService.loadContract('OWSN');
   }
 
   public async getOwnedAccountByToken(token: number): Promise<OwnedAccount> {

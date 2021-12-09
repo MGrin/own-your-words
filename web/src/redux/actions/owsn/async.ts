@@ -13,6 +13,7 @@ import {
 } from '.'
 import ethersService from '../../../services/EthersService'
 import { Logger } from '../../../services/Logger'
+import twitterAuthService from '../../../services/TwitterAuthService'
 import type { ThunkAC } from '../../utils'
 import type { OWSNActionPayload, OWSNActionType } from './types'
 
@@ -100,7 +101,19 @@ export const mintTwitter: ThunkAC<
       }
 
       const price = await tm.getPrice()
-      await owsn.mintTwitterOWSN(oauthToken, oauthVerifier, price)
+      const {
+        oauthToken: oauthTokenEncrypted,
+        oauthVerifier: oauthVerifierEncrypted,
+      } = await twitterAuthService.encryptOAuthTokenAndVerifier(
+        oauthToken,
+        oauthVerifier
+      )
+
+      await owsn.mintTwitterOWSN(
+        oauthTokenEncrypted,
+        oauthVerifierEncrypted,
+        price
+      )
     } catch (error) {
       logger.error(error as Error)
       dispatch(mintTwitterFailure({ error: error as Error }))

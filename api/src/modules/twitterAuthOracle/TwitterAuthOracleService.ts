@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ethers } from 'ethers';
 import { EtherService } from '../ether/EtherService';
 import { TwitterService } from '../twitter/TwitterService';
-import { abi } from '../../abi/TwitterAuthOracle.json';
 import { SolidityEvents } from './SolidityEvents';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
@@ -16,7 +15,7 @@ export class TwitterAuthOracleService {
     private readonly twitterService: TwitterService,
     private readonly etherService: EtherService,
   ) {
-    this.tao = this.etherService.loadContract('TAO', abi, [
+    this.tao = this.etherService.loadContract('TAO', [
       'startProcessing',
       'succeeded',
       'failed',
@@ -38,7 +37,6 @@ export class TwitterAuthOracleService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   public async pullPendingRequests() {
-    this.logger.log(`Pull pending requests`);
     const pendingRequestsCount =
       await this.tao.callStatic.getPendingRequestsIdsFromQueue();
 
@@ -78,10 +76,13 @@ export class TwitterAuthOracleService {
     try {
       startTx = await this.tao.safeCall.startProcessing(requestId);
       const request = await this.tao.getRequestById(requestId);
+      const oauthToken = this.etherService.decrypt(request.oauthToken);
+      const oauthVerifier = this.etherService.decrypt(request.oauthVerifier);
 
+      console.log(request.oauthToken, oauthToken);
       const accessToken = await this.twitterService.getAccessToken(
-        request.oauthToken,
-        request.oauthVerifier,
+        oauthToken,
+        oauthVerifier,
       );
 
       await startTx.wait();

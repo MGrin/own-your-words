@@ -59,14 +59,21 @@ export class TMService {
     )
 
     this.addPendingRequest(requestId.toNumber())
+    setTimeout(() => {
+      if (!this.pendingRequests.includes(Number(requestId.toNumber()))) {
+        return
+      }
+
+      this.onRequestSucceeded(requestId)
+    }, 30000)
   }
 
   private async onRequestSucceeded(
     requestId: ethers.BigNumberish,
-    tokenId: ethers.BigNumberish
+    tokenId?: ethers.BigNumberish
   ) {
     const reqId = ethers.utils.formatEther(requestId)
-    const tokId = ethers.utils.formatEther(tokenId)
+    const tokId = tokenId ? ethers.utils.formatEther(tokenId) : undefined
 
     if (!this.pendingRequests.includes(Number(reqId))) {
       return
@@ -76,7 +83,10 @@ export class TMService {
       `On ${TMEvents.authRequestSucceeded} event handler [tokenId=${tokId}][requestId=${reqId}]`
     )
 
-    store.dispatch(mintTwitterSuccess({ tokenId: tokId }))
+    if (tokId) {
+      store.dispatch(mintTwitterSuccess({ tokenId: tokId }))
+    }
+
     window.location.href = `${window.location.origin}${WebRoutes.accounts}`
     this.removePendingRequest(Number(reqId))
   }

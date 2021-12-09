@@ -112,6 +112,36 @@ class TwitterAuth {
     const body = (await res.json()) as TwitterOAuthAccessTokenResponse
     return body
   }
+
+  public async encryptOAuthTokenAndVerifier(
+    oauthToken: string,
+    oauthVerifier: string
+  ) {
+    const res = await fetch(`${getApiUrl()}/utils/encrypt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ oauthToken, oauthVerifier }),
+    })
+
+    if (res.status !== 200 && res.status !== 201) {
+      throw new Error(await res.text())
+    }
+
+    const body = (await res.json()) as {
+      encrypted: {
+        oauthToken: Buffer
+        oauthVerifier: Buffer
+      }
+    }
+
+    return {
+      oauthToken: body.encrypted.oauthToken.toString(),
+      oauthVerifier: body.encrypted.oauthVerifier.toString(),
+    }
+  }
 }
 
 const twitterAuthService = new TwitterAuth()

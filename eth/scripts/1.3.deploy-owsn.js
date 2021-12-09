@@ -1,7 +1,7 @@
 const { ethers, upgrades, network } = require("hardhat");
 const { writeLock, verifyNoLock, getLock } = require("./utils/locks");
-const { populateAbiToWeb, populateAbiToApi } = require("./utils/abi");
-const { replaceAddressInWeb, replaceAddressInApi } = require("./utils/env");
+const { populateAbiToApi } = require("./utils/abi");
+const { replaceAddressInApi } = require("./utils/env");
 const { getBaseUri } = require("./utils/baseUri");
 
 async function main() {
@@ -25,11 +25,8 @@ async function main() {
   writeLock(network.name, NAME, owsn.address);
   console.log(`${NAME} deployed to:`, owsn.address);
 
-  populateAbiToWeb(NAME);
-  populateAbiToWeb("TwitterMinter", "minters/");
-  populateAbiToApi(NAME);
-  replaceAddressInWeb(network.name, SYMBOL, owsn.address);
-  replaceAddressInApi(network.name, SYMBOL, owsn.address);
+  populateAbiToApi(NAME, SYMBOL, undefined, network.name);
+  replaceAddressInApi(SYMBOL, owsn.address, network.name);
 }
 
 main()

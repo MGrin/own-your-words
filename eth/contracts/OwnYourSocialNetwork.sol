@@ -23,7 +23,6 @@ contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   mapping(string => uint256) private _owned_accounts_by_gen_id;
   mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
   TwitterMinter public twitterMinter;
-  /////////////////////////////////////////////////////////////////////////////////////
 
   function __OwnYourSocialNetwork__init(string memory name, string memory symbol, string memory baseURI) initializer public  {
     __ERC721Custom_init(name, symbol, string(abi.encodePacked(baseURI, symbol)));
@@ -92,7 +91,7 @@ contract OwnYourSocialNetwork is ERC721Custom, IOwnYourSocialNetwork {
   }
 
   function getVersion() external pure returns (string memory) {
-    return "1.0.2";
+    return "1.0.1";
   }
 
   function _baseURI() internal pure override returns (string memory) {

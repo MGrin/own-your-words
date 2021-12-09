@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
@@ -15,8 +14,7 @@ contract ERC721Custom is
   Initializable,
   ContextUpgradeable,
   AccessControlEnumerableUpgradeable,
-  ERC721EnumerableUpgradeable,
-  ERC721BurnableUpgradeable
+  ERC721EnumerableUpgradeable
 {
   using CountersUpgradeable for CountersUpgradeable.Counter;
 
@@ -25,7 +23,7 @@ contract ERC721Custom is
 
   CountersUpgradeable.Counter internal _tokenIdTracker;
 
-  string private baseURI;
+  string internal baseURI;
 
   function initialize(string memory name, string memory symbol, string memory _baseURI)
     public
@@ -46,7 +44,6 @@ contract ERC721Custom is
     __AccessControlEnumerable_init_unchained();
     __ERC721_init_unchained(name, symbol);
     __ERC721Enumerable_init_unchained();
-    __ERC721Burnable_init_unchained();
     __ERC721Custom_init_unchained();
     baseURI = _baseURI;
 
@@ -90,7 +87,7 @@ contract ERC721Custom is
     address from,
     address to,
     uint256 tokenId
-  ) internal virtual override(ERC721Upgradeable, ERC721EnumerableUpgradeable) {
+  ) internal virtual override (ERC721EnumerableUpgradeable) {
     super._beforeTokenTransfer(from, to, tokenId);
   }
 
@@ -98,9 +95,8 @@ contract ERC721Custom is
     public
     view
     virtual
-    override(
+    override (
       AccessControlEnumerableUpgradeable,
-      ERC721Upgradeable,
       ERC721EnumerableUpgradeable
     )
     returns (bool)
@@ -112,6 +108,15 @@ contract ERC721Custom is
     require(hasRole(PAUSER_ROLE, _msgSender()), "ERC721Custom: must have pauser role");
     payable(_msgSender()).transfer(address(this).balance);
   }
+
+  function setBaseURI(string memory newBaseURI) public {
+    require(
+      hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+      "OwnYourSocialNetwork: must have minter role to setBaseURI"
+    );
+    baseURI = newBaseURI;
+  }
+  
 
   uint256[48] private __gap;
 }

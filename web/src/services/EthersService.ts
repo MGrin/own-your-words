@@ -1,13 +1,10 @@
 import { ethers } from 'ethers'
-import { OWSN_CONTRACT_LOCALHOST, OWSN_CONTRACT_RINKEBY } from '../constants'
 import { Logger } from './Logger'
 import { OWSNService } from './OWSNService'
-import OWSN from '../abi/OwnYourSocialNetwork.json'
-import TM from '../abi/TwitterMinter.json'
-
 import { TMService } from './TMService'
 import store from '../redux/store'
 import { changeAvailability, connect } from '../redux/actions/web3'
+import { getApiUrl } from '../utils'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -24,18 +21,6 @@ export const getSweetAddress = (address: string) =>
     address.length - 4,
     address.length
   )}`
-
-export const getOWSNContractAddress = (network: SupportedNetworks) => {
-  console.log(network)
-  switch (network) {
-    case SupportedNetworks.localhost:
-      return OWSN_CONTRACT_LOCALHOST
-    case SupportedNetworks.rinkeby:
-      return OWSN_CONTRACT_RINKEBY
-    default:
-      throw new Error('UNKNOWN NETWORK')
-  }
-}
 
 class EthersService {
   private readonly logger = new Logger('EthersService')
@@ -117,31 +102,15 @@ class EthersService {
     }
 
     this.connected = true
+    const contractsLoaders = [
+      this.loadContract(AvailableContracts.owsn, ['mintTwitter']),
+      this.loadContract(AvailableContracts.tm),
+    ]
 
-    let owsn
-    let tm
-
-    this.contractServices = {}
-
-    try {
-      owsn = new OWSNService(
-        await this.loadContract(AvailableContracts.owsn, OWSN.abi, [
-          'mintTwitter',
-        ])
-      )
-
-      this.contractServices[AvailableContracts.owsn] = owsn
-
-      tm = new TMService(
-        await this.loadContract(AvailableContracts.tm, TM.abi),
-        this.address
-      )
-
-      this.contractServices[AvailableContracts.tm] = tm
-
-      localStorage.setItem('autoconnect', 'true')
-    } catch (err) {
-      this.logger.error(err as Error)
+    const contracts = await Promise.all(contractsLoaders)
+    this.contractServices = {
+      [AvailableContracts.owsn]: new OWSNService(contracts[0]),
+      [AvailableContracts.tm]: new TMService(contracts[1], this.address),
     }
   }
 
@@ -159,7 +128,6 @@ class EthersService {
 
   private async loadContract(
     symbol: AvailableContracts,
-    abi: any,
     mayFailOverrides: string[] = []
   ) {
     this.logger.log(
@@ -172,33 +140,16 @@ class EthersService {
       throw new Error('Signer is not connected yet')
     }
 
-    let address: string
-    switch (symbol) {
-      case AvailableContracts.owsn: {
-        address = getOWSNContractAddress(this.network.name as SupportedNetworks)
-
-        break
-      }
-      case AvailableContracts.tm: {
-        if (
-          !this.contractServices ||
-          !this.contractServices[AvailableContracts.owsn]
-        ) {
-          throw new Error('OWSN Contract was not yet loaded.')
-        }
-
-        address =
-          (await this.contractServices[
-            AvailableContracts.owsn
-          ]!.getTMAddress()) || ''
-
-        break
-      }
-    }
-
-    const contract = new ethers.Contract(address, abi, this.provider).connect(
-      this.account
+    const contractDetailsResponse = await fetch(
+      `${getApiUrl()}/contracts/${symbol}`
     )
+    const { address, abi } = await contractDetailsResponse.json()
+
+    const contract = new ethers.Contract(
+      address,
+      abi.abi,
+      this.provider
+    ).connect(this.account)
 
     // @ts-expect-error
     contract.safeCall = {}

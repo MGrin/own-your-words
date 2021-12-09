@@ -25,6 +25,7 @@ export class OWSNService {
 
   public async mintTwitterOWSN(token: string, verifier: string, price: string) {
     this.logger.log('Mint twitter OWSN')
+
     await this.contract.safeCall.mintTwitter(token, verifier, {
       value: ethers.utils.parseEther(price),
     })

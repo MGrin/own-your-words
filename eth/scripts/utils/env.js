@@ -1,48 +1,47 @@
 const fs = require("fs");
-const WEB_PATH = "../web";
 const API_PATH = "../api";
 
-const replaceAddressInWeb = (network, symbol, address) => {
-  if (!fs.existsSync(WEB_PATH)) {
-    throw new Error(`Web project is not found at ${WEB_PATH}`);
-  }
-
-  const envFilePath = `${WEB_PATH}/.env`;
-
-  const existingEnvContent = fs.readFileSync(envFilePath).toString("utf-8");
-  const reToReplace = new RegExp(
-    `REACT_APP_${symbol}_CONTRACT_${network.toUpperCase()}=.*`
-  );
-  const valueToInsert = `REACT_APP_${symbol}_CONTRACT_${network.toUpperCase()}=${address}`;
-  const replacedEnvContent = existingEnvContent.replace(
-    reToReplace,
-    valueToInsert
-  );
-
-  fs.unlinkSync(envFilePath);
-  fs.writeFileSync(envFilePath, replacedEnvContent);
-};
-
-const replaceAddressInApi = (network, symbol, address) => {
+const replaceAddressInApi = (symbol, address, network) => {
   if (!fs.existsSync(API_PATH)) {
     throw new Error(`API project is not found at ${API_PATH}`);
   }
 
   const envFilePath = `${API_PATH}/.env`;
+  const ecosystemFilePath = `${API_PATH}/ecosystem.config.js`;
 
   const existingEnvContent = fs.readFileSync(envFilePath).toString("utf-8");
-  const reToReplace = new RegExp(`${symbol}_CONTRACT=.*`);
-  const valueToInsert = `${symbol}_CONTRACT=${address}`;
+  const existingEcosystemContent = fs
+    .readFileSync(ecosystemFilePath)
+    .toString("utf-8");
+
+  const reToReplaceInEnv = new RegExp(
+    `${symbol}_CONTRACT_${network.toUpperCase()}=.*`
+  );
+
+  const reToReplaceInEcosystem = new RegExp(
+    `${symbol}_CONTRACT_${network.toUpperCase()}: .*`
+  );
+
+  const valueToInsertInEnv = `${symbol}_CONTRACT_${network.toUpperCase()}=${address}`;
+  const valueToInsertInEcosystem = `${symbol}_CONTRACT_${network.toUpperCase()}: '${address}',`;
+
   const replacedEnvContent = existingEnvContent.replace(
-    reToReplace,
-    valueToInsert
+    reToReplaceInEnv,
+    valueToInsertInEnv
+  );
+
+  const replacedEcosystemContent = existingEcosystemContent.replace(
+    reToReplaceInEcosystem,
+    valueToInsertInEcosystem
   );
 
   fs.unlinkSync(envFilePath);
   fs.writeFileSync(envFilePath, replacedEnvContent);
+
+  fs.unlinkSync(ecosystemFilePath);
+  fs.writeFileSync(ecosystemFilePath, replacedEcosystemContent);
 };
 
 module.exports = {
-  replaceAddressInWeb,
   replaceAddressInApi,
 };
