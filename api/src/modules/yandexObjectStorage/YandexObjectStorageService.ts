@@ -32,7 +32,7 @@ export class YandexObjectStorageService {
       Key: key,
     };
 
-    const result: any = await new Promise((resolve, reject) => {
+    const result: any = await new Promise((resolve) => {
       this.aws.headObject(params, (err) => {
         if (err) {
           return resolve(undefined);

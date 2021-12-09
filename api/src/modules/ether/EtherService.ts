@@ -31,6 +31,7 @@ export class EtherService {
       `${symbol.toUpperCase()}_CONTRACT_${network.toUpperCase()}`,
     );
 
+    // eslint-disable-next-line
     const abi = require(`../../abi/${network}/${symbol}.json`);
     return { address, abi };
   }
@@ -62,7 +63,7 @@ export class EtherService {
   }
 
   public encrypt(message: string) {
-    let iv = crypto.randomBytes(16);
+    const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipheriv('aes-256-cbc', this.encryptionKey, iv);
     let crypted = cipher.update(message);
     crypted = Buffer.concat([crypted, cipher.final()]);
@@ -70,9 +71,9 @@ export class EtherService {
   }
 
   public decrypt(message: string) {
-    let textParts = message.split(':');
-    let iv = Buffer.from(textParts.shift(), 'hex');
-    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    const textParts = message.split(':');
+    const iv = Buffer.from(textParts.shift(), 'hex');
+    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
     const decipher = crypto.createDecipheriv(
       'aes-256-cbc',
       this.encryptionKey,
