@@ -36,8 +36,10 @@ export const checkAccountAvailability: ThunkAC<
         return
       }
 
-      await owsn.getOwnedAccountByGenSnId(owsn.getGenId(snName, snId))
-      dispatch(checkAccountAvailabilitySuccess({ snName, available: false }))
+      const available = await owsn.isAccountAvailable(
+        owsn.getGenId(snName, snId)
+      )
+      dispatch(checkAccountAvailabilitySuccess({ snName, available }))
     } catch (error) {
       logger.error(error as Error)
       dispatch(checkAccountAvailabilitySuccess({ snName, available: true }))

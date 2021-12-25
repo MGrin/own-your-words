@@ -11,14 +11,21 @@ import type { ThunkAction } from './utils'
 import type { OWSNAction } from './actions/owsn/types'
 import type { OWSNState } from './reducers/owsn'
 import twitterRedirectCatcher from './middlewares/twitterRedirectCatcher'
+import { OWWState } from './reducers/oww'
+import { OWWAction } from './actions/oww/types'
 
 export type State = {
   web3: Web3State
   twitterAuth: TwitterAuthState
   owsn: OWSNState
+  oww: OWWState
 }
 
-export type PlainAction = Web3Action | TwitterAuthAction | OWSNAction
+export type PlainAction =
+  | Web3Action
+  | TwitterAuthAction
+  | OWSNAction
+  | OWWAction
 export type Action = PlainAction | ThunkAction
 
 // @ts-expect-error

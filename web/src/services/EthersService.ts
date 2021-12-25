@@ -6,6 +6,8 @@ import store from '../redux/store'
 import { changeAvailability, connect } from '../redux/actions/web3'
 import { getApiUrl } from '../utils'
 import twitterAuthService from './TwitterAuthService'
+import { OWWService } from './OWWService'
+import { TPMService } from './TPMService'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -15,6 +17,8 @@ export enum SupportedNetworks {
 export enum AvailableContracts {
   owsn = 'OWSN',
   tm = 'TM',
+  oww = 'OWW',
+  tpm = 'TPM',
 }
 
 export const getSweetAddress = (address: string) =>
@@ -39,6 +43,8 @@ class EthersService {
   public contractServices?: {
     [AvailableContracts.owsn]?: OWSNService
     [AvailableContracts.tm]?: TMService
+    [AvailableContracts.oww]?: OWWService
+    [AvailableContracts.tpm]?: TPMService
   }
 
   private provider?: ethers.providers.Web3Provider
@@ -113,12 +119,16 @@ class EthersService {
     const contractsLoaders = [
       this.loadContract(AvailableContracts.owsn, ['mintTwitter']),
       this.loadContract(AvailableContracts.tm),
+      this.loadContract(AvailableContracts.oww, ['mintTwitterPost']),
+      this.loadContract(AvailableContracts.tpm),
     ]
 
     const contracts = await Promise.all(contractsLoaders)
     this.contractServices = {
       [AvailableContracts.owsn]: new OWSNService(contracts[0]),
       [AvailableContracts.tm]: new TMService(contracts[1], this.address),
+      [AvailableContracts.oww]: new OWWService(contracts[2]),
+      [AvailableContracts.tpm]: new TPMService(contracts[3], this.address),
     }
   }
 
@@ -131,6 +141,18 @@ class EthersService {
   public getTM() {
     return this.contractServices
       ? this.contractServices[AvailableContracts.tm]
+      : undefined
+  }
+
+  public getOWW() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.oww]
+      : undefined
+  }
+
+  public getTPM() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.tpm]
       : undefined
   }
 

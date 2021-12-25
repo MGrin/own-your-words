@@ -5,8 +5,11 @@ import { HmacSHA1, enc } from 'crypto-js';
 import {
   AccessTokenSignatureParams,
   RequestTokenSignatureParams,
+  TwitterBearerAccessTokenResponse,
   TwitterOAuthAccessTokenResponse,
   TwitterOAuthRequestTokenResponse,
+  TwitterPost,
+  TwitterUser,
 } from './types';
 import { ConfigService } from '@nestjs/config';
 
@@ -16,6 +19,7 @@ export class TwitterService {
 
   private TWITTER_API_KEY: string;
   private TWITTER_API_SECRET: string;
+  private TWITTER_API_TOKEN?: string;
 
   constructor(private readonly configs: ConfigService) {
     this.TWITTER_API_KEY = configs.get<string>('TWITTER_API_KEY');
@@ -82,6 +86,67 @@ export class TwitterService {
     return this.parseOAuthRequestToken<TwitterOAuthAccessTokenResponse>(
       responseText,
     );
+  }
+
+  public async getBearerToken() {
+    if (this.TWITTER_API_TOKEN) {
+      return this.TWITTER_API_TOKEN;
+    }
+
+    this.logger.log(`Get bearer token`);
+
+    const res = await axios({
+      url: 'https://api.twitter.com/oauth2/token?grant_type=client_credentials',
+      method: 'POST',
+      auth: {
+        username: this.TWITTER_API_KEY,
+        password: this.TWITTER_API_SECRET,
+      },
+    });
+
+    const data = res.data as TwitterBearerAccessTokenResponse;
+
+    this.TWITTER_API_TOKEN = data.access_token;
+
+    return this.TWITTER_API_TOKEN;
+  }
+
+  public async getUserByScreenName(screenName: string): Promise<TwitterUser> {
+    this.logger.log(`Get user by screen name [screenName=${screenName}]`);
+    const token = await this.getBearerToken();
+
+    const res = await axios({
+      url: `https://api.twitter.com/1.1/users/show.json?screen_name=${screenName}`,
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: '*/*',
+      },
+    });
+
+    const user: TwitterUser = res.data as TwitterUser;
+    user.profile_image_url_https = user.profile_image_url_https.replace(
+      '_normal',
+      '',
+    );
+
+    return user;
+  }
+
+  public async getPostById(postId: string): Promise<TwitterPost> {
+    this.logger.log(`Get post by id [postId=${postId}]`);
+
+    const token = await this.getBearerToken();
+    const res = await axios({
+      url: `https://api.twitter.com/1.1/statuses/show.json?id=${postId}`,
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        accept: '*/*',
+      },
+    });
+
+    return res.data as TwitterPost;
   }
 
   private async requestTokenSignature(

@@ -8,7 +8,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
-task("getRequest", "Show request state by id")
+task("getTAORequest", "Show TAO request state by id")
   .addParam("id", "Request id")
   .setAction(async ({ id }, hre) => {
     const taoLock = getLock(network.name, "TwitterAuthOracle");
@@ -18,6 +18,16 @@ task("getRequest", "Show request state by id")
     console.log(await tao.getRequestById(id));
   });
 
+task("getTPORequest", "Show TPO request state by id")
+  .addParam("id", "Request id")
+  .setAction(async ({ id }, hre) => {
+    const tpoLock = getLock(network.name, "TwitterPostOracle");
+    const TPO = await hre.ethers.getContractFactory("TwitterPostOracle");
+    const tpo = await TPO.attach(tpoLock.address);
+
+    console.log(await tpo.getRequestById(id));
+  });
+
 task("getTAOOwner", "Show TAO contract owner").setAction(async (_, hre) => {
   const taoLock = getLock(network.name, "TwitterAuthOracle");
   const TAO = await hre.ethers.getContractFactory("TwitterAuthOracle");
@@ -25,13 +35,40 @@ task("getTAOOwner", "Show TAO contract owner").setAction(async (_, hre) => {
   console.log(await tao.owner());
 });
 
+task("isOWSNAvailable", "Is OWSN available by gensnid")
+  .addParam("gensnid", "OWSN gensnid")
+  .setAction(async ({ gensnid }, hre) => {
+    const owsnLock = getLock(network.name, "OwnYourSocialNetwork");
+    const OWSN = await hre.ethers.getContractFactory("OwnYourSocialNetwork");
+    const owsn = await OWSN.attach(owsnLock.address);
+    console.log(await owsn.isAccountAvailable(gensnid));
+  });
+
 task("getOWSNToken", "Get OWSN Token by id")
   .addParam("token", "OWSN token id")
   .setAction(async ({ token }, hre) => {
     const owsnLock = getLock(network.name, "OwnYourSocialNetwork");
     const OWSN = await hre.ethers.getContractFactory("OwnYourSocialNetwork");
     const owsn = await OWSN.attach(owsnLock.address);
-    console.log(await owsn.getOwnedAccountByToken(token));
+    console.log(await owsn.getOWSNByTokenId(token));
+  });
+
+task("isOWWAvailable", "Is OWW available by gensnid")
+  .addParam("gensnid", "OWW gensnid")
+  .setAction(async ({ gensnid }, hre) => {
+    const owwLock = getLock(network.name, "OwnYourWords");
+    const OWW = await hre.ethers.getContractFactory("OwnYourWords");
+    const oww = await OWW.attach(owwLock.address);
+    console.log(await oww.isPostAvailable(gensnid));
+  });
+
+task("getOWWToken", "Get OWW Token by id")
+  .addParam("token", "OWW token id")
+  .setAction(async ({ token }, hre) => {
+    const owwLock = getLock(network.name, "OwnYourWords");
+    const OWW = await hre.ethers.getContractFactory("OwnYourWords");
+    const oww = await OWW.attach(owwLock.address);
+    console.log(await oww.getOWWByTokenId(token));
   });
 
 task("fund", "Send 1 eth to a given address")

@@ -14,10 +14,6 @@ export enum OWSNActionType {
   mintTwitterStart = 'OWSN/mint/twitter/START',
   mintTwitterSuccess = 'OWSN/mint/twitter/SUCCESS',
   mintTwitterFailure = 'OWSN/mint/twitter/FAILURE',
-
-  getOWSNByTokenStart = 'OWSN/getByToken/START',
-  getOWSNByTokenSuccess = 'OWSN/getByToken/SUCCESS',
-  getOWSNByTokenFailure = 'OWSN/getByToken/FAILURE',
 }
 
 export type OWSNActionPayload = {

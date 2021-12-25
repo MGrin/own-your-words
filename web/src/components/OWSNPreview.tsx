@@ -43,7 +43,7 @@ const OWSNPreview = ({ tokenId }: OWSNPreviewProps) => {
         {error ? (
           <Text color="tomato">{error.message}</Text>
         ) : (
-          <Image src={metadata?.image} />
+          <Image borderRadius="base" src={metadata?.image} />
         )}
       </Box>
     </a>

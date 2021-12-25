@@ -51,6 +51,7 @@ contract TwitterAuthOracle is Ownable {
   uint256 public priceWEI;
   
   mapping(uint256 => TwitterAuthData.Request) private requests;
+  mapping(address => TwitterAuthData.RequestSerialized[]) private requestsByOwner;
 
   Counters.Counter private counter;
   QueueUints256 private pendingRequestsQueue;
@@ -92,6 +93,7 @@ contract TwitterAuthOracle is Ownable {
     req.status = 1;
 
     requests[id] = req;
+    requestsByOwner[req.owner].push(serializeRequest(id));
 
     pendingRequestsQueue.append(id);
 
@@ -154,11 +156,16 @@ contract TwitterAuthOracle is Ownable {
     return pointer;
   }
 
+  function getRequestsForAddress(address owner) external view returns(TwitterAuthData.RequestSerialized[] memory) {
+
+    return requestsByOwner[owner];
+  }
+
   function setPriceETH(uint256 _priceWEI) external onlyOwner {
     priceWEI = _priceWEI;
   }
 
-  function serializeRequest(uint256 id) private view onlyOwner returns (TwitterAuthData.RequestSerialized memory) {
+  function serializeRequest(uint256 id) private view returns (TwitterAuthData.RequestSerialized memory) {
     TwitterAuthData.RequestSerialized memory req;
 
     req.id = requests[id].id;

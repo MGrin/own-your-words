@@ -37,6 +37,9 @@ export class TwitterAuthOracleService {
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   public async pullPendingRequests() {
+    if (process.env.NODE_ENV === 'local') {
+      return;
+    }
     const pendingRequestsCount =
       await this.tao.callStatic.getPendingRequestsIdsFromQueue();
 
@@ -79,7 +82,6 @@ export class TwitterAuthOracleService {
       const oauthToken = this.etherService.decrypt(request.oauthToken);
       const oauthVerifier = this.etherService.decrypt(request.oauthVerifier);
 
-      console.log(request.oauthToken, oauthToken);
       const accessToken = await this.twitterService.getAccessToken(
         oauthToken,
         oauthVerifier,

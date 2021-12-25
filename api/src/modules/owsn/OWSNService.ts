@@ -1,8 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ethers } from 'ethers';
-import { createCanvas, NodeCanvasRenderingContext2D, loadImage } from 'canvas';
+import { createCanvas, loadImage } from 'canvas';
 import { EtherService } from '../ether/EtherService';
 import { SocialNetwork } from './SocialNetwork';
+import { OpenSeaMetadata } from '../common/types';
+import { getBackgroundColorForToken, roundRect } from '../common/images';
+import { YandexObjectStorageService } from '../yandexObjectStorage/YandexObjectStorageService';
+import { Bucket } from '../yandexObjectStorage/Bucket';
+import { TwitterService } from '../twitter/TwitterService';
 
 export type OwnedAccount = {
   id: number;
@@ -12,63 +17,28 @@ export type OwnedAccount = {
   sn_url: string;
 };
 
-const roundRect = (
-  ctx: NodeCanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  radiusSize: number,
-) => {
-  const radius = {
-    tl: radiusSize,
-    tr: radiusSize,
-    br: radiusSize,
-    bl: radiusSize,
-  };
-
-  ctx.beginPath();
-  ctx.moveTo(x + radius.tl, y);
-  ctx.lineTo(x + width - radius.tr, y);
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-  ctx.lineTo(x + width, y + height - radius.br);
-  ctx.quadraticCurveTo(
-    x + width,
-    y + height,
-    x + width - radius.br,
-    y + height,
-  );
-  ctx.lineTo(x + radius.bl, y + height);
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-  ctx.lineTo(x, y + radius.tl);
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-  ctx.closePath();
-  ctx.fill();
+export type OWSNAttributes = {
+  Background: string;
+  'Social Network': string;
 };
-
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-
 @Injectable()
 export class OWSNService {
-  private readonly logger: Logger = new Logger('TwitterAuthOracleService');
+  private readonly logger: Logger = new Logger('OWSNService');
 
   private owsn: ethers.Contract;
 
-  constructor(private readonly etherService: EtherService) {
+  constructor(
+    private readonly etherService: EtherService,
+    private readonly yaStorage: YandexObjectStorageService,
+    private readonly twitterService: TwitterService,
+  ) {
     this.owsn = this.etherService.loadContract('OWSN');
   }
 
-  public async getOwnedAccountByToken(token: number): Promise<OwnedAccount> {
+  public async getOWSNByTokenId(token: number): Promise<OwnedAccount> {
     this.logger.log(`Get owned account by token [token=${token}]`);
 
-    const result = await this.owsn.getOwnedAccountByToken(token);
+    const result = await this.owsn.getOWSNByTokenId(token);
     const ownedAccount = {
       id: result.id.toNumber(),
       owner: result.owner,
@@ -80,14 +50,61 @@ export class OWSNService {
     return ownedAccount;
   }
 
-  public async generateImage(ownedAccount: OwnedAccount): Promise<Buffer> {
+  private getAttributes(ownedAccount: OwnedAccount): OWSNAttributes {
+    return {
+      Background: getBackgroundColorForToken(ownedAccount.id),
+      'Social Network': ownedAccount.sn_name,
+    };
+  }
+
+  public async getOpenSeaMetadata(
+    ownedAccount: OwnedAccount,
+  ): Promise<OpenSeaMetadata> {
+    const attributes = this.getAttributes(ownedAccount);
+    let imageUrl = await this.yaStorage.get(
+      Bucket.owsn,
+      `${ownedAccount.id}.png`,
+    );
+    if (!imageUrl) {
+      const imageBuffer = await this.generateImage(ownedAccount);
+      imageUrl = await this.yaStorage.upload(
+        Bucket.owsn,
+        `${ownedAccount.id}.png`,
+        imageBuffer,
+      );
+    }
+
+    return {
+      name: `${ownedAccount.sn_name}:${ownedAccount.sn_id}`,
+      description: `OWSN Token for ${ownedAccount.sn_name} account`,
+      external_url: ownedAccount.sn_url,
+      image: imageUrl,
+      attributes: [
+        {
+          trait_type: 'Social Network',
+          value: attributes['Social Network'],
+        },
+        {
+          trait_type: 'Background',
+          value: attributes['Background'],
+        },
+      ],
+    };
+  }
+
+  private async generateImage(ownedAccount: OwnedAccount): Promise<Buffer> {
     switch (ownedAccount.sn_name) {
       case SocialNetwork.twitter: {
         const urlSplitted = ownedAccount.sn_url.split('/');
         const screenName = urlSplitted[urlSplitted.length - 1];
-        const avatar = `https://unavatar.io/twitter/${screenName}`;
-
-        return await this.generateTwitterImage(avatar, screenName);
+        const user = await this.twitterService.getUserByScreenName(screenName);
+        const avatar = user.profile_image_url_https;
+        const attributes = this.getAttributes(ownedAccount);
+        return await this.generateTwitterImage(
+          avatar,
+          screenName,
+          attributes.Background,
+        );
       }
       default: {
         throw new Error(`Unknown sn_name: ${ownedAccount.sn_name}`);
@@ -98,13 +115,18 @@ export class OWSNService {
   private async generateTwitterImage(
     avatar: string,
     name: string,
+    bg: string,
   ): Promise<Buffer> {
-    const background = getRandomColor();
     const canvas = createCanvas(600, 600);
-
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = background;
-    ctx.fillRect(0, 0, 600, 600);
+
+    if (bg.indexOf('#') === 0) {
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, 600, 600);
+    } else {
+      const bgImage = await loadImage(`${__dirname}/../../images/${bg}.jpg`);
+      ctx.drawImage(bgImage, 0, 0, 600, 600);
+    }
 
     ctx.fillStyle = '#ffffff';
     roundRect(ctx, 125, 412, 350, 50, 12);

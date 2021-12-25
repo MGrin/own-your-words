@@ -23,3 +23,19 @@ export const getApiUrl = () => {
     }
   }
 }
+
+const VM_ERROR_EXCEPTION_PREFIX =
+  "Error: VM Exception while processing transaction: reverted with reason string '"
+
+export const formatError = (error: Error) => {
+  // @ts-expect-error
+  const data = error.data
+  if (data && data.message) {
+    if (data.message.indexOf(VM_ERROR_EXCEPTION_PREFIX) === 0) {
+      const msg = data.message.substring(VM_ERROR_EXCEPTION_PREFIX.length)
+      return msg.substring(0, msg.length - 1)
+    }
+    return data.message
+  }
+  return error.message
+}

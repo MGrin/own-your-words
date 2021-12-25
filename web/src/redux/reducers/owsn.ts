@@ -11,11 +11,6 @@ export type OWSNTwitterState = {
 
 export type OWSNState = {
   tokenIds: number[]
-
-  errors: {
-    [tokenId: number]: Error
-  }
-
   loading?: boolean
   error?: Error
 } & OWSNTwitterState
@@ -26,7 +21,6 @@ const twitterInitialState: OWSNTwitterState = {
 
 const initialState: OWSNState = {
   tokenIds: [],
-  errors: {},
   ...twitterInitialState,
 }
 

@@ -1,6 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TwitterService } from './TwitterService';
-import { AuthURLResponse, TwitterOAuthAccessTokenResponse } from './types';
+import {
+  AuthURLResponse,
+  TwitterOAuthAccessTokenResponse,
+  TwitterPost,
+} from './types';
 
 @Controller('twitter')
 export class TwitterController {
@@ -26,5 +30,10 @@ export class TwitterController {
       oauthVerifier,
     );
     return accessToken;
+  }
+
+  @Get('post/:id')
+  public async getPostById(@Param() { id }): Promise<TwitterPost> {
+    return this.twitterService.getPostById(id);
   }
 }

@@ -13,8 +13,6 @@ export type OwnedAccount = {
 export class OWSNService {
   private readonly logger = new Logger('OWSNService')
 
-  private tmAddress?: string
-
   private contract: ethers.Contract
 
   constructor(_contract: ethers.Contract) {
@@ -31,30 +29,22 @@ export class OWSNService {
     })
   }
 
-  public async getTMAddress() {
-    this.logger.log('Get TM address')
-    if (!this.tmAddress) {
-      this.tmAddress = await this.contract.twitterMinter()
-    }
+  public async getOWSNByGenSnId(genSnId: string): Promise<OwnedAccount> {
+    this.logger.log(`Get OWSN by genSnId [genSnId=${genSnId}]`)
 
-    return this.tmAddress
+    return await this.contract.getOWSNByGenSnId(genSnId)
   }
 
-  public async getOwnedAccountByGenSnId(genSnId: string) {
-    this.logger.log(`Get owned account by gen_sn_id [genSnId=${genSnId}]`)
-    return this.contract.getOwnedAccountByGenSnId(genSnId)
+  public async ownerOf(tokenId: number) {
+    this.logger.log(`owner of [tokenId=${tokenId}]`)
+
+    return await this.contract.ownerOf(tokenId)
   }
 
-  public async getOwnedAccountByToken(token: number): Promise<OwnedAccount> {
-    this.logger.log(`Get owned account by token [token=${token}]`)
-    const result = await this.contract.getOwnedAccountByToken(token)
-    return {
-      id: result.id.toNumber(),
-      owner: result.owner,
-      sn_id: result.sn_id,
-      sn_name: result.sn_name,
-      sn_url: result.sn_url,
-    }
+  public async isAccountAvailable(genSnId: string) {
+    this.logger.log(`IsAccountAvailable [genSnId=${genSnId}]`)
+
+    return await this.contract.isAccountAvailable(genSnId)
   }
 
   public async getOwnedAccountTokens(address: string) {

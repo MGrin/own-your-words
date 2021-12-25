@@ -6,6 +6,7 @@ import twitterAuthSelector from '../redux/selectors/twitterAuth'
 import { fetchRequestToken } from '../redux/actions/twitterAuth'
 import { getTwitterPrice } from '../redux/actions/owsn'
 import { owsnTwitterSelector } from '../redux/selectors/owsn'
+import { formatError } from '../utils'
 
 const TwitterAccountMint = () => {
   const dispatch = useDispatch()
@@ -85,7 +86,7 @@ const TwitterAccountMint = () => {
       <Flex alignItems="center" justifyContent="center" p={6}>
         {btn}
       </Flex>
-      {error && <Text color="tomato">{error.message}</Text>}
+      {error && <Text color="tomato">{formatError(error)}</Text>}
     </Box>
   )
 }

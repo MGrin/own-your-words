@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IMinter.sol";
 import "../oracles/TwitterAuthOracle.sol";
-import "../IOwnYourSocialNetwork.sol";
 
 library TwitterMintState {
   struct SuccessCallback {
