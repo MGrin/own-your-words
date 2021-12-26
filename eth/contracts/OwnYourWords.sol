@@ -88,15 +88,10 @@ contract OwnYourWords is ERC721Custom {
     twitterPostMinter.startMint{ value: msg.value }(postId, _msgSender(), this.mint);
   }
 
-  function updateTwitterPostMinterAddress(address twitterPostMinterAddress) public {
-    require(
-      hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-      "OwnYourWords: must have minter role to updateTwitterPostMinterAddress"
-    );
-
-    revokeRole(MINTER_ROLE, address(twitterPostMinterAddress));
+  function updateTwitterPostMinterAddress(address twitterPostMinterAddress) public  onlyRole(ADMIN_ROLE) {
+    revokeRole(MINTER_ROLE, address(twitterPostMinter));
     twitterPostMinter = TwitterPostMinter(twitterPostMinterAddress);
-    _setupRole(MINTER_ROLE, address(twitterPostMinterAddress));
+    grantRole(MINTER_ROLE, twitterPostMinterAddress);
   }
 
   function _baseURI() internal pure override returns (string memory) {

@@ -43,9 +43,10 @@ contract TwitterMinter is AccessControl, IMinter {
   constructor(address twitterAuthOracleAddress) AccessControl() {
     oracle = TwitterAuthOracle(twitterAuthOracleAddress);
   
+    _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
     _setupRole(ADMIN_ROLE, _msgSender());
     _setRoleAdmin(ADMIN_ROLE, USER_ROLE);
-    _setupRole(USER_ROLE, twitterAuthOracleAddress);
+    grantRole(USER_ROLE, twitterAuthOracleAddress);
   }
 
   function startMint(
@@ -89,5 +90,11 @@ contract TwitterMinter is AccessControl, IMinter {
 
   function retrieveFunds() public onlyRole(ADMIN_ROLE) {
     payable(_msgSender()).transfer(address(this).balance);
+  }
+
+  function setTwitterAuthOracle(address twitterAuthOracleAddress) public onlyRole(ADMIN_ROLE) {
+    revokeRole(USER_ROLE, address(oracle));
+    oracle = TwitterAuthOracle(twitterAuthOracleAddress);
+    grantRole(USER_ROLE, twitterAuthOracleAddress);
   }
 }

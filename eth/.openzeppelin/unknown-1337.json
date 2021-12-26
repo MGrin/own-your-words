@@ -1,28 +1,28 @@
 {
   "manifestVersion": "3.2",
   "admin": {
-    "address": "0x18E7C87F251bEd81bd2AfC61d79B7b3478A843C8",
-    "txHash": "0x9e6209e2ca3ff8cc93f0b9e2aae4ee35f11c3936671598cde8818e9e80672b30",
+    "address": "0xbE55B3ED6E83ef843bd6B42D7EA5ABf6AD36e8E0",
+    "txHash": "0xa545a0a6c62d10a92f1779e6b210925b389d090515796ec067a8517214c3bce8",
     "deployTransaction": {
-      "hash": "0x9e6209e2ca3ff8cc93f0b9e2aae4ee35f11c3936671598cde8818e9e80672b30",
+      "hash": "0xa545a0a6c62d10a92f1779e6b210925b389d090515796ec067a8517214c3bce8",
       "type": 2,
       "accessList": [],
-      "blockHash": "0xf850a074b2003a39ce78418bb37e43e6826504e94dd166cf4e10581fa8b61699",
-      "blockNumber": 26,
+      "blockHash": "0xb95cca2ad6116ec607e6b31f1d0fbd0df66ef78f27663859308b467c0651d779",
+      "blockNumber": 74,
       "transactionIndex": 0,
       "confirmations": 1,
       "from": "0x9D19E3B2188e9a304dDfe86D9E1D33845EbB26D8",
       "gasPrice": {
         "type": "BigNumber",
-        "hex": "0x018f835809"
+        "hex": "0x9543d7f9"
       },
       "maxPriorityFeePerGas": {
         "type": "BigNumber",
-        "hex": "0x018cf51726"
+        "hex": "0x95423134"
       },
       "maxFeePerGas": {
         "type": "BigNumber",
-        "hex": "0x0190312145"
+        "hex": "0x95444845"
       },
       "gasLimit": {
         "type": "BigNumber",
@@ -33,31 +33,31 @@
         "type": "BigNumber",
         "hex": "0x00"
       },
-      "nonce": 25,
+      "nonce": 68,
       "data": "0x608060405234801561001057600080fd5b50600080546001600160a01b031916339081178255604051909182917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a350610759806100616000396000f3fe60806040526004361061007b5760003560e01c80639623609d1161004e5780639623609d1461011157806399a88ec414610124578063f2fde38b14610144578063f3b7dead146101645761007b565b8063204e1c7a14610080578063715018a6146100bc5780637eff275e146100d35780638da5cb5b146100f3575b600080fd5b34801561008c57600080fd5b506100a061009b366004610515565b610184565b6040516001600160a01b03909116815260200160405180910390f35b3480156100c857600080fd5b506100d1610215565b005b3480156100df57600080fd5b506100d16100ee366004610554565b610292565b3480156100ff57600080fd5b506000546001600160a01b03166100a0565b6100d161011f36600461058c565b61031c565b34801561013057600080fd5b506100d161013f366004610554565b6103ad565b34801561015057600080fd5b506100d161015f366004610515565b610405565b34801561017057600080fd5b506100a061017f366004610515565b6104ef565b6000806000836001600160a01b03166040516101aa90635c60da1b60e01b815260040190565b600060405180830381855afa9150503d80600081146101e5576040519150601f19603f3d011682016040523d82523d6000602084013e6101ea565b606091505b5091509150816101f957600080fd5b8080602001905181019061020d9190610538565b949350505050565b6000546001600160a01b031633146102485760405162461bcd60e51b815260040161023f906106c0565b60405180910390fd5b600080546040516001600160a01b03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a3600080546001600160a01b0319169055565b6000546001600160a01b031633146102bc5760405162461bcd60e51b815260040161023f906106c0565b6040516308f2839760e41b81526001600160a01b038281166004830152831690638f283970906024015b600060405180830381600087803b15801561030057600080fd5b505af1158015610314573d6000803e3d6000fd5b505050505050565b6000546001600160a01b031633146103465760405162461bcd60e51b815260040161023f906106c0565b60405163278f794360e11b81526001600160a01b03841690634f1ef286903490610376908690869060040161065d565b6000604051808303818588803b15801561038f57600080fd5b505af11580156103a3573d6000803e3d6000fd5b5050505050505050565b6000546001600160a01b031633146103d75760405162461bcd60e51b815260040161023f906106c0565b604051631b2ce7f360e11b81526001600160a01b038281166004830152831690633659cfe6906024016102e6565b6000546001600160a01b0316331461042f5760405162461bcd60e51b815260040161023f906106c0565b6001600160a01b0381166104945760405162461bcd60e51b815260206004820152602660248201527f4f776e61626c653a206e6577206f776e657220697320746865207a65726f206160448201526564647265737360d01b606482015260840161023f565b600080546040516001600160a01b03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a3600080546001600160a01b0319166001600160a01b0392909216919091179055565b6000806000836001600160a01b03166040516101aa906303e1469160e61b815260040190565b600060208284031215610526578081fd5b81356105318161070b565b9392505050565b600060208284031215610549578081fd5b81516105318161070b565b60008060408385031215610566578081fd5b82356105718161070b565b915060208301356105818161070b565b809150509250929050565b6000806000606084860312156105a0578081fd5b83356105ab8161070b565b925060208401356105bb8161070b565b9150604084013567ffffffffffffffff808211156105d7578283fd5b818601915086601f8301126105ea578283fd5b8135818111156105fc576105fc6106f5565b604051601f8201601f19908116603f01168101908382118183101715610624576106246106f5565b8160405282815289602084870101111561063c578586fd5b82602086016020830137856020848301015280955050505050509250925092565b600060018060a01b038416825260206040818401528351806040850152825b818110156106985785810183015185820160600152820161067c565b818111156106a95783606083870101525b50601f01601f191692909201606001949350505050565b6020808252818101527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e6572604082015260600190565b634e487b7160e01b600052604160045260246000fd5b6001600160a01b038116811461072057600080fd5b5056fea2646970667358221220d849f96f3086b9f82cdcf665adb8c697ace05638da1c7c16ab2d26293717af6764736f6c63430008020033",
-      "r": "0xbae29997ba818912be0fb787472b5f2df7ec201f8473df378df94ae8c0134454",
-      "s": "0x5d68626c0994700f14c6c6d8ca43fe81920d3c1763c6012ab0d80e0b186c9fb8",
+      "r": "0x0e1c7a0bdc045ca4e378a93d0840fd965fa613d5e0d94428e15a6afb72f9c762",
+      "s": "0x3083ed42952a1bb3476a30f4a1a800f6edcce8074d7964369450c55f16167301",
       "v": 0,
-      "creates": "0x18E7C87F251bEd81bd2AfC61d79B7b3478A843C8",
+      "creates": "0xbE55B3ED6E83ef843bd6B42D7EA5ABf6AD36e8E0",
       "chainId": 1337
     }
   },
   "proxies": [
     {
-      "address": "0x6106391a6Eb7fc6096d2341875EA4705152096aA",
-      "txHash": "0xca38d847ee57155ba8ca9e37b6b5c6bf82903fca119254630f5f946f3b7b3a15",
+      "address": "0xBd64D0fa9614487008ae6FBD28f3E639e01a134c",
+      "txHash": "0xa6ac40c89b768b4fbd54655ba628cb7a82530f3ae2a9dc122bfb80dedf8cb63b",
       "kind": "transparent"
     },
     {
-      "address": "0xa8F734AABc0E4e3DfCB7e9E0FeEFD912C60eE7C2",
-      "txHash": "0xe8cf3096aa742ae70280a746f6a927c384ca6e3e77363a4bea741634d4ac0e8c",
+      "address": "0xe861F3f84b40E6c9642A49c785C9A3a0326c6c31",
+      "txHash": "0x12ef31441ec7318771af9ea2f31283fef76bf4059bffd7cdd6175dcf50cbf3ac",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "8bb43009a3d5fd7a8048c60f9c6decda80661ae2087ffdc178ac3f5fd0ba550e": {
-      "address": "0xE3f4b3a5F2b26E029D742f1Ef6D7a2Dcdbd0Db62",
-      "txHash": "0xf09dca2dd38db6418c05b4ff2c7af6789f8f0acf9f04cdd924204c2867231748",
+    "7cd51d865dc9a9bc36c1573b2f297f2c3962eeaa545902f5934004ebda4538e1": {
+      "address": "0x275c8d2DaE31F9eEBA5D280A32630e61d185204F",
+      "txHash": "0x54fd0aff71933dcb11f01361d652e7735967b67ee015e5ed12db3e4be2bd0b05",
       "layout": {
         "storage": [
           {
@@ -196,35 +196,35 @@
             "contract": "ERC721Custom",
             "label": "__gap",
             "type": "t_array(t_uint256)48_storage",
-            "src": "contracts/ERC721Custom.sol:121"
+            "src": "contracts/ERC721Custom.sol:111"
           },
           {
             "contract": "OwnYourSocialNetwork",
             "label": "_owned_accounts_by_gen_id",
-            "type": "t_mapping(t_string_memory_ptr,t_struct(availability)4427_storage)",
+            "type": "t_mapping(t_string_memory_ptr,t_struct(availability)4408_storage)",
             "src": "contracts/OwnYourSocialNetwork.sol:27"
           },
           {
             "contract": "OwnYourSocialNetwork",
             "label": "_owned_accounts_by_id",
-            "type": "t_mapping(t_uint256,t_struct(data)4422_storage)",
+            "type": "t_mapping(t_uint256,t_struct(data)4403_storage)",
             "src": "contracts/OwnYourSocialNetwork.sol:28"
           },
           {
             "contract": "OwnYourSocialNetwork",
             "label": "twitterMinter",
-            "type": "t_contract(TwitterMinter)5242",
+            "type": "t_contract(TwitterMinter)5239",
             "src": "contracts/OwnYourSocialNetwork.sol:29"
           }
         ],
         "types": {
-          "t_mapping(t_string_memory_ptr,t_struct(availability)4427_storage)": {
+          "t_mapping(t_string_memory_ptr,t_struct(availability)4408_storage)": {
             "label": "mapping(string => struct OwnedAccount.availability)"
           },
           "t_string_storage": {
             "label": "string"
           },
-          "t_struct(availability)4427_storage": {
+          "t_struct(availability)4408_storage": {
             "label": "struct OwnedAccount.availability",
             "members": [
               {
@@ -243,10 +243,10 @@
           "t_bool": {
             "label": "bool"
           },
-          "t_mapping(t_uint256,t_struct(data)4422_storage)": {
+          "t_mapping(t_uint256,t_struct(data)4403_storage)": {
             "label": "mapping(uint256 => struct OwnedAccount.data)"
           },
-          "t_struct(data)4422_storage": {
+          "t_struct(data)4403_storage": {
             "label": "struct OwnedAccount.data",
             "members": [
               {
@@ -267,7 +267,7 @@
               }
             ]
           },
-          "t_contract(TwitterMinter)5242": {
+          "t_contract(TwitterMinter)5239": {
             "label": "contract TwitterMinter"
           },
           "t_struct(Counter)2387_storage": {
@@ -371,9 +371,9 @@
         }
       }
     },
-    "3d57ff205b7ea9809891c1b3b34ebeaa68cad08cf60c1632ca7ba19979b79e66": {
-      "address": "0xC8151D00CEAc4a754a57005715cAf1E44Bc4C2E6",
-      "txHash": "0xead9fe409e1e01167b376561698bbb8ddd2ab0272d498c34fde69996220fc2f1",
+    "a916398c81e81ee5651c199a19e85456ea22eb6ed6f59bea32940f0bde8aa4a1": {
+      "address": "0xcaAbAE861338A7a573159a1799d64E1e7243D10E",
+      "txHash": "0xb3ca5b0544eacb62112e381ce232012f0b491403b6eca0c7d43ede316ec7dd12",
       "layout": {
         "storage": [
           {
@@ -512,35 +512,35 @@
             "contract": "ERC721Custom",
             "label": "__gap",
             "type": "t_array(t_uint256)48_storage",
-            "src": "contracts/ERC721Custom.sol:121"
+            "src": "contracts/ERC721Custom.sol:111"
           },
           {
             "contract": "OwnYourWords",
             "label": "_owned_words_by_gen_id",
-            "type": "t_mapping(t_string_memory_ptr,t_struct(availability)4720_storage)",
+            "type": "t_mapping(t_string_memory_ptr,t_struct(availability)4692_storage)",
             "src": "contracts/OwnYourWords.sol:28"
           },
           {
             "contract": "OwnYourWords",
             "label": "_owned_words_by_id",
-            "type": "t_mapping(t_uint256,t_struct(data)4715_storage)",
+            "type": "t_mapping(t_uint256,t_struct(data)4687_storage)",
             "src": "contracts/OwnYourWords.sol:29"
           },
           {
             "contract": "OwnYourWords",
             "label": "twitterPostMinter",
-            "type": "t_contract(TwitterPostMinter)5469",
+            "type": "t_contract(TwitterPostMinter)5500",
             "src": "contracts/OwnYourWords.sol:30"
           }
         ],
         "types": {
-          "t_mapping(t_string_memory_ptr,t_struct(availability)4720_storage)": {
+          "t_mapping(t_string_memory_ptr,t_struct(availability)4692_storage)": {
             "label": "mapping(string => struct OwnedWords.availability)"
           },
           "t_string_storage": {
             "label": "string"
           },
-          "t_struct(availability)4720_storage": {
+          "t_struct(availability)4692_storage": {
             "label": "struct OwnedWords.availability",
             "members": [
               {
@@ -559,10 +559,10 @@
           "t_bool": {
             "label": "bool"
           },
-          "t_mapping(t_uint256,t_struct(data)4715_storage)": {
+          "t_mapping(t_uint256,t_struct(data)4687_storage)": {
             "label": "mapping(uint256 => struct OwnedWords.data)"
           },
-          "t_struct(data)4715_storage": {
+          "t_struct(data)4687_storage": {
             "label": "struct OwnedWords.data",
             "members": [
               {
@@ -590,7 +590,7 @@
           "t_address": {
             "label": "address"
           },
-          "t_contract(TwitterPostMinter)5469": {
+          "t_contract(TwitterPostMinter)5500": {
             "label": "contract TwitterPostMinter"
           },
           "t_struct(Counter)2387_storage": {

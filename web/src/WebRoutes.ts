@@ -4,4 +4,5 @@ export enum WebRoutes {
   accountMint = '/account-mint',
   words = '/words',
   statements = '/statements',
+  activity = '/activity',
 }

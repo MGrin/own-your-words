@@ -88,15 +88,10 @@ contract OwnYourSocialNetwork is ERC721Custom {
     return _owned_accounts_by_id[tokenId];
   }
 
-  function updateTwitterMinterAddress(address twitterMinterAddress) public {
-    require(
-      hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-      "OwnYourSocialNetwork: must have minter role to updateTwitterMinterAddress"
-    );
-
+  function updateTwitterMinterAddress(address twitterMinterAddress) public onlyRole(ADMIN_ROLE) {
     revokeRole(MINTER_ROLE, address(twitterMinter));
     twitterMinter = TwitterMinter(twitterMinterAddress);
-    _setupRole(MINTER_ROLE, address(twitterMinterAddress));
+    grantRole(MINTER_ROLE, twitterMinterAddress);
   }
 
   function _baseURI() internal pure override returns (string memory) {

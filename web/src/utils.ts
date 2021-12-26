@@ -28,6 +28,9 @@ const VM_ERROR_EXCEPTION_PREFIX =
   "Error: VM Exception while processing transaction: reverted with reason string '"
 
 export const formatError = (error: Error) => {
+  if (!error) {
+    return ''
+  }
   // @ts-expect-error
   const data = error.data
   if (data && data.message) {

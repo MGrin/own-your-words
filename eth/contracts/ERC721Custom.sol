@@ -18,8 +18,8 @@ contract ERC721Custom is
 {
   using CountersUpgradeable for CountersUpgradeable.Counter;
 
+  bytes32 public constant ADMIN_ROLE = keccak256("MINTER_ROLE");
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-  bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
   CountersUpgradeable.Counter internal _tokenIdTracker;
 
@@ -46,22 +46,17 @@ contract ERC721Custom is
     __ERC721Enumerable_init_unchained();
     __ERC721Custom_init_unchained();
     baseURI = _baseURI;
-
   }
 
   function __ERC721Custom_init_unchained() internal initializer {
     _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
+    _setupRole(ADMIN_ROLE, _msgSender());
+    _setRoleAdmin(ADMIN_ROLE, MINTER_ROLE);
     _setupRole(MINTER_ROLE, _msgSender());
-    _setupRole(PAUSER_ROLE, _msgSender());
   }
 
-  function _mint_with_owner(address to) internal returns (uint256) {
-    require(
-      hasRole(MINTER_ROLE, _msgSender()),
-      string(abi.encodePacked("ERC721Custom: must have minter role to mint"))
-    );
-
+  function _mint_with_owner(address to) internal onlyRole(MINTER_ROLE) returns (uint256) {
     uint256 _tokenId = _tokenIdTracker.current();
     _mint(to, _tokenIdTracker.current());
     _tokenIdTracker.increment();
@@ -104,16 +99,11 @@ contract ERC721Custom is
     return super.supportsInterface(interfaceId);
   }
 
-  function retrieveFunds() public {
-    require(hasRole(PAUSER_ROLE, _msgSender()), "ERC721Custom: must have pauser role");
+  function retrieveFunds() public onlyRole(ADMIN_ROLE){
     payable(_msgSender()).transfer(address(this).balance);
   }
 
-  function setBaseURI(string memory newBaseURI) public {
-    require(
-      hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-      "OwnYourSocialNetwork: must have minter role to setBaseURI"
-    );
+  function setBaseURI(string memory newBaseURI) public onlyRole(ADMIN_ROLE) {
     baseURI = newBaseURI;
   }
   

@@ -102,7 +102,7 @@ const OWWMintModal = ({ isOpen, onClose }: OWWMintModalProps) => {
             colorScheme="blue"
             onClick={onMintOWWClick}
             isLoading={loading}
-            disabled={loading}
+            disabled={loading || !isUrlValid}
           >
             Mint
           </Button>

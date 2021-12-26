@@ -104,15 +104,19 @@ export class TwitterPostOracleService {
       );
       await succeedTx.wait();
     } catch (err) {
-      this.logger.error(err);
-      if (startTx) {
-        await startTx.wait();
+      try {
+        this.logger.error(err);
+        if (startTx) {
+          await startTx.wait();
+        }
+        const failedTx = await this.tpo.safeCall.failed(
+          requestId,
+          String(err.message),
+        );
+        await failedTx.wait();
+      } catch (err) {
+        this.logger.error(err);
       }
-      const failedTx = await this.tpo.safeCall.failed(
-        requestId,
-        String(err.message),
-      );
-      await failedTx.wait();
     }
   }
 }

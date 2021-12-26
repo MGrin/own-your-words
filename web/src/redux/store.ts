@@ -13,12 +13,15 @@ import type { OWSNState } from './reducers/owsn'
 import twitterRedirectCatcher from './middlewares/twitterRedirectCatcher'
 import { OWWState } from './reducers/oww'
 import { OWWAction } from './actions/oww/types'
+import { ActivityState } from './reducers/activity'
+import { ActivityAction } from './actions/activity/types'
 
 export type State = {
   web3: Web3State
   twitterAuth: TwitterAuthState
   owsn: OWSNState
   oww: OWWState
+  activity: ActivityState
 }
 
 export type PlainAction =
@@ -26,6 +29,8 @@ export type PlainAction =
   | TwitterAuthAction
   | OWSNAction
   | OWWAction
+  | ActivityAction
+
 export type Action = PlainAction | ThunkAction
 
 // @ts-expect-error

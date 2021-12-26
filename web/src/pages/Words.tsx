@@ -21,7 +21,6 @@ const Words = () => {
 
   const { tokenIds } = useSelector(owwSelector)
 
-  console.log(tokenIds)
   return (
     <Stack>
       <OWWMintModal isOpen={isMintingModalOpen} onClose={onMintingModalClose} />

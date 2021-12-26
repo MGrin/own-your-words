@@ -47,7 +47,6 @@ export const wrapText = (
   const words = text.split(/[ \n]/);
   let line = '';
 
-  console.log(text);
   for (let n = 0; n < words.length; n++) {
     const testLine = line + words[n] + ' ';
     const metrics = ctx.measureText(testLine);

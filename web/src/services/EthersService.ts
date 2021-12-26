@@ -8,6 +8,8 @@ import { getApiUrl } from '../utils'
 import twitterAuthService from './TwitterAuthService'
 import { OWWService } from './OWWService'
 import { TPMService } from './TPMService'
+import { TAOService } from './TAOService'
+import { TPOService } from './TPOService'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -17,8 +19,10 @@ export enum SupportedNetworks {
 export enum AvailableContracts {
   owsn = 'OWSN',
   tm = 'TM',
+  tao = 'TAO',
   oww = 'OWW',
   tpm = 'TPM',
+  tpo = 'TPO',
 }
 
 export const getSweetAddress = (address: string) =>
@@ -43,8 +47,10 @@ class EthersService {
   public contractServices?: {
     [AvailableContracts.owsn]?: OWSNService
     [AvailableContracts.tm]?: TMService
+    [AvailableContracts.tao]?: TAOService
     [AvailableContracts.oww]?: OWWService
     [AvailableContracts.tpm]?: TPMService
+    [AvailableContracts.tpo]?: TPOService
   }
 
   private provider?: ethers.providers.Web3Provider
@@ -121,6 +127,8 @@ class EthersService {
       this.loadContract(AvailableContracts.tm),
       this.loadContract(AvailableContracts.oww, ['mintTwitterPost']),
       this.loadContract(AvailableContracts.tpm),
+      this.loadContract(AvailableContracts.tao),
+      this.loadContract(AvailableContracts.tpo),
     ]
 
     const contracts = await Promise.all(contractsLoaders)
@@ -129,7 +137,11 @@ class EthersService {
       [AvailableContracts.tm]: new TMService(contracts[1], this.address),
       [AvailableContracts.oww]: new OWWService(contracts[2]),
       [AvailableContracts.tpm]: new TPMService(contracts[3], this.address),
+      [AvailableContracts.tao]: new TAOService(contracts[4]),
+      [AvailableContracts.tpo]: new TPOService(contracts[5]),
     }
+
+    localStorage.setItem('autoconnect', 'true')
   }
 
   public getOWSN() {
@@ -144,6 +156,12 @@ class EthersService {
       : undefined
   }
 
+  public getTAO() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.tao]
+      : undefined
+  }
+
   public getOWW() {
     return this.contractServices
       ? this.contractServices[AvailableContracts.oww]
@@ -153,6 +171,12 @@ class EthersService {
   public getTPM() {
     return this.contractServices
       ? this.contractServices[AvailableContracts.tpm]
+      : undefined
+  }
+
+  public getTPO() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.tpo]
       : undefined
   }
 

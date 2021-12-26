@@ -18,6 +18,7 @@ const catcher =
       return
     }
 
+    console.log(twitterAuthService)
     switch (twitterAuthService.mode) {
       case MODE.check: {
         store.dispatch(fetchAccessToken())

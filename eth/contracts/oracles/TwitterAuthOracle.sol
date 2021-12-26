@@ -104,6 +104,7 @@ contract TwitterAuthOracle is Ownable {
   function startProcessing(uint256 id) external onlyOwner {
     require(requests[id].status == 1, "Request with provided id is not in pending state, or does not exist");
     requests[id].status = 2;
+    requestsByOwner[requests[id].owner].push(serializeRequest(id));
   }
 
   function succeeded(
@@ -121,6 +122,7 @@ contract TwitterAuthOracle is Ownable {
 
     requests[id].status = 3;
     requests[id].successCallback(res);
+    requestsByOwner[requests[id].owner].push(serializeRequest(id));
   }
 
   function failed(uint256 id, string memory err) external onlyOwner {
@@ -129,6 +131,7 @@ contract TwitterAuthOracle is Ownable {
     requests[id].status = 4;
     requests[id].err = err;
     requests[id].failureCallback(id, err);
+    requestsByOwner[requests[id].owner].push(serializeRequest(id));
   }
 
   function getRequestById(uint256 id) external view onlyOwner returns (TwitterAuthData.RequestSerialized memory) {
@@ -156,9 +159,8 @@ contract TwitterAuthOracle is Ownable {
     return pointer;
   }
 
-  function getRequestsForAddress(address owner) external view returns(TwitterAuthData.RequestSerialized[] memory) {
-
-    return requestsByOwner[owner];
+  function getMyRequests() external view returns(TwitterAuthData.RequestSerialized[] memory) {
+    return requestsByOwner[_msgSender()];
   }
 
   function setPriceETH(uint256 _priceWEI) external onlyOwner {

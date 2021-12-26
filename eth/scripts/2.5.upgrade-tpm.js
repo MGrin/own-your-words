@@ -19,6 +19,11 @@ async function main() {
 
   populateAbiToApi(NAME, SYMBOL, "minters/", network.name);
   replaceAddressInApi(SYMBOL, tpm.address, network.name);
+
+  const owwLock = getLock(network.name, "OwnYourWords");
+  const OWW = await ethers.getContractFactory("OwnYourWords");
+  const oww = await OWW.attach(owwLock.address);
+  await oww.updateTwitterPostMinterAddress(tpm.address);
 }
 
 main()
