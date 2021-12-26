@@ -21,10 +21,12 @@ export class TwitterAuthOracleService {
       'failed',
     ]);
 
-    this.tao.on(
-      SolidityEvents.newPendingRequest,
-      this.handleNewPendingRequestEvent.bind(this),
-    );
+    if (this.tao) {
+      this.tao.on(
+        SolidityEvents.newPendingRequest,
+        this.handleNewPendingRequestEvent.bind(this),
+      );
+    }
   }
 
   public async handleNewPendingRequestEvent(requestId: number) {

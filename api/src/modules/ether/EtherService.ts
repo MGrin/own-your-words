@@ -51,7 +51,7 @@ export class EtherService {
   public loadContract(
     symbol: string,
     mayFailOverrides: string[] = [],
-  ): ethers.Contract {
+  ): ethers.Contract | undefined {
     this.logger.log(
       `Load contract [symbol=${symbol}][mayFailOverrides=${mayFailOverrides.join(
         ', ',
@@ -77,6 +77,7 @@ export class EtherService {
       this.logger.error(
         new Error(`Failed to load contract details: ${symbol}`),
       );
+      return undefined;
     }
   }
 

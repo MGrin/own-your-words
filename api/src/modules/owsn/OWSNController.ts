@@ -1,5 +1,4 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { Bucket } from '../yandexObjectStorage/Bucket';
 import { OWSNService } from './OWSNService';
 
 @Controller('OWSN')

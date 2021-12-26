@@ -23,10 +23,13 @@ export class TwitterPostOracleService {
     ]);
 
     this.owsn = this.etherService.loadContract('OWSN');
-    this.tpo.on(
-      SolidityEvents.newPendingRequest,
-      this.handleNewPendingRequestEvent.bind(this),
-    );
+
+    if (this.tpo) {
+      this.tpo.on(
+        SolidityEvents.newPendingRequest,
+        this.handleNewPendingRequestEvent.bind(this),
+      );
+    }
   }
 
   public async handleNewPendingRequestEvent(requestId: number) {
