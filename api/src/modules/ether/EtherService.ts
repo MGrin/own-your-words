@@ -58,20 +58,26 @@ export class EtherService {
       )}]`,
     );
 
-    const { address, abi } = this.getContractDetails(symbol);
+    try {
+      const { address, abi } = this.getContractDetails(symbol);
 
-    const contract = new ethers.Contract(
-      address,
-      abi.abi,
-      this.provider,
-    ).connect(this.account);
+      const contract = new ethers.Contract(
+        address,
+        abi.abi,
+        this.provider,
+      ).connect(this.account);
 
-    // @ts-expect-error yeah
-    contract.safeCall = {};
-    mayFailOverrides.forEach((method) => {
-      contract.safeCall[method] = this.createSafeMethod(contract, method);
-    });
-    return contract;
+      // @ts-expect-error yeah
+      contract.safeCall = {};
+      mayFailOverrides.forEach((method) => {
+        contract.safeCall[method] = this.createSafeMethod(contract, method);
+      });
+      return contract;
+    } catch (err) {
+      this.logger.error(
+        new Error(`Failed to load contract details: ${symbol}`),
+      );
+    }
   }
 
   public encrypt(message: string) {
