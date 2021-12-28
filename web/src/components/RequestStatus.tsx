@@ -1,7 +1,6 @@
 import { CheckIcon, WarningIcon } from '@chakra-ui/icons'
 import { Flex, Spinner, Text } from '@chakra-ui/react'
 import { Request } from '../redux/reducers/activity'
-import { formatError } from '../utils'
 
 type RequestStatusProps = {
   request: Request
