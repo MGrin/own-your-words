@@ -9,6 +9,7 @@ import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgrad
 import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 import "./minters/TwitterPostMinter.sol";
 import "./utils/OwnedWords.sol";
@@ -163,6 +164,15 @@ contract OwnYourWords is
 
     function setBaseURI(string memory newBaseURI) public onlyRole(ADMIN_ROLE) {
       _baseTokenURI = newBaseURI;
+    }
+
+
+    function baseTokenURI() public view returns (string memory) {
+      return _baseTokenURI;
+    }
+
+    function tokenURI(uint256 _tokenId) override public view returns (string memory) {
+        return string(abi.encodePacked(baseTokenURI(), "OWW", Strings.toString(_tokenId)));
     }
 
     uint256[48] private __gap;

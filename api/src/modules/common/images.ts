@@ -81,8 +81,11 @@ export enum BACKGROUND_IMAGES {
 
 export const getBackgroundColorForToken = (originalToken: number) => {
   let token = originalToken;
-  if (process.env.NODE_ENV === 'local') {
-    token = Math.floor(Math.random() * 1000);
+
+  if (token === 0) {
+    const colorNames = Object.keys(COLORS);
+    const colorName = colorNames[token % colorNames.length];
+    return COLORS[colorName];
   }
 
   if (token % 7 === 0) {

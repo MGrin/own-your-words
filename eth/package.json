@@ -50,6 +50,7 @@
     "rinkeby:deploy-oww": "npx hardhat run --network rinkeby scripts/1.6.deploy-oww.js",
     "rinkeby:deploy-dao": "npx hardhat run --network rinkeby scripts/1.7.deploy-dao.js",
     "rinkeby:deploy-dm": "npx hardhat run --network rinkeby scripts/1.8.deploy-dm.js",
+    "rinkeby:deploy-all": "yarn rinkeby:deploy-tao && yarn rinkeby:deploy-tm && yarn rinkeby:deploy-owsn && yarn rinkeby:deploy-tpo && yarn rinkeby:deploy-tpm && yarn rinkeby:deploy-oww && yarn rinkeby:deploy-dao && yarn rinkeby:deploy-dm",
     "rinkeby:upgrade-owsn": "npx hardhat run --network rinkeby scripts/2.1.upgrade-owsn.js",
     "rinkeby:upgrade-oww": "npx hardhat run --network rinkeby scripts/2.2.upgrade-oww.js",
     "rinkeby:console": "npx hardhat console --network rinkeby",
