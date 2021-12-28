@@ -11,6 +11,7 @@ import { TAOService } from './TAOService'
 import { TPOService } from './TPOService'
 import { DMService } from './DMService'
 import { DAOService } from './DAOService'
+import { setNetworkNotSupported } from '../redux/actions/ui'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -125,6 +126,15 @@ class EthersService {
 
     if (this.network.name === 'unknown') {
       this.network.name = 'localhost'
+    }
+
+    if (
+      (Object as any).values(SupportedNetworks).indexOf(this.network.name) ===
+      -1
+    ) {
+      store.dispatch(setNetworkNotSupported({ isNetworkSupported: false }))
+    } else {
+      store.dispatch(setNetworkNotSupported({ isNetworkSupported: true }))
     }
 
     this.connected = true

@@ -17,6 +17,8 @@ import { ActivityState } from './reducers/activity'
 import { ActivityAction } from './actions/activity/types'
 import { DiscordAuthState } from './reducers/discordAuth'
 import { DiscordAuthAction } from './actions/discordAuth/types'
+import { UIState } from './reducers/ui'
+import { UIAction } from './actions/ui/types'
 
 export type State = {
   web3: Web3State
@@ -25,6 +27,7 @@ export type State = {
   owsn: OWSNState
   oww: OWWState
   activity: ActivityState
+  ui: UIState
 }
 
 export type PlainAction =
@@ -34,6 +37,7 @@ export type PlainAction =
   | OWWAction
   | ActivityAction
   | DiscordAuthAction
+  | UIAction
 
 export type Action = PlainAction | ThunkAction
 

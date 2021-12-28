@@ -64,8 +64,7 @@ const reducer: Reducer<Web3State, Web3Action> = (
       const payload =
         action.payload as Web3ActionPayload[Web3ActionType.connectFailure]
       return {
-        ...state,
-        loading: false,
+        ...initialState,
         error: payload.error,
       }
     }
