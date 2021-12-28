@@ -7,7 +7,7 @@ import { connectStart, connectSuccess, connectFailure } from './plain'
 
 const logger = new Logger('Web3AsyncActions')
 const pageLoadedTimestamp = Date.now()
-const modesClearingTimeout = 1000
+const modesClearingTimeout = 10000
 
 export const connect: ThunkAC<void> = () => async (dispatch) => {
   dispatch(connectStart())
