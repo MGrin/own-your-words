@@ -94,7 +94,7 @@ const catcher =
           mintProcessing()
         }
       }
-    }, 100)
+    }, 500)
   }
 
 export default catcher
