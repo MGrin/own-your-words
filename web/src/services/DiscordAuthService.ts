@@ -42,8 +42,6 @@ export type AuthURLResponse = {
 class DiscordAuth {
   private readonly logger = new Logger('DiscordAuth')
 
-  private accessTokenRequested = false
-
   public code: string | null = null
   public redirectUrl: string | null = null
 
@@ -71,10 +69,13 @@ class DiscordAuth {
         needRedirect = true
       }
 
-      this.mode = this.mode =
+      this.logger.log(`Need redirect: ${needRedirect}`)
+
+      this.setMode(
         (window.location.pathname as WebRoutes) === WebRoutes.accountMintDiscord
           ? MODE.mint
           : MODE.check
+      )
 
       if (needRedirect) {
         window.history.replaceState(
@@ -143,6 +144,8 @@ class DiscordAuth {
     code: string,
     redirectUrl: string
   ) {
+    this.logger.log(`Encrypt OAuth code and redirectUrl`)
+
     const res = await fetch(`${getApiUrl()}/utils/encrypt`, {
       method: 'POST',
       headers: {
@@ -170,6 +173,8 @@ class DiscordAuth {
   }
 
   public getRedirectUrl = () => {
+    this.logger.log(`Get redirectUrl`)
+
     return this.mode === MODE.mint
       ? `${window.location.origin}${WebRoutes.accountMintDiscord}`
       : `${window.location.origin}${WebRoutes.accountMintDiscordCheck}`
@@ -178,6 +183,8 @@ class DiscordAuth {
   public async getUser(
     accessToken: DiscordOAuthAccessTokenResponse
   ): Promise<DiscordUser> {
+    this.logger.log(`Get user`)
+
     const res = await fetch(`${getApiUrl()}/discord/user`, {
       method: 'POST',
       headers: {
@@ -196,6 +203,8 @@ class DiscordAuth {
   }
 
   public setMode(mode?: MODE) {
+    this.logger.log(`Set mode [mode=${mode}]`)
+
     this.mode = mode || null
   }
 }

@@ -54,10 +54,13 @@ class TwitterAuth {
         needRedirect = true
       }
 
-      this.mode =
+      this.logger.log(`Need redirect: ${needRedirect}`)
+
+      this.setMode(
         (window.location.pathname as WebRoutes) === WebRoutes.accountMintTwitter
           ? MODE.mint
           : MODE.check
+      )
 
       if (needRedirect) {
         window.history.replaceState(
@@ -126,6 +129,8 @@ class TwitterAuth {
     oauthToken: string,
     oauthVerifier: string
   ) {
+    this.logger.log(`Encrypt OAuth token and verifier`)
+
     const res = await fetch(`${getApiUrl()}/utils/encrypt`, {
       method: 'POST',
       headers: {
@@ -153,6 +158,7 @@ class TwitterAuth {
   }
 
   public setMode(mode?: MODE) {
+    this.logger.log(`Set mode [mode=${mode}]`)
     this.mode = mode || null
   }
 }
