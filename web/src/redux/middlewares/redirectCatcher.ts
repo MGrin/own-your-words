@@ -12,82 +12,84 @@ const catcher =
   (store: StoreAPI) => (next: NextFn) => (action: PlainAction) => {
     next(action)
 
-    let redirectOrigin
-    if (twitterAuthService.mode) {
-      redirectOrigin = 'twitter'
-    } else if (discordAuthService.mode) {
-      redirectOrigin = 'discord'
-    }
-
-    if (!redirectOrigin) {
-      return
-    }
-
-    if (action.type !== Web3ActionType.connectSuccess) {
-      return
-    }
-
-    let checkProcessing
-    let mintProcessing
-    let mode: MODE | null = null
-
-    switch (redirectOrigin) {
-      case 'twitter': {
-        mode = twitterAuthService.mode
-        checkProcessing = () => {
-          store.dispatch(fetchTwitterAccessToken())
-        }
-        mintProcessing = () => {
-          if (
-            !twitterAuthService.oauthToken ||
-            !twitterAuthService.oauthVerifier
-          ) {
-            return
-          }
-
-          store.dispatch(
-            mintTwitter({
-              oauthToken: twitterAuthService.oauthToken!,
-              oauthVerifier: twitterAuthService.oauthVerifier!,
-            })
-          )
-        }
-        break
+    setTimeout(() => {
+      let redirectOrigin
+      if (twitterAuthService.mode) {
+        redirectOrigin = 'twitter'
+      } else if (discordAuthService.mode) {
+        redirectOrigin = 'discord'
       }
-      case 'discord': {
-        mode = discordAuthService.mode
-        checkProcessing = () => {
-          store.dispatch(fetchDiscordAccessToken())
-        }
-        mintProcessing = () => {
-          if (!discordAuthService.code) {
-            return
-          }
 
-          store.dispatch(
-            mintDiscord({
-              code: discordAuthService.code!,
-              redirectUrl: discordAuthService.getRedirectUrl(),
-            })
-          )
-        }
-        break
-      }
-    }
-
-    if (!mode || !checkProcessing || !mintProcessing) {
-      return
-    }
-
-    switch (mode) {
-      case MODE.check: {
-        checkProcessing()
+      if (!redirectOrigin) {
         return
       }
-      case MODE.mint: {
-        mintProcessing()
+
+      if (action.type !== Web3ActionType.connectSuccess) {
+        return
       }
-    }
+
+      let checkProcessing
+      let mintProcessing
+      let mode: MODE | null = null
+
+      switch (redirectOrigin) {
+        case 'twitter': {
+          mode = twitterAuthService.mode
+          checkProcessing = () => {
+            store.dispatch(fetchTwitterAccessToken())
+          }
+          mintProcessing = () => {
+            if (
+              !twitterAuthService.oauthToken ||
+              !twitterAuthService.oauthVerifier
+            ) {
+              return
+            }
+
+            store.dispatch(
+              mintTwitter({
+                oauthToken: twitterAuthService.oauthToken!,
+                oauthVerifier: twitterAuthService.oauthVerifier!,
+              })
+            )
+          }
+          break
+        }
+        case 'discord': {
+          mode = discordAuthService.mode
+          checkProcessing = () => {
+            store.dispatch(fetchDiscordAccessToken())
+          }
+          mintProcessing = () => {
+            if (!discordAuthService.code) {
+              return
+            }
+
+            store.dispatch(
+              mintDiscord({
+                code: discordAuthService.code!,
+                redirectUrl: discordAuthService.getRedirectUrl(),
+              })
+            )
+          }
+          break
+        }
+      }
+
+      if (!mode || !checkProcessing || !mintProcessing) {
+        return
+      }
+
+      switch (mode) {
+        case MODE.check: {
+          checkProcessing()
+          return
+        }
+        case MODE.mint: {
+          mintProcessing()
+        }
+      }
+    }, 100)
   }
 
 export default catcher
