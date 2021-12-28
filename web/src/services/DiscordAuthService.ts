@@ -56,6 +56,8 @@ class DiscordAuth {
       window.location.pathname as WebRoutes
     )
 
+    this.logger.log(`Is redirected from discord: ${isRedirectedFromDiscord}`)
+
     if (isRedirectedFromDiscord) {
       let needRedirect = false
       const query = new URLSearchParams(window.location.search)

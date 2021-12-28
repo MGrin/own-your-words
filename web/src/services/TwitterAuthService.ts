@@ -39,6 +39,8 @@ class TwitterAuth {
       window.location.pathname as WebRoutes
     )
 
+    this.logger.log(`Is redirected from twitter: ${isRedirectedFromTwitter}`)
+
     if (isRedirectedFromTwitter) {
       let needRedirect = false
       const query = new URLSearchParams(window.location.search)
