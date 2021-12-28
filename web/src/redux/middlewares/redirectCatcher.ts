@@ -6,6 +6,9 @@ import { fetchAccessToken as fetchDiscordAccessToken } from '../actions/discordA
 import { Web3ActionType } from '../actions/web3/types'
 import type { PlainAction } from '../store'
 import type { StoreAPI } from '../utils'
+import { Logger } from '../../services/Logger'
+
+const logger = new Logger('RedirectCatcher')
 
 type NextFn = (a: PlainAction) => void
 const catcher =
@@ -13,6 +16,10 @@ const catcher =
     next(action)
 
     setTimeout(() => {
+      if (action.type !== Web3ActionType.connectSuccess) {
+        return
+      }
+
       let redirectOrigin
       if (twitterAuthService.mode) {
         redirectOrigin = 'twitter'
@@ -20,11 +27,9 @@ const catcher =
         redirectOrigin = 'discord'
       }
 
-      if (!redirectOrigin) {
-        return
-      }
+      logger.log(`Redirect origin = ${redirectOrigin}`)
 
-      if (action.type !== Web3ActionType.connectSuccess) {
+      if (!redirectOrigin) {
         return
       }
 
