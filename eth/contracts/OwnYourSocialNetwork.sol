@@ -2,100 +2,199 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC721Custom.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
+import "hardhat/console.sol";
+
 import "./minters/TwitterMinter.sol";
+import "./minters/DiscordMinter.sol";
+import "./utils/OwnedAccount.sol";
 
-library OwnedAccount {
-  struct data {
-    uint256 id;
+contract OwnYourSocialNetwork is
+    Initializable, ContextUpgradeable,
+    AccessControlEnumerableUpgradeable,
+    ERC721EnumerableUpgradeable,
+    ERC721PausableUpgradeable
+{
+    function initialize(
+        string memory name,
+        string memory symbol,
+        string memory baseTokenURI
+    ) public virtual initializer {
+        __OwnYourSocialNetwork_init(name, symbol, baseTokenURI);
+    }
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    using OwnedAccount for OwnedAccount.data;
 
-    string sn_name;
-    string sn_id;
-    string sn_url;
-  }
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
-  struct availability {
-    uint256 id;
-    bool stored;
-  }
-}
+    CountersUpgradeable.Counter private _tokenIdTracker;
 
-contract OwnYourSocialNetwork is ERC721Custom {
-  using OwnedAccount for OwnedAccount.data;
-  using OwnedAccount for OwnedAccount.availability;
+    string private _baseTokenURI;
 
-  mapping(string => OwnedAccount.availability) private _owned_accounts_by_gen_id;
-  mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
-  TwitterMinter public twitterMinter;
+    TwitterMinter private twitterMinter;
 
-  function __OwnYourSocialNetwork__init(string memory name, string memory symbol, string memory baseURI) initializer public  {
-    __ERC721Custom_init(name, symbol, string(abi.encodePacked(baseURI, symbol)));
-  }
+    function __OwnYourSocialNetwork_init(
+        string memory name,
+        string memory symbol,
+        string memory baseTokenURI
+    ) internal onlyInitializing {
+        __Context_init_unchained();
+        __ERC165_init_unchained();
+        __AccessControl_init_unchained();
+        __AccessControlEnumerable_init_unchained();
+        __ERC721_init_unchained(name, symbol);
+        __ERC721Enumerable_init_unchained();
+        __Pausable_init_unchained();
+        __ERC721Pausable_init_unchained();
+        __OwnYourSocialNetwork_init_unchained(baseTokenURI);
+    }
 
-  function mint(
-    string memory sn_name,
-    string memory sn_id,
-    string memory sn_url,
-    address to
-  ) external returns (uint256) {
-    string memory gen_sn_id = string(
-      abi.encodePacked(sn_name, sn_id)
-    );
+    function __OwnYourSocialNetwork_init_unchained(
+        string memory baseTokenURI
+    ) internal onlyInitializing {
+        _baseTokenURI = baseTokenURI;
 
-    require(
-      isAccountAvailable(gen_sn_id) == true,
-      "OwnYourSocialNetwork: The account was already minted"
-    );
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
-    uint256 _token_id = _mint_with_owner(to);
-    _owned_accounts_by_id[_token_id].id = _token_id;
-    _owned_accounts_by_id[_token_id].sn_name = sn_name;
-    _owned_accounts_by_id[_token_id].sn_id = sn_id;
-    _owned_accounts_by_id[_token_id].sn_url = sn_url;
+        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
+        _setupRole(ADMIN_ROLE, _msgSender());
+    }
 
-    _owned_accounts_by_gen_id[gen_sn_id].id = _token_id;
-    _owned_accounts_by_gen_id[gen_sn_id].stored = true;
+    function _baseURI() internal view override returns (string memory) {
+        return _baseTokenURI;
+    }
 
-    return _token_id;
-  }
+    function mint(address to) external returns (uint256) {
+        require(hasRole(MINTER_ROLE, _msgSender()), "OwnYourSocialNetwork: must have minter role to mint");
 
-  function mintTwitter(
-    string memory oauthToken,
-    string memory oauthVerifier
-  ) external payable {
-    twitterMinter.startMint{ value: msg.value }(oauthToken, oauthVerifier, _msgSender(), this.mint);
-  }
+        uint256 _token_id = _tokenIdTracker.current();
 
-  function isAccountAvailable(string memory gen_sn_id) public view returns (bool) {
-    OwnedAccount.availability memory availability = _owned_accounts_by_gen_id[gen_sn_id];
+        _mint(to, _token_id);
+        _tokenIdTracker.increment();
 
-    return !availability.stored;
-  }
+        return _token_id;
+    }
 
-  function getOWSNByGenSnId(string memory gen_sn_id) public view returns (OwnedAccount.data memory) {
-    require(
-      !isAccountAvailable(gen_sn_id),
-      "OwnYourSocialNetwork: The account was not yet minted"
-    );
+    function mintTwitter(
+      string memory oauthToken,
+      string memory oauthVerifier
+    ) external payable {
+      twitterMinter.startMint{ value: msg.value }(oauthToken, oauthVerifier, _msgSender(), this.mint);
+    }
 
-    uint256 tokenId = _owned_accounts_by_gen_id[gen_sn_id].id;
-    return getOWSNByTokenId(tokenId);
-  }
+    function mintDiscord(
+      string memory code,
+      string memory redirectUrl
+    ) external payable {
+      discordMinter.startMint{ value: msg.value }(code, redirectUrl, _msgSender(), this.mint);
+    }
 
-  function getOWSNByTokenId(uint256 tokenId) public view returns (OwnedAccount.data memory) {
-    require(_exists(tokenId) == true, "OwnYourSocialNetwork: The account was not yet minted");
+    function isAvailable(string memory sn_name, string memory sn_id) public view returns (bool) {
+      if (twitterMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return twitterMinter.isAvailable(sn_id);
+      }
 
-    return _owned_accounts_by_id[tokenId];
-  }
+      if (discordMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return discordMinter.isAvailable(sn_id);
+      }
 
-  function updateTwitterMinterAddress(address twitterMinterAddress) public onlyRole(ADMIN_ROLE) {
-    revokeRole(MINTER_ROLE, address(twitterMinter));
-    twitterMinter = TwitterMinter(twitterMinterAddress);
-    grantRole(MINTER_ROLE, twitterMinterAddress);
-  }
+      console.log("Unknown sn_name: %s", sn_name);
+      return false;
+    }
 
-  function _baseURI() internal pure override returns (string memory) {
-    return "https://rinkeby.oww-api.famio.app/OWSN/";
-  }
+    function getOWSNBySnId(string memory sn_name, string memory sn_id) public view returns (OwnedAccount.data memory) {
+      require(
+        !isAvailable(sn_name, sn_id),
+        "OwnYourSocialNetwork: The account was not yet minted"
+      );
 
+      if (twitterMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return twitterMinter.getOWNSBySnId(sn_id);
+      }
+
+      if (discordMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return discordMinter.getOWNSBySnId(sn_id);
+      }
+
+      require(false, "OwnYourSocialNetwork: Unsupported social network"); 
+    }
+
+    function getOWSNByTokenId(uint256 tokenId) public view returns (OwnedAccount.data memory) {
+      require(_exists(tokenId) == true, "OwnYourSocialNetwork: The account was not yet minted [_exist]");
+
+      if (twitterMinter.tokenExists(tokenId)) {
+        return twitterMinter.getOWSNByTokenId(tokenId);
+      }
+
+      if (discordMinter.tokenExists(tokenId)) {
+        return discordMinter.getOWSNByTokenId(tokenId);
+      }
+
+      require(false, "OwnYourSocialNetwork: The account was not yet minted [minters]");
+    }
+
+    function setTwitterMinterAddress(address twitterMinterAddress) public {
+      require(hasRole(ADMIN_ROLE, _msgSender()), "OwnYourSocialNetwork: must have admin role to change");
+
+      revokeRole(MINTER_ROLE, address(twitterMinter));
+      twitterMinter = TwitterMinter(twitterMinterAddress);
+      grantRole(MINTER_ROLE, twitterMinterAddress);
+    }
+
+    function setDiscordMinterAddress(address discordMinterAddress) public {
+      require(hasRole(ADMIN_ROLE, _msgSender()), "OwnYourSocialNetwork: must have admin role to change");
+
+      revokeRole(MINTER_ROLE, address(discordMinter));
+      discordMinter = DiscordMinter(discordMinterAddress);
+      grantRole(MINTER_ROLE, discordMinterAddress);
+    }
+
+    function pause() public {
+        require(hasRole(PAUSER_ROLE, _msgSender()), "OwnYourSocialNetwork: must have pauser role to pause");
+        _pause();
+    }
+
+    function unpause() public {
+        require(hasRole(PAUSER_ROLE, _msgSender()), "OwnYourSocialNetwork: must have pauser role to unpause");
+        _unpause();
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721EnumerableUpgradeable, ERC721PausableUpgradeable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControlEnumerableUpgradeable, ERC721Upgradeable, ERC721EnumerableUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function retrieveFunds() public onlyRole(ADMIN_ROLE){
+      payable(_msgSender()).transfer(address(this).balance);
+    }
+
+    function setBaseURI(string memory newBaseURI) public onlyRole(ADMIN_ROLE) {
+      _baseTokenURI = newBaseURI;
+    }
+
+    uint256[48] private __gap;
+    DiscordMinter private discordMinter;
 }

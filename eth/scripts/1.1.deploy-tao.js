@@ -1,11 +1,12 @@
 const { ethers, network } = require("hardhat");
-const { writeLock } = require("./utils/locks");
+const { getLock, writeLock } = require("./utils/locks");
 const { populateAbiToApi } = require("./utils/abi");
 const { replaceAddressInApi } = require("./utils/env");
 
+const NAME = "TwitterAuthOracle";
+const SYMBOL = "TAO";
+
 async function main() {
-  const NAME = "TwitterAuthOracle";
-  const SYMBOL = "TAO";
   const TwitterAuthOracle = await ethers.getContractFactory(NAME);
 
   const tao = await TwitterAuthOracle.deploy();
@@ -16,6 +17,13 @@ async function main() {
 
   populateAbiToApi(NAME, SYMBOL, "oracles/", network.name);
   replaceAddressInApi(SYMBOL, tao.address, network.name);
+
+  try {
+    const tmLock = getLock(network.name, "TwitterMinter");
+    const TwitterMinter = await ethers.getContractFactory("TwitterMinter");
+    const tm = await TwitterMinter.attach(tmLock.address);
+    await tm.setTwitterAuthOracle(tao.address);
+  } catch (e) {}
 }
 
 main()

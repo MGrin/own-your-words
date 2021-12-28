@@ -86,19 +86,33 @@ export class TwitterPostOracleService {
       const request = await this.tpo.getRequestById(requestId);
       const postId = request.postId;
       const requestOwner = request.owner;
+      await startTx.wait();
+
       const post = await this.twitterService.getPostById(postId);
 
-      const owsnToken = await this.owsn.getOWSNByGenSnId(
-        `twitter${post.user.id}`,
+      const amountOfOWSNTokensBN: ethers.BigNumber = await this.owsn.balanceOf(
+        requestOwner,
       );
-
-      const owner = await this.owsn.ownerOf(owsnToken.id);
-
-      if (owner !== requestOwner) {
-        throw new Error('Requesting account is not an owner of social network');
+      const amountOfTokens = amountOfOWSNTokensBN.toNumber();
+      let isOwner = false;
+      for (let i = 0; i < amountOfTokens; i++) {
+        const tokenId: ethers.BigNumber = await this.owsn.tokenOfOwnerByIndex(
+          requestOwner,
+          i,
+        );
+        const token = await this.owsn.getOWSNByTokenId(tokenId.toNumber());
+        if (
+          token.sn_name === 'twitter' &&
+          String(token.sn_id) === String(post.user.id)
+        ) {
+          isOwner = true;
+          break;
+        }
       }
 
-      await startTx.wait();
+      if (!isOwner) {
+        throw new Error('Requesting account is not an owner of social network');
+      }
 
       const succeedTx = await this.tpo.safeCall.succeeded(
         requestId,

@@ -1,4 +1,5 @@
 export { default as twitterAuth } from './twitterAuth'
+export { default as discordAuth } from './discordAuth'
 export { default as web3 } from './web3'
 export { default as owsn } from './owsn'
 export { default as oww } from './oww'

@@ -14,13 +14,13 @@ async function main() {
 
   const tm = getLock(network.name, "TwitterMinter");
 
-  const owsn = await upgrades.deployProxy(
-    OwnYourSocialNetwork,
-    [NAME, SYMBOL, getBaseUri(network.name)],
-    { initializer: "__OwnYourSocialNetwork__init" }
-  );
+  const owsn = await upgrades.deployProxy(OwnYourSocialNetwork, [
+    NAME,
+    SYMBOL,
+    getBaseUri(network.name),
+  ]);
   await owsn.deployed();
-  await owsn.updateTwitterMinterAddress(tm.address);
+  await owsn.setTwitterMinterAddress(tm.address);
 
   writeLock(network.name, NAME, owsn.address);
   console.log(`${NAME} deployed to:`, owsn.address);

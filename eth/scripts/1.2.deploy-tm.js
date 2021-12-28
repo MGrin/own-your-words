@@ -19,6 +19,13 @@ async function main() {
 
   populateAbiToApi(NAME, SYMBOL, "minters/", network.name);
   replaceAddressInApi(SYMBOL, tm.address, network.name);
+
+  try {
+    const owsnLock = getLock(network.name, "OwnYourSocialNetwork");
+    const OWSN = await ethers.getContractFactory("OwnYourSocialNetwork");
+    const owsn = await OWSN.attach(owsnLock.address);
+    await owsn.setTwitterMinterAddress(tm.address);
+  } catch (e) {}
 }
 
 main()

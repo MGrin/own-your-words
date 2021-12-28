@@ -2,15 +2,21 @@ import {
   checkAccountAvailabilityFailure,
   checkAccountAvailabilityStart,
   checkAccountAvailabilitySuccess,
+  getDiscordPriceFailure,
+  getDiscordPriceStart,
+  getDiscordPriceSuccess,
   getTokenIdsFailure,
   getTokenIdsStart,
   getTokenIdsSuccess,
   getTwitterPriceFailure,
   getTwitterPriceStart,
   getTwitterPriceSuccess,
+  mintDiscordFailure,
+  mintDiscordStart,
   mintTwitterFailure,
   mintTwitterStart,
 } from '.'
+import discordAuthService from '../../../services/DiscordAuthService'
 import ethersService from '../../../services/EthersService'
 import { Logger } from '../../../services/Logger'
 import twitterAuthService from '../../../services/TwitterAuthService'
@@ -36,9 +42,7 @@ export const checkAccountAvailability: ThunkAC<
         return
       }
 
-      const available = await owsn.isAccountAvailable(
-        owsn.getGenId(snName, snId)
-      )
+      const available = await owsn.isAvailable(snName, snId)
       dispatch(checkAccountAvailabilitySuccess({ snName, available }))
     } catch (error) {
       logger.error(error as Error)
@@ -85,6 +89,24 @@ export const getTwitterPrice: ThunkAC<
   }
 }
 
+export const getDiscordPrice: ThunkAC<
+  OWSNActionPayload[OWSNActionType.getDiscordPriceStart]
+> = () => async (dispatch) => {
+  dispatch(getDiscordPriceStart())
+  try {
+    const dm = ethersService.getDM()
+    if (!dm) {
+      throw new Error('TM contract is not yet ready!')
+    }
+
+    const price = await dm.getPrice()
+    dispatch(getDiscordPriceSuccess({ price }))
+  } catch (error) {
+    logger.error(error as Error)
+    dispatch(getDiscordPriceFailure({ error: error as Error }))
+  }
+}
+
 export const mintTwitter: ThunkAC<
   OWSNActionPayload[OWSNActionType.mintTwitterStart]
 > =
@@ -119,5 +141,36 @@ export const mintTwitter: ThunkAC<
     } catch (error) {
       logger.error(error as Error)
       dispatch(mintTwitterFailure({ error: error as Error }))
+    }
+  }
+
+export const mintDiscord: ThunkAC<
+  OWSNActionPayload[OWSNActionType.mintDiscordStart]
+> =
+  ({ code, redirectUrl }) =>
+  async (dispatch) => {
+    dispatch(mintDiscordStart({ code, redirectUrl }))
+    try {
+      const owsn = ethersService.getOWSN()
+      if (!owsn) {
+        throw new Error('OWSN contract is not yet ready!')
+      }
+
+      const dm = ethersService.getDM()
+      if (!dm) {
+        throw new Error('DM contract is not yet ready!')
+      }
+
+      const price = await dm.getPrice()
+      const { code: codeEncrypted, redirectUrl: redirectUrlEncrypted } =
+        await discordAuthService.encryptOAuthCodeAndRedirectUrl(
+          code,
+          redirectUrl
+        )
+
+      await owsn.mintDiscordOWSN(codeEncrypted, redirectUrlEncrypted, price)
+    } catch (error) {
+      logger.error(error as Error)
+      dispatch(mintDiscordFailure({ error: error as Error }))
     }
   }

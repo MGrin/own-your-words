@@ -6,13 +6,11 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./IMinter.sol";
 import "../oracles/TwitterAuthOracle.sol";
+import "../utils/OwnedAccount.sol";
 
 library TwitterMintState {
   struct SuccessCallback {
     function (
-      string memory,
-      string memory,
-      string memory,
       address
     ) external returns (uint256) cb;
   }
@@ -20,12 +18,19 @@ library TwitterMintState {
 
 contract TwitterMinter is AccessControl, IMinter {
   using TwitterMintState for TwitterMintState.SuccessCallback;
+  using OwnedAccount for OwnedAccount.data;
+  using OwnedAccount for OwnedAccount.availability;
 
   TwitterAuthOracle public oracle;
+
   mapping(uint256 => TwitterMintState.SuccessCallback) private _callback_by_req_id;
+  mapping(string => OwnedAccount.availability) private _owned_accounts_by_sn_id;
+  mapping(uint256 => OwnedAccount.data) private _owned_accounts_by_id;
+
   bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
   bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
-
+  bytes32 public constant snName = keccak256("twitter");
+  
   event TwitterAuthRequestSubmited(
     address indexed sender, uint256 requestId
   );
@@ -54,9 +59,6 @@ contract TwitterMinter is AccessControl, IMinter {
     string memory oauthVerifier,
     address owner,
     function (
-      string memory,
-      string memory,
-      string memory,
       address
     ) external returns (uint256) cb
   ) external payable {
@@ -68,27 +70,56 @@ contract TwitterMinter is AccessControl, IMinter {
   function succeedMint(
     TwitterAuthData.Response memory res
   ) external onlyRole(USER_ROLE) {    
-    uint256 tokenId = _callback_by_req_id[res.requestId].cb(
-      "twitter",
-      res.userId,
-      string(abi.encodePacked("https://twitter.com/", res.screenName)),
+    uint256 _token_id = _callback_by_req_id[res.requestId].cb(
       res.owner
     );
-    emit TwitterAuthRequestSucceeded(res.requestId, tokenId);
+
+    _owned_accounts_by_id[_token_id].id = _token_id;
+    _owned_accounts_by_id[_token_id].sn_name = "twitter";
+    _owned_accounts_by_id[_token_id].sn_id = res.userId;
+    _owned_accounts_by_id[_token_id].sn_url = string(abi.encodePacked("https://twitter.com/", res.screenName));
+
+    _owned_accounts_by_sn_id[res.userId].id = _token_id;
+    _owned_accounts_by_sn_id[res.userId].stored = true;
+
+    emit TwitterAuthRequestSucceeded(res.requestId, _token_id);
   }
 
   function failMint(
     uint256 reqId,
     string memory err
-  ) external onlyRole(USER_ROLE) {    
+  ) external override onlyRole(USER_ROLE) {    
     emit TwitterAuthRequestFailed(reqId, err);
+  }
+
+  function isAvailable(string memory sn_id) public view override returns (bool) {
+    OwnedAccount.availability memory availability = _owned_accounts_by_sn_id[sn_id];
+
+    return !availability.stored;
+  }
+
+  function tokenExists(uint256 token_id) public view override returns (bool) {
+    OwnedAccount.data memory owsn =  _owned_accounts_by_id[token_id];
+    return getSnName() == keccak256(abi.encodePacked(owsn.sn_name));
+  }
+
+  function getOWNSBySnId(string memory sn_id) public view returns (OwnedAccount.data memory) {
+    require(!isAvailable(sn_id), "TwitterMinter: Account was not yet minted");
+    uint256 tokenId = _owned_accounts_by_sn_id[sn_id].id;
+
+    return _owned_accounts_by_id[tokenId];
+  }
+
+  function getOWSNByTokenId(uint256 tokenId) public view returns (OwnedAccount.data memory) {
+    require(tokenExists(tokenId), "TwitterMinter: Account was not yet minted");
+    return _owned_accounts_by_id[tokenId];
   }
 
   function getPriceWEI() public view override returns (uint256) {
     return oracle.priceWEI();
   }
 
-  function retrieveFunds() public onlyRole(ADMIN_ROLE) {
+  function retrieveFunds() public override onlyRole(ADMIN_ROLE) {
     payable(_msgSender()).transfer(address(this).balance);
   }
 
@@ -96,5 +127,9 @@ contract TwitterMinter is AccessControl, IMinter {
     revokeRole(USER_ROLE, address(oracle));
     oracle = TwitterAuthOracle(twitterAuthOracleAddress);
     grantRole(USER_ROLE, twitterAuthOracleAddress);
+  }
+
+  function getSnName() public pure override returns(bytes32) {
+    return snName;
   }
 }

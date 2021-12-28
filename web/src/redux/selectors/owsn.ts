@@ -10,6 +10,13 @@ export const owsnTwitterSelector = (state: State) => ({
   available: state.owsn.twitterAccountAvailable,
 })
 
+export const owsnDiscordSelector = (state: State) => ({
+  loading: state.owsn.discordLoading,
+  error: state.owsn.discordError,
+  price: state.owsn.discordPrice,
+  available: state.owsn.discordAccountAvailable,
+})
+
 export const tokenIdsSelector = (state: State) => {
   return state.owsn.tokenIds
 }

@@ -29,9 +29,9 @@ export class OWWService {
     })
   }
 
-  public async isPostAvailable(genSnId: string) {
-    this.logger.log(`Is post available [genSnId=${genSnId}]`)
-    return this.contract.isPostAvailable(genSnId)
+  public async isAvailable(snName: string, postId: string) {
+    this.logger.log(`Is post available [snName=${snName}, postId=${postId}]`)
+    return this.contract.isAvailable(snName, postId)
   }
 
   public async getOWWTokens(address: string) {

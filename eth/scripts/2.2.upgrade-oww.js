@@ -16,11 +16,10 @@ async function main() {
   const oww = await upgrades.upgradeProxy(
     existingDeployment.address,
     OwnYourWords,
-    [NAME, SYMBOL, getBaseUri(network.name)],
-    { initializer: "__OwnYourWords__init" }
+    [NAME, SYMBOL, getBaseUri(network.name)]
   );
   await oww.deployed();
-  await oww.updateTwitterPostMinterAddress(tpm.address);
+  await oww.setTwitterPostMinterAddress(tpm.address);
   await oww.setBaseURI(getBaseUri(network.name));
 
   writeLock(network.name, NAME, oww.address);

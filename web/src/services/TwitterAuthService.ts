@@ -2,8 +2,10 @@ import { getApiUrl } from '../utils'
 import { WebRoutes } from '../WebRoutes'
 import { Logger } from './Logger'
 
-const SUPPORTED_REDIRECT_PATHNAME = [WebRoutes.accountMint]
-const REDIRECT_HASH_PREFIX = '#twitter-'
+const SUPPORTED_REDIRECT_PATHNAME = [
+  WebRoutes.accountMintTwitter,
+  WebRoutes.accountMintTwitterCheck,
+]
 
 export enum MODE {
   check = 'check',
@@ -33,30 +35,35 @@ class TwitterAuth {
   constructor() {
     this.logger.log('Constructor')
 
-    const isRedirectedFromTwitter =
-      SUPPORTED_REDIRECT_PATHNAME.includes(
-        window.location.pathname as WebRoutes
-      ) && window.location.hash.startsWith(REDIRECT_HASH_PREFIX)
+    const isRedirectedFromTwitter = SUPPORTED_REDIRECT_PATHNAME.includes(
+      window.location.pathname as WebRoutes
+    )
 
     if (isRedirectedFromTwitter) {
+      let needRedirect = false
       const query = new URLSearchParams(window.location.search)
       if (query.has('oauth_token')) {
         this.oauthToken = query.get('oauth_token')
+        needRedirect = true
       }
 
       if (query.has('oauth_verifier')) {
         this.oauthVerifier = query.get('oauth_verifier')
+        needRedirect = true
       }
 
-      this.mode = window.location.hash.substring(
-        REDIRECT_HASH_PREFIX.length
-      ) as MODE
+      this.mode =
+        (window.location.pathname as WebRoutes) === WebRoutes.accountMintTwitter
+          ? MODE.mint
+          : MODE.check
 
-      window.history.replaceState(
-        {},
-        document.title,
-        `${window.location.origin}${window.location.pathname}`
-      )
+      if (needRedirect) {
+        window.history.replaceState(
+          {},
+          'Own Your Words',
+          `${window.location.origin}${WebRoutes.accountMint}`
+        )
+      }
     }
   }
 

@@ -1,8 +1,9 @@
 require("@nomiclabs/hardhat-waffle");
 require("@openzeppelin/hardhat-upgrades");
 require("@nomiclabs/hardhat-etherscan");
+// require("hardhat-ethernal");
 require("dotenv").config();
-require("./tasks.js");
+require("./tasks");
 
 /**
  * @type import('hardhat/config').HardhatUserConfig

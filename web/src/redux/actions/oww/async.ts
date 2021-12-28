@@ -77,7 +77,7 @@ export const mintPost: ThunkAC<OWWActionPayload[OWWActionType.mintPostStart]> =
 
       const price = await tpm.getPrice()
 
-      const available = await oww.isPostAvailable(oww.getGenId(snName, postId))
+      const available = await oww.isAvailable(snName, postId)
 
       if (!available) {
         throw new Error('Unfortunately, this post is not available for minting')
@@ -87,8 +87,9 @@ export const mintPost: ThunkAC<OWWActionPayload[OWWActionType.mintPostStart]> =
         case 'twitter': {
           const post = await TwitterService.getPostById(postId)
 
-          const owsnToken = await owsn.getOWSNByGenSnId(
-            `${snName}${post.user.id}`
+          const owsnToken = await owsn.getOWSNBySnId(
+            snName,
+            String(post.user.id)
           )
 
           const owsnOwner = await owsn.ownerOf(owsnToken.id)

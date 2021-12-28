@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { DiscordModule } from '../discord/DiscordModule';
+import { DiscordService } from '../discord/DiscordService';
 import { EtherModule } from '../ether/EtherModule';
 import { EtherService } from '../ether/EtherService';
 import { TwitterModule } from '../twitter/TwitterModule';
@@ -15,12 +17,14 @@ import { OWSNService } from './OWSNService';
     EtherModule,
     YandexObjectStorageModule,
     TwitterModule,
+    DiscordModule,
   ],
   providers: [
     OWSNService,
     EtherService,
     YandexObjectStorageService,
     TwitterService,
+    DiscordService,
   ],
   controllers: [OWSNController],
   exports: [],

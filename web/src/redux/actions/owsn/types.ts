@@ -11,9 +11,17 @@ export enum OWSNActionType {
   getTwitterPriceSuccess = 'OWSN/getTwitterPrice/SUCCESS',
   getTwitterPriceFailure = 'OWSN/getTwitterPrice/FAILURE',
 
+  getDiscordPriceStart = 'OWSN/getDiscordPrice/START',
+  getDiscordPriceSuccess = 'OWSN/getDiscordPrice/SUCCESS',
+  getDiscordPriceFailure = 'OWSN/getDiscordPrice/FAILURE',
+
   mintTwitterStart = 'OWSN/mint/twitter/START',
   mintTwitterSuccess = 'OWSN/mint/twitter/SUCCESS',
   mintTwitterFailure = 'OWSN/mint/twitter/FAILURE',
+
+  mintDiscordStart = 'OWSN/mint/discord/START',
+  mintDiscordSuccess = 'OWSN/mint/discord/SUCCESS',
+  mintDiscordFailure = 'OWSN/mint/discord/FAILURE',
 }
 
 export type OWSNActionPayload = {
@@ -46,6 +54,14 @@ export type OWSNActionPayload = {
     error: Error
   }
 
+  [OWSNActionType.getDiscordPriceStart]: void
+  [OWSNActionType.getDiscordPriceSuccess]: {
+    price: string
+  }
+  [OWSNActionType.getDiscordPriceFailure]: {
+    error: Error
+  }
+
   [OWSNActionType.mintTwitterStart]: {
     oauthToken: string
     oauthVerifier: string
@@ -54,6 +70,17 @@ export type OWSNActionPayload = {
     tokenId: string
   }
   [OWSNActionType.mintTwitterFailure]: {
+    error: Error
+  }
+
+  [OWSNActionType.mintDiscordStart]: {
+    code: string
+    redirectUrl: string
+  }
+  [OWSNActionType.mintDiscordSuccess]: {
+    tokenId: string
+  }
+  [OWSNActionType.mintDiscordFailure]: {
     error: Error
   }
 }
@@ -70,6 +97,18 @@ export type OWSNAction =
   | {
       type: OWSNActionType.getTwitterPriceFailure
       payload: OWSNActionPayload[OWSNActionType.getTwitterPriceFailure]
+    }
+  | {
+      type: OWSNActionType.getDiscordPriceStart
+      payload: OWSNActionPayload[OWSNActionType.getDiscordPriceStart]
+    }
+  | {
+      type: OWSNActionType.getDiscordPriceSuccess
+      payload: OWSNActionPayload[OWSNActionType.getDiscordPriceSuccess]
+    }
+  | {
+      type: OWSNActionType.getDiscordPriceFailure
+      payload: OWSNActionPayload[OWSNActionType.getDiscordPriceFailure]
     }
   | {
       type: OWSNActionType.checkAccountAvailabilityStart
@@ -94,6 +133,18 @@ export type OWSNAction =
   | {
       type: OWSNActionType.mintTwitterFailure
       payload: OWSNActionPayload[OWSNActionType.mintTwitterFailure]
+    }
+  | {
+      type: OWSNActionType.mintDiscordStart
+      payload: OWSNActionPayload[OWSNActionType.mintDiscordStart]
+    }
+  | {
+      type: OWSNActionType.mintDiscordSuccess
+      payload: OWSNActionPayload[OWSNActionType.mintDiscordSuccess]
+    }
+  | {
+      type: OWSNActionType.mintDiscordFailure
+      payload: OWSNActionPayload[OWSNActionType.mintDiscordFailure]
     }
   | {
       type: OWSNActionType.getTokenIdsStart

@@ -1,5 +1,6 @@
-import { Text, Box, Divider, Heading, Stack } from '@chakra-ui/react'
+import { Text, Box, Divider, Heading, Stack, Flex } from '@chakra-ui/react'
 import React from 'react'
+import DiscordAccountMint from '../containers/DiscordAccountMint'
 import TwitterAccountMint from '../containers/TwitterAccountMint'
 
 const AccountMint = () => {
@@ -43,7 +44,10 @@ const AccountMint = () => {
         Price of this NFT is here to cover the gas fees related to these calls
       </Text>
       <Box mb={12} />
-      <TwitterAccountMint />
+      <Flex wrap="wrap" justifyContent="space-evenly">
+        <TwitterAccountMint />
+        <DiscordAccountMint />
+      </Flex>
     </Stack>
   )
 }

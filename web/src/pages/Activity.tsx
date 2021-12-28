@@ -3,7 +3,6 @@ import {
   Stack,
   Table,
   Tbody,
-  Text,
   Th,
   Thead,
   Tr,
@@ -14,7 +13,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import RequestDescription from '../components/RequestDescription'
 import RequestStatus from '../components/RequestStatus'
 import { getRequests } from '../redux/actions/activity'
-import { Request } from '../redux/reducers/activity'
 import { activityRequestsSelector } from '../redux/selectors/activity'
 
 const Activity = () => {
@@ -26,7 +24,7 @@ const Activity = () => {
   const { requests } = useSelector(activityRequestsSelector)
 
   return (
-    <Stack>
+    <Stack maxW="100%" overflowX="auto">
       <Heading>Activity</Heading>
       <Table variant="simple">
         <Thead>

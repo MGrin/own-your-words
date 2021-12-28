@@ -89,6 +89,34 @@ export const getTwitterPriceFailure: AC<
   },
 })
 
+export const getDiscordPriceStart: AC<
+  OWSNActionType.getDiscordPriceStart,
+  OWSNActionPayload[OWSNActionType.getDiscordPriceStart]
+> = () => ({
+  type: OWSNActionType.getDiscordPriceStart,
+  payload: undefined,
+})
+
+export const getDiscordPriceSuccess: AC<
+  OWSNActionType.getDiscordPriceSuccess,
+  OWSNActionPayload[OWSNActionType.getDiscordPriceSuccess]
+> = ({ price }) => ({
+  type: OWSNActionType.getDiscordPriceSuccess,
+  payload: {
+    price,
+  },
+})
+
+export const getDiscordPriceFailure: AC<
+  OWSNActionType.getDiscordPriceFailure,
+  OWSNActionPayload[OWSNActionType.getDiscordPriceFailure]
+> = ({ error }) => ({
+  type: OWSNActionType.getDiscordPriceFailure,
+  payload: {
+    error,
+  },
+})
+
 export const mintTwitterStart: AC<
   OWSNActionType.mintTwitterStart,
   OWSNActionPayload[OWSNActionType.mintTwitterStart]
@@ -115,6 +143,37 @@ export const mintTwitterFailure: AC<
   OWSNActionPayload[OWSNActionType.mintTwitterFailure]
 > = ({ error }) => ({
   type: OWSNActionType.mintTwitterFailure,
+  payload: {
+    error,
+  },
+})
+
+export const mintDiscordStart: AC<
+  OWSNActionType.mintDiscordStart,
+  OWSNActionPayload[OWSNActionType.mintDiscordStart]
+> = ({ code, redirectUrl }) => ({
+  type: OWSNActionType.mintDiscordStart,
+  payload: {
+    code,
+    redirectUrl,
+  },
+})
+
+export const mintDiscordSuccess: AC<
+  OWSNActionType.mintDiscordSuccess,
+  OWSNActionPayload[OWSNActionType.mintDiscordSuccess]
+> = ({ tokenId }) => ({
+  type: OWSNActionType.mintDiscordSuccess,
+  payload: {
+    tokenId,
+  },
+})
+
+export const mintDiscordFailure: AC<
+  OWSNActionType.mintDiscordFailure,
+  OWSNActionPayload[OWSNActionType.mintDiscordFailure]
+> = ({ error }) => ({
+  type: OWSNActionType.mintDiscordFailure,
   payload: {
     error,
   },

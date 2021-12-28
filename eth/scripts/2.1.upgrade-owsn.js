@@ -11,16 +11,17 @@ async function main() {
   const OwnYourSocialNetwork = await ethers.getContractFactory(NAME);
 
   const tm = getLock(network.name, "TwitterMinter");
+  const dm = getLock(network.name, "DiscordMinter");
   const existingDeployment = getLock(network.name, NAME);
 
   const owsn = await upgrades.upgradeProxy(
     existingDeployment.address,
     OwnYourSocialNetwork,
-    [NAME, SYMBOL, getBaseUri(network.name)],
-    { initializer: "__OwnYourSocialNetwork__init" }
+    [NAME, SYMBOL, getBaseUri(network.name)]
   );
   await owsn.deployed();
-  await owsn.updateTwitterMinterAddress(tm.address);
+  await owsn.setTwitterMinterAddress(tm.address);
+  await owsn.setDiscordMinterAddress(dm.address);
   await owsn.setBaseURI(getBaseUri(network.name));
 
   writeLock(network.name, NAME, owsn.address);

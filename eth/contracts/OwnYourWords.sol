@@ -2,100 +2,164 @@
 
 pragma solidity ^0.8.0;
 
-import "./ERC721Custom.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721PausableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+
 import "./minters/TwitterPostMinter.sol";
+import "./utils/OwnedWords.sol";
 
-library OwnedWords {
-  struct data {
-    uint256 id;
-    address owner;
+contract OwnYourWords is
+    Initializable, ContextUpgradeable,
+    AccessControlEnumerableUpgradeable,
+    ERC721EnumerableUpgradeable,
+    ERC721PausableUpgradeable
+{
+    function initialize(
+        string memory name,
+        string memory symbol,
+        string memory baseTokenURI
+    ) public virtual initializer {
+        __OwnYourWords_init(name, symbol, baseTokenURI);
+    }
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    using OwnedWords for OwnedWords.data;
 
-    string sn_name;
-    string post_id;
-    string post_url;
-  }
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+    bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
-  struct availability {
-    uint256 id;
-    bool stored;
-  }
-}
+    CountersUpgradeable.Counter private _tokenIdTracker;
 
-contract OwnYourWords is ERC721Custom {
-  using OwnedWords for OwnedWords.data;
-  using OwnedWords for OwnedWords.availability;
+    string private _baseTokenURI;
 
-  mapping(string => OwnedWords.availability) private _owned_words_by_gen_id;
-  mapping(uint256 => OwnedWords.data) private _owned_words_by_id;
-  TwitterPostMinter public twitterPostMinter;
+    TwitterPostMinter private twitterPostMinter;
 
-  function __OwnYourWords__init(string memory name, string memory symbol, string memory baseURI) initializer public  {
-    __ERC721Custom_init(name, symbol, string(abi.encodePacked(baseURI, symbol)));
-  }
+    function __OwnYourWords_init(
+        string memory name,
+        string memory symbol,
+        string memory baseTokenURI
+    ) internal onlyInitializing {
+        __Context_init_unchained();
+        __ERC165_init_unchained();
+        __AccessControl_init_unchained();
+        __AccessControlEnumerable_init_unchained();
+        __ERC721_init_unchained(name, symbol);
+        __ERC721Enumerable_init_unchained();
+        __Pausable_init_unchained();
+        __ERC721Pausable_init_unchained();
+        __OwnYourWords_init_unchained(baseTokenURI);
+    }
 
-  function mint(
-    string memory sn_name,
-    string memory post_id,
-    string memory post_url,
-    address to
-  ) external returns (uint256) {
-    string memory gen_sn_id = string(
-      abi.encodePacked(sn_name, post_id)
-    );
+    function __OwnYourWords_init_unchained(
+        string memory baseTokenURI
+    ) internal onlyInitializing {
+        _baseTokenURI = baseTokenURI;
 
-    require(
-      isPostAvailable(gen_sn_id) == true,
-      "OwnYourWords: These words were already minted"
-    );
-    uint256 _token_id = _mint_with_owner(to);
-    _owned_words_by_id[_token_id].id = _token_id;
-    _owned_words_by_id[_token_id].owner = to;
-    _owned_words_by_id[_token_id].sn_name = sn_name;
-    _owned_words_by_id[_token_id].post_id = post_id;
-    _owned_words_by_id[_token_id].post_url = post_url;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
 
-    _owned_words_by_gen_id[gen_sn_id].id = _token_id;
-    _owned_words_by_gen_id[gen_sn_id].stored = true;
-    
-    return _token_id;
-  }
+        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
+        _setupRole(ADMIN_ROLE, _msgSender());
+    }
 
-  function isPostAvailable(string memory gen_sn_id) public view returns (bool) {
-    OwnedWords.availability memory availability = _owned_words_by_gen_id[gen_sn_id];
+    function _baseURI() internal view override returns (string memory) {
+        return _baseTokenURI;
+    }
 
-    return !availability.stored;
-  }
+    function mint(address to) external returns (uint256) {
+        require(hasRole(MINTER_ROLE, _msgSender()), "OwnYourWords: must have minter role to mint");
 
-  function getOWWByGenSnId(string memory gen_sn_id) public view returns (OwnedWords.data memory) {
-    require(
-      !isPostAvailable(gen_sn_id),
-      "OwnYourWords: The post was not yet minted"
-    );
+        uint256 _token_id = _tokenIdTracker.current();
 
-    uint256 tokenId = _owned_words_by_gen_id[gen_sn_id].id;
-    return getOWWByTokenId(tokenId);
-  }
+        _mint(to, _token_id);
+        _tokenIdTracker.increment();
 
-  function getOWWByTokenId(uint256 tokenId) public view returns (OwnedWords.data memory) {
-    require(_exists(tokenId) == true, "OwnYourWords: The post was not yet minted");
+        return _token_id;
+    }
 
-    return _owned_words_by_id[tokenId];
-  }
+    function mintTwitterPost(string memory postId) external payable {
+      twitterPostMinter.startMint{ value: msg.value }(postId, _msgSender(), this.mint);
+    }
 
-  function mintTwitterPost(
-    string memory postId
-  ) external payable {
-    twitterPostMinter.startMint{ value: msg.value }(postId, _msgSender(), this.mint);
-  }
+    function isAvailable(string memory sn_name, string memory sn_id) public view returns (bool) {
+      if (twitterPostMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return twitterPostMinter.isAvailable(sn_id);
+      }
 
-  function updateTwitterPostMinterAddress(address twitterPostMinterAddress) public  onlyRole(ADMIN_ROLE) {
-    revokeRole(MINTER_ROLE, address(twitterPostMinter));
-    twitterPostMinter = TwitterPostMinter(twitterPostMinterAddress);
-    grantRole(MINTER_ROLE, twitterPostMinterAddress);
-  }
+      return false;
+    }
 
-  function _baseURI() internal pure override returns (string memory) {
-    return "https://rinkeby.oww-api.famio.app/OWW/";
-  }
+    function getOWWBySnId(string memory sn_name, string memory sn_id) public view returns (OwnedWords.data memory) {
+      require(
+        !isAvailable(sn_name, sn_id),
+        "OwnYourWords: The post was not yet minted"
+      );
 
+      if (twitterPostMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+        return twitterPostMinter.getOWWBySnId(sn_id);
+      }
+
+      require(false, "OwnYourWords: Unsupported social network"); 
+    }
+
+    function getOWWByTokenId(uint256 tokenId) public view returns (OwnedWords.data memory) {
+      require(_exists(tokenId) == true, "OwnYourWords: The post was not yet minted");
+
+      if (twitterPostMinter.tokenExists(tokenId)) {
+        return twitterPostMinter.getOWWByTokenId(tokenId);
+      }
+
+      require(false, "OwnYourWords: The post was not yet minted");
+    }
+
+    function setTwitterPostMinterAddress(address twitterPostMinterAddress) public {
+      require(hasRole(ADMIN_ROLE, _msgSender()), "OwnYourWords: must have admin role to mint");
+
+      revokeRole(MINTER_ROLE, address(twitterPostMinter));
+      twitterPostMinter = TwitterPostMinter(twitterPostMinterAddress);
+      grantRole(MINTER_ROLE, twitterPostMinterAddress);
+    }
+
+    function pause() public {
+        require(hasRole(PAUSER_ROLE, _msgSender()), "OwnYourWords: must have pauser role to pause");
+        _pause();
+    }
+
+    function unpause() public {
+        require(hasRole(PAUSER_ROLE, _msgSender()), "OwnYourWords: must have pauser role to unpause");
+        _unpause();
+    }
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721EnumerableUpgradeable, ERC721PausableUpgradeable) {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControlEnumerableUpgradeable, ERC721Upgradeable, ERC721EnumerableUpgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function retrieveFunds() public onlyRole(ADMIN_ROLE){
+      payable(_msgSender()).transfer(address(this).balance);
+    }
+
+    function setBaseURI(string memory newBaseURI) public onlyRole(ADMIN_ROLE) {
+      _baseTokenURI = newBaseURI;
+    }
+
+    uint256[48] private __gap;
 }

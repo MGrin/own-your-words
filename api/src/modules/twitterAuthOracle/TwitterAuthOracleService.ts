@@ -84,12 +84,11 @@ export class TwitterAuthOracleService {
       const oauthToken = this.etherService.decrypt(request.oauthToken);
       const oauthVerifier = this.etherService.decrypt(request.oauthVerifier);
 
+      await startTx.wait();
       const accessToken = await this.twitterService.getAccessToken(
         oauthToken,
         oauthVerifier,
       );
-
-      await startTx.wait();
       const succeedTx = await this.tao.safeCall.succeeded(
         requestId,
         accessToken.screen_name,

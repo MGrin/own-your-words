@@ -40,9 +40,13 @@ const TwitterAccountMint = () => {
   }, [dispatch])
 
   const onClick = useCallback(() => {
+    const callbackUrl =
+      mode === MODE.mint
+        ? `${window.location.href}/twitter`
+        : `${window.location.href}/twitter/check`
     dispatch(
       fetchRequestToken({
-        callbackUrl: `${window.location.href}#twitter-${mode}`,
+        callbackUrl,
       })
     )
   }, [dispatch, mode])

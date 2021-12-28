@@ -23,7 +23,7 @@ export class TAOService {
         ({
           id: requestAsArr.id.toNumber(),
           status: requestAsArr.status,
-          error: requestAsArr.error,
+          error: requestAsArr.err,
           targetContract: AvailableContracts.owsn,
         } as Request)
     )

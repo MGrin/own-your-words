@@ -10,6 +10,9 @@ import { OWWService } from './OWWService'
 import { TPMService } from './TPMService'
 import { TAOService } from './TAOService'
 import { TPOService } from './TPOService'
+import { DMService } from './DMService'
+import { DAOService } from './DAOService'
+import discordAuthService from './DiscordAuthService'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
@@ -20,6 +23,8 @@ export enum AvailableContracts {
   owsn = 'OWSN',
   tm = 'TM',
   tao = 'TAO',
+  dao = 'DAO',
+  dm = 'DM',
   oww = 'OWW',
   tpm = 'TPM',
   tpo = 'TPO',
@@ -48,6 +53,8 @@ class EthersService {
     [AvailableContracts.owsn]?: OWSNService
     [AvailableContracts.tm]?: TMService
     [AvailableContracts.tao]?: TAOService
+    [AvailableContracts.dm]?: DMService
+    [AvailableContracts.dao]?: DAOService
     [AvailableContracts.oww]?: OWWService
     [AvailableContracts.tpm]?: TPMService
     [AvailableContracts.tpo]?: TPOService
@@ -78,12 +85,14 @@ class EthersService {
     // @ts-expect-error
     window.ethereum.on('networkChanged', () => {
       twitterAuthService.setMode()
+      discordAuthService.setMode()
       store.dispatch(connect())
     })
 
     // @ts-expect-error
     window.ethereum.on('accountsChanged', () => {
       twitterAuthService.setMode()
+      discordAuthService.setMode()
       store.dispatch(connect())
     })
   }
@@ -123,12 +132,17 @@ class EthersService {
 
     this.connected = true
     const contractsLoaders = [
-      this.loadContract(AvailableContracts.owsn, ['mintTwitter']),
+      this.loadContract(AvailableContracts.owsn, [
+        'mintTwitter',
+        'mintDiscord',
+      ]),
       this.loadContract(AvailableContracts.tm),
       this.loadContract(AvailableContracts.oww, ['mintTwitterPost']),
       this.loadContract(AvailableContracts.tpm),
       this.loadContract(AvailableContracts.tao),
       this.loadContract(AvailableContracts.tpo),
+      this.loadContract(AvailableContracts.dao),
+      this.loadContract(AvailableContracts.dm),
     ]
 
     const contracts = await Promise.all(contractsLoaders)
@@ -139,6 +153,8 @@ class EthersService {
       [AvailableContracts.tpm]: new TPMService(contracts[3], this.address),
       [AvailableContracts.tao]: new TAOService(contracts[4]),
       [AvailableContracts.tpo]: new TPOService(contracts[5]),
+      [AvailableContracts.dao]: new DAOService(contracts[6]),
+      [AvailableContracts.dm]: new DMService(contracts[7], this.address),
     }
 
     localStorage.setItem('autoconnect', 'true')
@@ -177,6 +193,18 @@ class EthersService {
   public getTPO() {
     return this.contractServices
       ? this.contractServices[AvailableContracts.tpo]
+      : undefined
+  }
+
+  public getDAO() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.dao]
+      : undefined
+  }
+
+  public getDM() {
+    return this.contractServices
+      ? this.contractServices[AvailableContracts.dm]
       : undefined
   }
 

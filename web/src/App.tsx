@@ -41,6 +41,26 @@ const App = () => {
               component={AccountMint}
             />
             <ProtectedRoute
+              path={WebRoutes.accountMintTwitter}
+              exact
+              component={AccountMint}
+            />
+            <ProtectedRoute
+              path={WebRoutes.accountMintTwitterCheck}
+              exact
+              component={AccountMint}
+            />
+            <ProtectedRoute
+              path={WebRoutes.accountMintDiscord}
+              exact
+              component={AccountMint}
+            />
+            <ProtectedRoute
+              path={WebRoutes.accountMintDiscordCheck}
+              exact
+              component={AccountMint}
+            />
+            <ProtectedRoute
               path={WebRoutes.accounts}
               exact
               component={Accounts}

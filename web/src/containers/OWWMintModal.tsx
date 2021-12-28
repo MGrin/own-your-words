@@ -13,6 +13,7 @@ import {
   Input,
   ModalFooter,
   Button,
+  Box,
 } from '@chakra-ui/react'
 import { useDispatch, useSelector } from 'react-redux'
 import { owwInputSelector, owwSelector } from '../redux/selectors/oww'
@@ -39,7 +40,7 @@ type OWWMintModalProps = {
 }
 const OWWMintModal = ({ isOpen, onClose }: OWWMintModalProps) => {
   const { postUrl, isUrlValid, postId } = useSelector(owwInputSelector)
-  const { loading, error } = useSelector(owwSelector)
+  const { loading, error, price } = useSelector(owwSelector)
 
   const dispatch = useDispatch()
 
@@ -95,6 +96,15 @@ const OWWMintModal = ({ isOpen, onClose }: OWWMintModalProps) => {
         </ModalBody>
         <ModalFooter>
           {error && <Text color="tomato">{formatError(error)}</Text>}
+          <Box
+            fontWeight="semibold"
+            letterSpacing="wide"
+            fontSize="xl"
+            textTransform="uppercase"
+            ml="2"
+          >
+            {price} ETH
+          </Box>
           <Button variant="ghost" mr={3} onClick={onModalClose}>
             Close
           </Button>

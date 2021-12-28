@@ -36,10 +36,11 @@ const RequestStatus = ({ request }: RequestStatusProps) => {
   }
 
   if (request.status === 4) {
+    console.log(request)
     return (
       <Flex>
         <WarningIcon mr={2} />
-        <Text>Failed: {formatError(request.error)}</Text>
+        <Text>Failed: {request.error}</Text>
       </Flex>
     )
   }

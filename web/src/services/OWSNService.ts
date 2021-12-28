@@ -29,10 +29,25 @@ export class OWSNService {
     })
   }
 
-  public async getOWSNByGenSnId(genSnId: string): Promise<OwnedAccount> {
-    this.logger.log(`Get OWSN by genSnId [genSnId=${genSnId}]`)
+  public async mintDiscordOWSN(
+    code: string,
+    redirectUrl: string,
+    price: string
+  ) {
+    this.logger.log('Mint discord OWSN')
 
-    return await this.contract.getOWSNByGenSnId(genSnId)
+    await this.contract.safeCall.mintDiscord(code, redirectUrl, {
+      value: ethers.utils.parseEther(price),
+    })
+  }
+
+  public async getOWSNBySnId(
+    snName: string,
+    snId: string
+  ): Promise<OwnedAccount> {
+    this.logger.log(`Get OWSN by genSnId [snName=${snName}, snId=${snId}]`)
+
+    return await this.contract.getOWSNBySnId(snName, snId)
   }
 
   public async ownerOf(tokenId: number) {
@@ -41,10 +56,10 @@ export class OWSNService {
     return await this.contract.ownerOf(tokenId)
   }
 
-  public async isAccountAvailable(genSnId: string) {
-    this.logger.log(`IsAccountAvailable [genSnId=${genSnId}]`)
+  public async isAvailable(snName: string, snId: string) {
+    this.logger.log(`Is Available [snName=${snName}, snId=${snId}]`)
 
-    return await this.contract.isAccountAvailable(genSnId)
+    return await this.contract.isAvailable(snName, snId)
   }
 
   public async getOwnedAccountTokens(address: string) {

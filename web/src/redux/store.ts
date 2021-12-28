@@ -10,15 +10,18 @@ import type { Web3State } from './reducers/web3'
 import type { ThunkAction } from './utils'
 import type { OWSNAction } from './actions/owsn/types'
 import type { OWSNState } from './reducers/owsn'
-import twitterRedirectCatcher from './middlewares/twitterRedirectCatcher'
+import redirectCatcher from './middlewares/redirectCatcher'
 import { OWWState } from './reducers/oww'
 import { OWWAction } from './actions/oww/types'
 import { ActivityState } from './reducers/activity'
 import { ActivityAction } from './actions/activity/types'
+import { DiscordAuthState } from './reducers/discordAuth'
+import { DiscordAuthAction } from './actions/discordAuth/types'
 
 export type State = {
   web3: Web3State
   twitterAuth: TwitterAuthState
+  discordAuth: DiscordAuthState
   owsn: OWSNState
   oww: OWWState
   activity: ActivityState
@@ -30,13 +33,14 @@ export type PlainAction =
   | OWSNAction
   | OWWAction
   | ActivityAction
+  | DiscordAuthAction
 
 export type Action = PlainAction | ThunkAction
 
 // @ts-expect-error
 const store = createStore<State, Action, any, any>(
   combineReducers(reducers),
-  applyMiddleware(thunk, twitterRedirectCatcher, logger)
+  applyMiddleware(thunk, redirectCatcher, logger)
 )
 
 export default store
