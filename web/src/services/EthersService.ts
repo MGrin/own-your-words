@@ -82,11 +82,13 @@ class EthersService {
 
     // @ts-expect-error
     window.ethereum.on('networkChanged', () => {
+      this.logger.log('On network changed')
       store.dispatch(connect())
     })
 
     // @ts-expect-error
     window.ethereum.on('accountsChanged', () => {
+      this.logger.log('On account changed')
       store.dispatch(connect())
     })
   }
