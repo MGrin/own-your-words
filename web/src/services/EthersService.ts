@@ -84,15 +84,11 @@ class EthersService {
 
     // @ts-expect-error
     window.ethereum.on('networkChanged', () => {
-      twitterAuthService.setMode()
-      discordAuthService.setMode()
       store.dispatch(connect())
     })
 
     // @ts-expect-error
     window.ethereum.on('accountsChanged', () => {
-      twitterAuthService.setMode()
-      discordAuthService.setMode()
       store.dispatch(connect())
     })
   }
@@ -111,6 +107,7 @@ class EthersService {
       throw error
     }
 
+    const previousAddress = this.address
     this.account = this.provider.getSigner()
     this.address = await this.account.getAddress()
 
@@ -125,12 +122,25 @@ class EthersService {
       this.sweetAddress = getSweetAddress(this.address)
     }
 
+    const previousNetwork = this.network?.name
     this.network = await this.provider.getNetwork()
+
     if (this.network.name === 'unknown') {
       this.network.name = 'localhost'
     }
 
     this.connected = true
+
+    if (
+      this.network.name === previousNetwork &&
+      this.address === previousAddress
+    ) {
+      return
+    }
+
+    twitterAuthService.setMode()
+    discordAuthService.setMode()
+
     const contractsLoaders = [
       this.loadContract(AvailableContracts.owsn, [
         'mintTwitter',
