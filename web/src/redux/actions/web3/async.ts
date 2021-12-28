@@ -6,6 +6,8 @@ import type { ThunkAC } from '../../utils'
 import { connectStart, connectSuccess, connectFailure } from './plain'
 
 const logger = new Logger('Web3AsyncActions')
+const pageLoadedTimestamp = Date.now()
+const modesClearingTimeout = 1000
 
 export const connect: ThunkAC<void> = () => async (dispatch) => {
   dispatch(connectStart())
@@ -23,8 +25,9 @@ export const connect: ThunkAC<void> = () => async (dispatch) => {
     )
 
     if (
-      ethersService.network?.name !== previousNetwork?.name ||
-      ethersService.address === previousAddress
+      (ethersService.network?.name !== previousNetwork?.name ||
+        ethersService.address === previousAddress) &&
+      Date.now() - pageLoadedTimestamp > modesClearingTimeout
     ) {
       twitterAuthService.setMode()
       discordAuthService.setMode()
