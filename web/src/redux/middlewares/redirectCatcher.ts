@@ -9,6 +9,7 @@ import type { StoreAPI } from '../utils'
 import { Logger } from '../../services/Logger'
 
 const logger = new Logger('RedirectCatcher')
+let processed = false
 
 type NextFn = (a: PlainAction) => void
 const catcher =
@@ -16,6 +17,10 @@ const catcher =
     next(action)
 
     if (action.type !== Web3ActionType.connectSuccess) {
+      return
+    }
+
+    if (processed) {
       return
     }
 
@@ -83,6 +88,8 @@ const catcher =
     if (!mode || !checkProcessing || !mintProcessing) {
       return
     }
+
+    processed = true
 
     switch (mode) {
       case MODE.check: {
