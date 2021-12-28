@@ -87,7 +87,9 @@ contract OwnYourWords is
     }
 
     function isAvailable(string memory sn_name, string memory sn_id) public view returns (bool) {
-      if (twitterPostMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      bytes32 encodedSnName = keccak256(abi.encodePacked(sn_name));
+
+      if (twitterPostMinter.getSnName() == encodedSnName) {
         return twitterPostMinter.isAvailable(sn_id);
       }
 
@@ -100,7 +102,9 @@ contract OwnYourWords is
         "OwnYourWords: The post was not yet minted"
       );
 
-      if (twitterPostMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      bytes32 encodedSnName = keccak256(abi.encodePacked(sn_name));
+
+      if (twitterPostMinter.getSnName() == encodedSnName) {
         return twitterPostMinter.getOWWBySnId(sn_id);
       }
 
