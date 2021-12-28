@@ -37,10 +37,15 @@ export type PlainAction =
 
 export type Action = PlainAction | ThunkAction
 
+const middlewares = [thunk, redirectCatcher]
+if (process.env.NODE_ENV !== 'production') {
+  // @ts-expect-error
+  middlewares.push(logger)
+}
 // @ts-expect-error
 const store = createStore<State, Action, any, any>(
   combineReducers(reducers),
-  applyMiddleware(thunk, redirectCatcher, logger)
+  applyMiddleware(...middlewares)
 )
 
 export default store
