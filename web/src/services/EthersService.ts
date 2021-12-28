@@ -5,14 +5,12 @@ import { TMService } from './TMService'
 import store from '../redux/store'
 import { changeAvailability, connect } from '../redux/actions/web3'
 import { getApiUrl } from '../utils'
-import twitterAuthService from './TwitterAuthService'
 import { OWWService } from './OWWService'
 import { TPMService } from './TPMService'
 import { TAOService } from './TAOService'
 import { TPOService } from './TPOService'
 import { DMService } from './DMService'
 import { DAOService } from './DAOService'
-import discordAuthService from './DiscordAuthService'
 
 export enum SupportedNetworks {
   localhost = 'localhost',
