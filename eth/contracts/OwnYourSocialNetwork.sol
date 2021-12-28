@@ -100,11 +100,13 @@ contract OwnYourSocialNetwork is
     }
 
     function isAvailable(string memory sn_name, string memory sn_id) public view returns (bool) {
-      if (twitterMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      bytes32 encodedSnName = keccak256(abi.encodePacked(sn_name));
+
+      if (twitterMinter.getSnName() == encodedSnName) {
         return twitterMinter.isAvailable(sn_id);
       }
 
-      if (discordMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      if (discordMinter.getSnName() == encodedSnName) {
         return discordMinter.isAvailable(sn_id);
       }
 
@@ -118,11 +120,13 @@ contract OwnYourSocialNetwork is
         "OwnYourSocialNetwork: The account was not yet minted"
       );
 
-      if (twitterMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      bytes32 encodedSnName = keccak256(abi.encodePacked(sn_name));
+
+      if (twitterMinter.getSnName() == encodedSnName) {
         return twitterMinter.getOWNSBySnId(sn_id);
       }
 
-      if (discordMinter.getSnName() == keccak256(abi.encodePacked(sn_name))) {
+      if (discordMinter.getSnName() == encodedSnName) {
         return discordMinter.getOWNSBySnId(sn_id);
       }
 
