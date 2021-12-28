@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import axios, { Method } from 'axios';
+import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { DiscordOAuthAccessTokenResponse, DiscordUser } from './types';
 

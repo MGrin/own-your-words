@@ -80,7 +80,7 @@ export enum BACKGROUND_IMAGES {
 }
 
 export const getBackgroundColorForToken = (originalToken: number) => {
-  let token = originalToken;
+  const token = originalToken;
 
   if (token === 0) {
     const colorNames = Object.keys(COLORS);

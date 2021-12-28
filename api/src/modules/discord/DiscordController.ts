@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { DiscordService } from './DiscordService';
 import { DiscordOAuthAccessTokenResponse, DiscordUser } from './types';
 
